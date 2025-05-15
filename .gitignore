@@ -1,0 +1,69 @@
+# System files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Editor directories and files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.project
+.classpath
+.settings/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependency directories (if you add them later)
+node_modules/
+bower_components/
+jspm_packages/
+vendor/
+
+# Build directories (if you add a build process later)
+dist/
+build/
+out/
+.tmp/
+.temp/
+.cache/
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# If you use npm
+package-lock.json
+
+# If you use yarn
+yarn.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Optional: ignore specific image files that are too large for git
+# *.psd
+# *.ai
+# *.zip
