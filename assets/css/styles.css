@@ -1,0 +1,242 @@
+/* 
+ * styles.css
+ * Ben Tossell's personal website
+ */
+
+/* ===== RESET ===== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ===== VARIABLES ===== */
+:root {
+  /* Colors */
+  --color-background: #FFABED;
+  --color-text: #24292F;
+  --color-link: #24292F;
+  --color-link-hover: #000000;
+  --color-divider: #24292F;
+  
+  /* Typography */
+  --font-family: 'Inter', sans-serif;
+  --font-size-base: 18px;
+  --font-size-small: 0.75em;
+  --font-size-normal: 0.875em;
+  --font-size-large: 1.375em;
+  
+  /* Spacing */
+  --spacing-small: 0.5rem;
+  --spacing-medium: 1rem;
+  --spacing-large: 2rem;
+  --spacing-xlarge: 3rem;
+  
+  /* Layout */
+  --width-container: 40rem;
+  --padding-container-horizontal: 3rem;
+  --padding-container-vertical: 3rem;
+}
+
+/* ===== BASE STYLES ===== */
+html {
+  font-size: var(--font-size-base);
+  min-height: 100vh;
+}
+
+body {
+  font-family: var(--font-family);
+  line-height: 1.5;
+  color: var(--color-text);
+  background-color: var(--color-background);
+  min-height: 100vh;
+  min-width: 320px;
+  overflow-x: hidden;
+  word-wrap: break-word;
+}
+
+h1, h2, h3, p {
+  margin-bottom: var(--spacing-medium);
+}
+
+a {
+  color: var(--color-link);
+  text-decoration: underline;
+  transition: color 0.25s ease;
+}
+
+a:hover {
+  text-decoration: none;
+  color: var(--color-link-hover);
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  background-color: var(--color-divider);
+  margin: var(--spacing-large) 0;
+  width: 100%;
+}
+
+ul {
+  list-style-position: inside;
+  margin-bottom: var(--spacing-medium);
+}
+
+li {
+  margin-bottom: var(--spacing-small);
+}
+
+/* ===== LAYOUT ===== */
+#wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: var(--spacing-medium);
+}
+
+#main {
+  width: 100%;
+  max-width: var(--width-container);
+  margin: 0 auto;
+}
+
+.inner {
+  padding: var(--padding-container-vertical) var(--padding-container-horizontal);
+}
+
+/* ===== TYPOGRAPHY ===== */
+.subtitle {
+  font-size: var(--font-size-normal);
+  font-weight: 400;
+  margin-top: var(--spacing-xlarge);
+  margin-bottom: var(--spacing-xlarge);
+}
+
+.title {
+  font-size: var(--font-size-large);
+  font-weight: 300;
+  margin-bottom: var(--spacing-large);
+}
+
+.past-experience h3 {
+  font-size: var(--font-size-small);
+  font-weight: 400;
+  margin-bottom: 0;
+}
+
+.past-experience ul {
+  list-style-type: disc;
+  padding-left: var(--spacing-medium);
+}
+
+.past-experience li {
+  font-size: var(--font-size-small);
+  font-weight: 400;
+}
+
+.investment-group h3 {
+  font-size: var(--font-size-small);
+  font-weight: 600;
+  margin-bottom: var(--spacing-small);
+}
+
+/* ===== TABLES ===== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--spacing-medium);
+  font-size: var(--font-size-small);
+}
+
+td {
+  padding: 0.25rem 0.34375rem;
+}
+
+td:first-child {
+  padding-left: 0;
+}
+
+td:last-child {
+  padding-right: 0;
+}
+
+/* ===== SOCIAL LINKS ===== */
+.social-links {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 1.25em;
+  margin-top: var(--spacing-medium);
+}
+
+.social-links a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1em;
+  height: 1em;
+  transition: transform 0.25s ease;
+}
+
+.social-links a:hover {
+  transform: scale(1.1);
+}
+
+.social-links svg {
+  width: 100%;
+  height: 100%;
+  fill: var(--color-text);
+}
+
+.social-links .label {
+  display: none;
+}
+
+/* ===== RESPONSIVE STYLES ===== */
+@media (max-width: 1680px) {
+  :root {
+    --font-size-base: 13pt;
+  }
+}
+
+@media (max-width: 980px) {
+  :root {
+    --font-size-base: 11pt;
+  }
+}
+
+@media (max-width: 736px) {
+  :root {
+    --padding-container-horizontal: 2rem;
+    --padding-container-vertical: 3rem;
+  }
+  
+  .subtitle {
+    margin-top: 2.625rem;
+    margin-bottom: 2.625rem;
+  }
+  
+  .title {
+    margin-bottom: 2.4375rem;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --spacing-medium: 0.65625rem;
+  }
+}
+
+@media (max-width: 360px) {
+  :root {
+    --padding-container-horizontal: 1.5rem;
+    --padding-container-vertical: 2.25rem;
+    --spacing-medium: 0.5625rem;
+  }
+  
+  .social-links {
+    gap: 0.5625rem;
+  }
+}
