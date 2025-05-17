@@ -13,15 +13,15 @@
 /* ===== VARIABLES ===== */
 :root {
   /* Colors */
-  --color-background: #FFABED;
+  --color-background: #FFFFFF;
   --color-text: #24292F;
   --color-link: #24292F;
   --color-link-hover: #000000;
-  --color-divider: #24292F;
+  --color-divider: #ededed;
   
   /* Typography */
   --font-family: 'Inter', sans-serif;
-  --font-size-base: 18px;
+  --font-size-base: 15px;
   --font-size-small: 0.75em;
   --font-size-normal: 0.875em;
   --font-size-large: 1.375em;
