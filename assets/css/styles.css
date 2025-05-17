@@ -38,6 +38,15 @@
   --padding-container-vertical: 3rem;
 }
 
+/* Dark mode overrides */
+body.dark-mode {
+  --color-background: #0d1117;
+  --color-text: #c9d1d9;
+  --color-link: #c9d1d9;
+  --color-link-hover: #ffffff;
+  --color-divider: #30363d;
+}
+
 /* ===== BASE STYLES ===== */
 html {
   font-size: var(--font-size-base);
@@ -192,6 +201,23 @@ td:last-child {
 
 .social-links .label {
   display: none;
+}
+
+/* Dark mode toggle button */
+#theme-toggle {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: var(--color-text);
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+#theme-toggle svg {
+  width: 1em;
+  height: 1em;
+  stroke: currentColor;
 }
 
 /* ===== RESPONSIVE STYLES ===== */

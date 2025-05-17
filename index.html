@@ -24,8 +24,10 @@
     
     <!-- CSS -->
     <link rel="stylesheet" href="assets/css/styles.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
+    <button id="theme-toggle" aria-label="Toggle dark mode"><i data-lucide="moon"></i></button>
     <div id="wrapper">
         <main id="main">
             <div class="inner">
@@ -206,5 +208,24 @@
             </div>
         </main>
     </div>
+    <script>
+        const toggle = document.getElementById('theme-toggle');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+        const stored = localStorage.getItem('theme');
+        if (stored === 'dark' || (!stored && prefersDark.matches)) {
+            document.body.classList.add('dark-mode');
+            toggle.setAttribute('data-lucide', 'sun');
+        } else {
+            toggle.setAttribute('data-lucide', 'moon');
+        }
+        lucide.createIcons();
+        toggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            toggle.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+            lucide.createIcons();
+        });
+    </script>
 </body>
 </html>
