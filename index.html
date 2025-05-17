@@ -26,6 +26,7 @@
     <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
+    <button id="theme-toggle" aria-label="Toggle dark mode">🌙</button>
     <div id="wrapper">
         <main id="main">
             <div class="inner">
@@ -206,5 +207,22 @@
             </div>
         </main>
     </div>
+    <script>
+        const toggle = document.getElementById('theme-toggle');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+        const stored = localStorage.getItem('theme');
+        if (stored === 'dark' || (!stored && prefersDark.matches)) {
+            document.body.classList.add('dark-mode');
+            toggle.innerHTML = '&#x2600;&#xFE0F;';
+        } else {
+            toggle.innerHTML = '&#x1F319;';
+        }
+        toggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            toggle.innerHTML = isDark ? '&#x2600;&#xFE0F;' : '&#x1F319;';
+        });
+    </script>
 </body>
 </html>
