@@ -319,10 +319,9 @@ body {
   max-width: 600px;
   overflow-y: auto;
   border-right: 1px solid var(--color-divider);
-  background-color: rgba(0,0,0,0.05);
 }
 .resizer {
-  width: 4px;
+  width: 2px;
   cursor: col-resize;
   background-color: var(--color-divider);
 }
