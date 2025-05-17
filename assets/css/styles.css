@@ -309,3 +309,143 @@ body {
 .sidebar ul {
   padding-left: 1.2rem;
 }
+.container {
+  display: flex;
+  height: calc(100vh - 2.5rem);
+}
+.sidebar {
+  width: 300px;
+  min-width: 250px;
+  max-width: 600px;
+  overflow-y: auto;
+  border-right: 1px solid var(--color-divider);
+  background-color: rgba(0,0,0,0.05);
+}
+.resizer {
+  width: 4px;
+  cursor: col-resize;
+  background-color: var(--color-divider);
+}
+body.resizing {
+  cursor: col-resize;
+}
+.content {
+  flex: 1;
+  overflow-y: auto;
+}
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--color-divider);
+}
+.tab-trigger {
+  padding: 0.5rem 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+}
+.tab-trigger.active {
+  border-bottom: 2px solid var(--color-text);
+  font-weight: 600;
+}
+.tab-content {
+  display: none;
+  padding: 1rem;
+}
+.tab-content.active {
+  display: block;
+}
+.file-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--color-divider);
+  padding: 0.5rem 0;
+}
+.file-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+}
+.file-btn svg {
+  width: 1rem;
+  height: 1rem;
+  fill: currentColor;
+}
+.badges {
+  display: flex;
+  gap: 0.25rem;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 0 0.5rem;
+  font-size: 0.75rem;
+  border: 1px solid var(--color-divider);
+}
+.badge.green {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+.badge.red {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+.code-block {
+  font-family: monospace;
+  background-color: rgba(0,0,0,0.05);
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+  white-space: pre-wrap;
+}
+.lived {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+  color: var(--color-text);
+  margin-top: 0.5rem;
+}
+.lived .icon {
+  width: 1rem;
+  height: 1rem;
+  fill: currentColor;
+}
+.testing-title {
+  margin-top: 1rem;
+  font-weight: 600;
+}
+.testing-list {
+  list-style: disc;
+  padding-left: 1.2rem;
+  font-size: 0.875rem;
+}
+.testing-list .check {
+  width: 1rem;
+  height: 1rem;
+  fill: #16a34a;
+}
+.testing-list code {
+  background-color: rgba(0,0,0,0.05);
+  padding: 0.1rem 0.25rem;
+  border-radius: 0.25rem;
+  margin: 0 0.25rem;
+}
+.more {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-left: 0.25rem;
+  cursor: pointer;
+  color: var(--color-text);
+}
+.more svg {
+  width: 0.875rem;
+  height: 0.875rem;
+  fill: currentColor;
+}
