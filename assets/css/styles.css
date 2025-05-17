@@ -328,7 +328,7 @@ body {
   height: calc(100vh - 2.5rem);
 }
 .sidebar {
-  width: 300px;
+  width: 600px;
   min-width: 250px;
   max-width: 600px;
   overflow-y: auto;
