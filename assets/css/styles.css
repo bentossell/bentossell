@@ -291,12 +291,12 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
+  width: 2.5rem;
+  height: 2.5rem;
   background: none;
   border: 1px solid var(--color-divider);
-  border-radius: 50%;
-  color: var(--color-text);
+  border-radius: 10%;
+  color: #e4e4e1;
   cursor: pointer;
   padding: 0;
   transition: background-color 0.2s ease, color 0.2s ease;
