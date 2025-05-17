@@ -288,11 +288,23 @@ body {
 }
 .actions a,
 .actions button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
   background: none;
-  border: none;
+  border: 1px solid var(--color-divider);
+  border-radius: 50%;
   color: var(--color-text);
   cursor: pointer;
   padding: 0;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.actions a:hover,
+.actions button:hover {
+  background-color: var(--color-divider);
+  color: var(--color-link-hover);
 }
 .actions svg {
   width: 1.25rem;
