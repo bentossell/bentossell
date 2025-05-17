@@ -15,6 +15,7 @@
   /* Colors */
   --color-background: #FFFFFF;
   --color-text: #24292F;
+  --color-text-secondary: #8f8f8f;
   --color-link: #24292F;
   --color-link-hover: #000000;
   --color-divider: #ededed;
@@ -350,6 +351,7 @@ body.resizing {
 .tabs {
   display: flex;
   border-bottom: 1px solid var(--color-divider);
+  font-size: 0.875rem;
 }
 .tab-trigger {
   padding: 0.5rem 1rem;
@@ -357,17 +359,21 @@ body.resizing {
   border: none;
   cursor: pointer;
   font: inherit;
+  font-color: var(--color-text-secondary)
 }
 .tab-trigger.active {
   border-bottom: 2px solid var(--color-text);
+  font-color: var(--color-text);
   font-weight: 500;
 }
 .tab-content {
   display: none;
   padding: 1rem;
+  background-color: #ffffff;
 }
 .tab-content.active {
   display: block;
+  font-size: 0.875rem;
 }
 .file-header {
   display: flex;
@@ -412,6 +418,7 @@ body.resizing {
 }
 .code-block {
   font-family: monospace;
+  font-size: 0.875rem;
   background-color: rgba(0,0,0,0.05);
   padding: 0.75rem;
   border-radius: 0.375rem;
