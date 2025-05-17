@@ -345,6 +345,7 @@ body.resizing {
 .content {
   flex: 1;
   overflow-y: auto;
+  background-color: #f3f3f3;
 }
 .tabs {
   display: flex;
@@ -359,7 +360,7 @@ body.resizing {
 }
 .tab-trigger.active {
   border-bottom: 2px solid var(--color-text);
-  font-weight: 600;
+  font-weight: 500;
 }
 .tab-content {
   display: none;
