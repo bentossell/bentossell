@@ -300,6 +300,7 @@ body {
 }
 .sidebar {
   padding: 1rem;
+  font-size: 0.875rem;
 }
 .sidebar h5 {
   font-size: 0.875rem;
@@ -308,6 +309,7 @@ body {
 }
 .sidebar ul {
   padding-left: 1.2rem;
+  font-size: 0.875rem;
 }
 .container {
   display: flex;
