@@ -352,6 +352,7 @@ body.resizing {
   display: flex;
   border-bottom: 1px solid var(--color-divider);
   font-size: 0.875rem;
+  padding: 1rem;
 }
 .tab-trigger {
   padding: 0.5rem 1rem;
@@ -359,12 +360,11 @@ body.resizing {
   border: none;
   cursor: pointer;
   font: inherit;
-  font-color: var(--color-text-secondary)
+  font-color: var(--color-text-secondary);
 }
 .tab-trigger.active {
-  border-bottom: 2px solid var(--color-text);
   font-color: var(--color-text);
-  font-weight: 500;
+  font-weight: 600;
 }
 .tab-content {
   display: none;
