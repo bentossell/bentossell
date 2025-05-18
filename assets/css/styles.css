@@ -48,6 +48,17 @@ body.dark-mode {
   --color-divider: #30363d;
 }
 
+/* Make sure theme toggle icon matches social icon color in dark mode */
+body.dark-mode #theme-toggle-icon {
+  color: var(--color-text-secondary);
+  stroke: var(--color-text-secondary);
+}
+body.dark-mode .icon-btn:hover #theme-toggle-icon,
+body.dark-mode .icon-btn:focus-visible #theme-toggle-icon {
+  color: var(--color-link-hover);
+  stroke: var(--color-link-hover);
+}
+
 /* ==== Tabs & Tab Content Dark Mode ==== */
 body.dark-mode .content {
   background-color: #161b22;
@@ -384,6 +395,13 @@ body {
   color: var(--color-link-hover);
   outline: none;
 }
+
+/* Ensure theme icon inherits same hover/focus color as icon-btn */
+#theme-toggle:hover #theme-toggle-icon,
+#theme-toggle:focus-visible #theme-toggle-icon {
+  color: var(--color-link-hover);
+  stroke: var(--color-link-hover);
+}
 .icon-btn .relative {
   display: flex;
   align-items: center;
@@ -391,13 +409,15 @@ body {
   width: 100%;
   height: 100%;
 }
-.icon-btn svg {
+.icon-btn svg, #theme-toggle-icon {
   display: block;
   margin: auto;
   width: 1.5rem;
   height: 1.5rem;
   vertical-align: middle;
   stroke: currentColor;
+  color: inherit;
+  transition: color 0.2s, stroke 0.2s;
 }
 .actions {
   display: flex;
