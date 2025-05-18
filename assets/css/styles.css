@@ -41,7 +41,7 @@
 
 /* Dark mode overrides */
 body.dark-mode {
-  --color-background: #0d1117;
+  --color-background: #212121;
   --color-text: #c9d1d9;
   --color-link: #c9d1d9;
   --color-link-hover: #ffffff;
@@ -61,12 +61,12 @@ body.dark-mode .icon-btn:focus-visible #theme-toggle-icon {
 
 /* ==== Tabs & Tab Content Dark Mode ==== */
 body.dark-mode .content {
-  background-color: #161b22;
+  background-color: #303030;
 }
 
 body.dark-mode .tabs {
   border-bottom: 1px solid var(--color-divider);
-  background-color: #161b22;
+  background-color: #303030;
 }
 
 body.dark-mode .tab-trigger {
@@ -90,12 +90,12 @@ body.dark-mode .tab-trigger:focus-visible {
 }
 
 body.dark-mode .tab-content {
-  background-color: #161b22;
+  background-color: #303030;
   color: var(--color-text);
 }
 
 body.dark-mode .tab-content.active {
-  background-color: #161b22;
+  background-color: #303030;
   color: var(--color-text);
 }
 
