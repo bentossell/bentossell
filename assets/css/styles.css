@@ -559,11 +559,13 @@ body.resizing {
   display: block;
   background-color: #dcfce7;
   color: #15803d;
+  line-height: 1;
 }
 .diff-block .removed {
   display: block;
   background-color: #fee2e2;
   color: #b91c1c;
+  line-height: 1;
 }
 .lived {
   display: flex;
