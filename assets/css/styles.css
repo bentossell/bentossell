@@ -287,23 +287,24 @@ body {
   align-items: center;
   gap: 0.75rem;
 }
-.actions a,
-.actions button {
-  display: flex;
+.icon-btn {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.5rem;
-  height: 1,5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0 0.5rem;
   background: none;
-  color: #e4e4e1;
+  border-radius: 0.5rem;
+  color: var(--color-text-secondary);
   cursor: pointer;
-  padding: 0;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
-.actions a:hover,
-.actions button:hover {
+.icon-btn:hover,
+.icon-btn:focus-visible {
   background-color: var(--color-divider);
   color: var(--color-link-hover);
+  outline: none;
 }
 .actions svg {
   width: 1.25rem;
