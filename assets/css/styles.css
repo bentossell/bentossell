@@ -295,6 +295,7 @@ body {
   height: 2.5rem;
   padding: 0 0.5rem;
   background: none;
+  border: none;
   border-radius: 0.5rem;
   color: var(--color-text-secondary);
   cursor: pointer;
