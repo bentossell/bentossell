@@ -89,9 +89,15 @@ body.dark-mode .tab-content.active {
 }
 
 body.dark-mode .file-header {
-  background-color: #161b22;
+  background-color: #23272e; /* much lighter for distinction */
   border-bottom: 1px solid var(--color-divider);
-  color: var(--color-text);
+  color: #fff; /* make header text white for contrast */
+}
+
+body.dark-mode .file-header .file-btn,
+body.dark-mode .file-header .file-btn svg {
+  color: #fff !important;   /* ensure icon and text are visible */
+  fill: #fff !important;
 }
 
 body.dark-mode .diff-block {
