@@ -95,6 +95,7 @@ body.dark-mode .tab-content {
 body.dark-mode .tab-content.active {
   background-color: #171717;
   color: var(--color-text);
+  height: 100%;
 }
 
 body.dark-mode .file-header {
