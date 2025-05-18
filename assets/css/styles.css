@@ -374,13 +374,16 @@ body.resizing {
 .tab-content.active {
   display: block;
   font-size: 0.875rem;
+  padding: 3rem;
+  background-color: #8f8f8f;
 }
 .file-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid var(--color-divider);
-  padding: 0.5rem 0;
+  padding: 1rem;
+  background-color:  #ffffff;
 }
 .file-btn {
   display: flex;
