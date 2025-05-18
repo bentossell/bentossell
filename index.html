@@ -14,7 +14,7 @@
     <header class="topbar">
         <div class="title-block">
             <h1>ben tossell</h1>
-            <p class="commit-info">17 May <a href="https://github.com/bentossell/bentossell" target="_blank" rel="noopener">bentossell/bentossell</a> +4 -0</p>
+            <p class="commit-info" id="commit-info">Loading commit info...</p>
         </div>
         <div class="actions">
             <button id="share" title="share bens site" aria-label="Share" class="icon-btn" type="button">
@@ -152,6 +152,42 @@
         updateThemeIcon();
     });
     updateThemeIcon();
+
+    // --- GitHub commit info updater ---
+    async function fetchLatestCommit() {
+        try {
+            // Get the latest commit from the main branch
+            const repo = "bentossell/bentossell";
+            const commitApi = `https://api.github.com/repos/${repo}/commits?per_page=1`;
+            const resp = await fetch(commitApi);
+            if (!resp.ok) throw new Error("Failed to fetch commit info");
+            const [commit] = await resp.json();
+
+            // Get stats for the latest commit
+            const commitSha = commit.sha;
+            const commitUrl = commit.html_url;
+            const author = commit.commit.author.name;
+            const date = new Date(commit.commit.author.date);
+            const dateStr = date.toLocaleDateString(undefined, { day: "2-digit", month: "short" });
+            
+            // Get the commit stats (additions/deletions)
+            const detailResp = await fetch(`https://api.github.com/repos/${repo}/commits/${commitSha}`);
+            if (!detailResp.ok) throw new Error("Failed to fetch commit details");
+            const details = await detailResp.json();
+            const additions = details.stats.additions;
+            const deletions = details.stats.deletions;
+
+            // Compose the commit info string
+            // Example: "17 May bentossell/bentossell +4 -0"
+            const info = `${dateStr} <a href="${commitUrl}" target="_blank" rel="noopener">${repo}</a> +${additions} -${deletions}`;
+            document.getElementById("commit-info").innerHTML = info;
+        } catch (err) {
+            document.getElementById("commit-info").textContent = "Couldn't load commit info";
+        }
+    }
+    fetchLatestCommit();
+    setInterval(fetchLatestCommit, 60 * 1000); // Update every 1 minute
+
     </script>
 </body>
 </html>
