@@ -1,4 +1,4 @@
-### Tools I Use
+### tools i use
 - Superhuman
 - GitHub
 - ChatGPT
