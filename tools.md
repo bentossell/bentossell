@@ -1,9 +1,11 @@
-# Tools I Use
-
-A few of my favourite tools and services:
-
-- Notion
+### Tools I Use
 - Superhuman
-- Figma
 - GitHub
+- ChatGPT
+- Codex
+- Factory
 - Slack
+- Granola
+- Whispr Flow
+- Cursor
+- Replit
