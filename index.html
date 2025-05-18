@@ -102,11 +102,17 @@
     async function loadMarkdown(file, target){
         try{
             const resp = await fetch(repoBase + file);
-            if(!resp.ok) throw new Error("fetch failed");
+            if(!resp.ok) throw new Error('fetch failed');
             const text = await resp.text();
-            document.getElementById(target).innerHTML = marked.parse(text);
+            const escaped = text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+            const linked = escaped.replace(/\[([^\]]+)\]\(([^\)]+)\)/g,
+                '<a href="$2" target="_blank" rel="noopener">[$1]($2)</a>');
+            document.getElementById(target).innerHTML = '<code>' + linked + '</code>';
         }catch(e){
-            document.getElementById(target).textContent = "Failed to load";
+            document.getElementById(target).textContent = 'Failed to load';
         }
     }
     function handleTabChange(tab){
@@ -172,8 +178,8 @@
         try {
             // Get the latest commit from the main branch
             const repo = "bentossell/bentossell";
-            const commitApi = `https://api.github.com/repos/${repo}/commits?per_page=1`;
-            const resp = await fetch(commitApi);
+            const commitApi = `https://api.github.com/repos/${repo}/commits?per_page=1&sha=main`;
+            const resp = await fetch(commitApi, { headers: { 'Accept': 'application/vnd.github+json' }});
             if (!resp.ok) throw new Error("Failed to fetch commit info");
             const [commit] = await resp.json();
 
@@ -185,7 +191,9 @@
             const dateStr = date.toLocaleDateString(undefined, { day: "2-digit", month: "short" });
             
             // Get the commit stats (additions/deletions)
-            const detailResp = await fetch(`https://api.github.com/repos/${repo}/commits/${commitSha}`);
+            const detailResp = await fetch(`https://api.github.com/repos/${repo}/commits/${commitSha}`, {
+                headers: { 'Accept': 'application/vnd.github+json' }
+            });
             if (!detailResp.ok) throw new Error("Failed to fetch commit details");
             const details = await detailResp.json();
             const additions = details.stats.additions;

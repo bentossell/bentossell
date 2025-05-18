@@ -558,6 +558,10 @@ body.resizing {
   display: block;
   white-space: pre;
 }
+.diff-block a {
+  color: inherit;
+  text-decoration: underline;
+}
 .diff-block .added {
   display: block;
   background-color: #dcfce7;
