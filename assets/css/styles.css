@@ -78,14 +78,12 @@ body.dark-mode .tab-trigger {
 body.dark-mode .tab-trigger.active {
   color: var(--color-text);
   font-weight: 600;
-  background: #21262c;
   /* subtle highlight for active tab */
   border-radius: 0.375rem 0.375rem 0 0;
 }
 
 body.dark-mode .tab-trigger:hover,
 body.dark-mode .tab-trigger:focus-visible {
-  background: #21262c;
   color: var(--color-link-hover);
 }
 
@@ -100,7 +98,7 @@ body.dark-mode .tab-content.active {
 }
 
 body.dark-mode .file-header {
-  background-color: #23272e; /* much lighter for distinction */
+  background-color: #212121; /* much lighter for distinction */
   border-bottom: 1px solid var(--color-divider);
   color: #fff; /* make header text white for contrast */
 }
@@ -112,7 +110,7 @@ body.dark-mode .file-header .file-btn svg {
 }
 
 body.dark-mode .diff-block {
-  background-color: #23272e;
+  background-color: #171717;
   color: var(--color-text);
 }
 
