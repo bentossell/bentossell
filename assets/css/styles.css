@@ -428,7 +428,7 @@ body.resizing {
 .diff-block {
   font-family: Menlo, Consolas, monospace;
   font-size: 0.875rem;
-  background-color: rgba(0,0,0,0.05);
+  background-color: #ffffff;
   padding: 0.75rem;
   border-radius: 0.375rem;
   overflow-x: auto;
