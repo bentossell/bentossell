@@ -112,7 +112,7 @@ body.dark-mode .file-header .file-btn svg {
 }
 
 body.dark-mode .diff-block {
-  background-color: #161b22;
+  background-color: #23272e;
   color: var(--color-text);
 }
 
