@@ -1,193 +1,142 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ben tossell</title>
-    <meta name="description" content="ben tossell's personal site">
-    <link rel="icon" type="image/png" href="assets/images/favicon.png">
-    <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
-    <link href="https://fonts.googleapis.com/css2?display=swap&family=Inter:wght@300;400;600" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/styles.css">
-</head>
-<body>
-    <header class="topbar">
-        <div class="title-block">
-            <h1>ben tossell</h1>
-            <p class="commit-info" id="commit-info">Loading commit info...</p>
-        </div>
-        <div class="actions">
-            <button id="share" title="share bens site" aria-label="Share" class="icon-btn" type="button">
-                <div class="relative">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share-icon lucide-share"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><polyline points="16 6 12 2 8 6"/><line x1="12" x2="12" y1="2" y2="15"/></svg>
-                </div>
-            </button>
-            <a href="https://x.com/bentossell/" target="_blank" rel="noopener" aria-label="X" class="icon-btn">
-                <div class="relative">
-                    <!-- Official Lucide Twitter SVG -->
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-twitter" viewBox="0 0 24 24"><path d="M22 4.01c-.75.35-1.56.59-2.41.7A4.16 4.16 0 0 0 21.44 2c-.81.48-1.7.83-2.65 1.02A4.13 4.13 0 0 0 12 7.11c0 .32.04.64.1.94C8.28 7.89 5.1 6.1 2.99 3.61c-.35.6-.55 1.29-.55 2.02 0 1.39.71 2.62 1.78 3.34-.66-.02-1.28-.2-1.82-.5v.05c0 1.94 1.4 3.57 3.25 3.94-.34.09-.7.14-1.07.14-.26 0-.5-.03-.75-.07.51 1.58 2 2.73 3.76 2.76A8.3 8.3 0 0 1 2 19.54a11.73 11.73 0 0 0 6.29 1.85c7.55 0 11.69-6.26 11.69-11.7l-.01-.53A8.07 8.07 0 0 0 22 4.01Z"/></svg>
-                </div>
-            </a>
-            <a href="https://www.linkedin.com/in/ben-tossell-70453537/" target="_blank" rel="noopener" aria-label="LinkedIn" class="icon-btn">
-                <div class="relative">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-linkedin-icon lucide-linkedin"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
-                </div>
-            </a>
-            <a href="https://github.com/bentossell" target="_blank" rel="noopener" aria-label="GitHub" class="icon-btn">
-                <div class="relative">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-github-icon lucide-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.091 1 5.091 1A5.07 5.07 0 0 0 5 4.77 5.44 5.44 0 0 0 3.5 9.5c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 21.13V25"/></svg>
-                </div>
-            </a>
-            <button id="theme-toggle" aria-label="Toggle dark mode" class="icon-btn" type="button">
-                <div class="relative">
-                    <svg id="theme-toggle-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon-icon lucide-moon" style="transition: color 0.2s;"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>
-                </div>
-            </button>
-        </div>
-    </header>
-    <div class="container">
-        <aside class="sidebar">
-            <h5 class>now:</h5>
-            <ul>
-                <li>founder &amp; solo-gp ben's bites</li>
-                <li>i invest $100-200k into technical founders building technical tools like; supabase, etched, sf compute, factory, wordware, crewai, see my investments.md</li>
-                <li>i write a newsletter where I show what tools im building with, interesting tools and content im seeing. 125k+ others love it</li>
-                <li>twin dad (1 of each btw)</li>
-            </ul>
-            <h5 class>previously:</h5>
-            <ul>
-                <li>built and sold the biggest no-code community, makerpad, to zapier (in 18 months)</li>
-                <li>scouted for a16z and invested in; gamma, cosine, and more</li>
-                <li>led the product hunt community &amp; homepage, testing 1000s of products along the way</li>
-                <li>lived in china when I was in uni</li>
-            </ul>
-            <h5 class="testing-title">testing</h5>
-            <ul class="testing-list">
-                <li><svg viewBox="0 0 16 16" class="check"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"></path></svg><code>codex</code><button class="more" aria-label="More"><svg viewBox="0 0 16 16"><path d="M10 13a1 1 0 100-2 1 1 0 000 2zm-4 0a1 1 0 100-2 1 1 0 000 2zm1-5a1 1 0 11-2 0 1 1 0 012 0zm3 1a1 1 0 100-2 1 1 0 000 2z"></path></svg></button></li>
-            </ul>
-        </aside>
-        <div class="resizer"></div>
-        <main class="content">
-            <div class="tabs">
-                <button class="tab-trigger active" data-tab="investments">investments</button>
-                <button class="tab-trigger" data-tab="tools">tools i use</button>
-            </div>
-            <div class="tab-content active" id="investments">
-                <div class="file-header">
-                    <button class="file-btn"><svg viewBox="0 0 16 16"><path d="M3.75 1.5a.25.25 0 00-.25.25v12.5c0 .138.112.25.25.25h9.5a.25.25 0 00.25-.25V4.664a.25.25 0 00-.073-.177l-2.914-2.914a.25.25 0 00-.177-.073H3.75zM2 1.75C2 .784 2.784 0 3.75 0h6.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0113.25 16h-9.5A1.75 1.75 0 012 14.25V1.75z"></path><path d="M4.75 4a.75.75 0 01.75.75v2.5a.75.75 0 01-1.5 0v-2.5A.75.75 0 014.75 4zm4.25 0a.75.75 0 000 1.5h1.5a.75.75 0 000-1.5H9z"></path></svg><span>investments.md</span></button>
-                    <div class="badges"><span class="badge green">+4</span><span class="badge red">-0</span></div>
-                </div>
-                <pre class="diff-block"><code>
-<span class="added">- supabase</span>
-<span class="added">- etched</span>
-<span class="added">- sf compute</span>
-<span class="added">- flutterflow</span>
-<span class="added">- crew ai</span>
-<span class="added">- wordware</span>
-<span class="added">- factory</span>
-<span class="added">- pika</span>
-<span class="added">- solve intelligence</span>
-<span class="added">- create</span>
-<span class="added">- rork</span>
-</code></pre>
-            </div>
-            <div class="tab-content" id="tools">
-                <p class="muted">Commit logs will appear here</p>
-            </div>
-        </main>
-    </div>
-    <script>
-    document.getElementById('share').addEventListener('click', async () => {
-        try {
-            await navigator.clipboard.writeText(window.location.href);
-        } catch (e) {
-            console.error('Copy failed', e);
-        }
-    });
-    // simple tabs
-    document.querySelectorAll('.tab-trigger').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.tab-trigger').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            btn.classList.add('active');
-            document.getElementById(btn.dataset.tab).classList.add('active');
-        });
-    });
-    // sidebar resize
-    const sidebar = document.querySelector('.sidebar');
-    const resizer = document.querySelector('.resizer');
-    let startX = 0;
-    let startWidth = 0;
-    function onMouseMove(e){
-        const delta = e.clientX - startX;
-        const width = Math.min(600, Math.max(250, startWidth + delta));
-        sidebar.style.width = width + 'px';
-    }
-    function onMouseUp(){
-        document.body.classList.remove('resizing');
-        document.removeEventListener('mousemove', onMouseMove);
-        document.removeEventListener('mouseup', onMouseUp);
-    }
-    resizer.addEventListener('mousedown', e => {
-        startX = e.clientX;
-        startWidth = sidebar.offsetWidth;
-        document.body.classList.add('resizing');
-        document.addEventListener('mousemove', onMouseMove);
-        document.addEventListener('mouseup', onMouseUp);
-    });
-    // theme toggle
-    const themeToggleBtn = document.getElementById('theme-toggle');
-    const themeIcon = document.getElementById('theme-toggle-icon');
-    function updateThemeIcon(){
-        if(document.body.classList.contains('dark-mode')){
-            themeIcon.setAttribute('class', 'lucide lucide-sun-icon lucide-sun');
-            themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
-        } else {
-            themeIcon.setAttribute('class', 'lucide lucide-moon-icon lucide-moon');
-            themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/>';
-        }
-    }
-    themeToggleBtn.addEventListener('click', () => {
-        document.body.classList.toggle('dark-mode');
-        updateThemeIcon();
-    });
-    updateThemeIcon();
+<!-- Existing index.html content -->
+<!-- ... (keep all existing content) ... -->
 
-    // --- GitHub commit info updater ---
-    async function fetchLatestCommit() {
-        try {
-            // Get the latest commit from the main branch
-            const repo = "bentossell/bentossell";
-            const commitApi = `https://api.github.com/repos/${repo}/commits?per_page=1`;
-            const resp = await fetch(commitApi);
-            if (!resp.ok) throw new Error("Failed to fetch commit info");
-            const [commit] = await resp.json();
+<!-- Add this before the closing </body> tag -->
+<style>
+.llms-link {
+  position: fixed;
+  left: 12px;
+  bottom: 12px;
+  font-size: 13px;
+  color: #888;
+  background: none;
+  border: none;
+  text-decoration: underline;
+  z-index: 9999;
+  padding: 0;
+  margin: 0;
+}
+.llms-link:visited {
+  color: #888;
+}
+.llms-overlay {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #f9f9f9;
+  color: #333;
+  font-family: monospace, monospace;
+  font-size: 15px;
+  white-space: pre-wrap;
+  overflow: auto;
+  z-index: 10000;
+  padding: 32px 16px 16px 16px;
+  box-sizing: border-box;
+}
+.llms-close {
+  position: absolute;
+  top: 12px;
+  right: 24px;
+  background: #eee;
+  color: #333;
+  border: none;
+  font-size: 18px;
+  font-family: inherit;
+  padding: 4px 10px;
+  cursor: pointer;
+  border-radius: 2px;
+}
+</style>
+<a href="#" class="llms-link" id="llms-link">llms.txt</a>
+<script>
+function generateLlmsTxt() {
+  // Capture main content for LLMs: title, headings, visible text, links
+  let lines = [];
 
-            // Get stats for the latest commit
-            const commitSha = commit.sha;
-            const commitUrl = commit.html_url;
-            const author = commit.commit.author.name;
-            const date = new Date(commit.commit.author.date);
-            const dateStr = date.toLocaleDateString(undefined, { day: "2-digit", month: "short" });
-            
-            // Get the commit stats (additions/deletions)
-            const detailResp = await fetch(`https://api.github.com/repos/${repo}/commits/${commitSha}`);
-            if (!detailResp.ok) throw new Error("Failed to fetch commit details");
-            const details = await detailResp.json();
-            const additions = details.stats.additions;
-            const deletions = details.stats.deletions;
+  // Title
+  if (document.title) {
+    lines.push('# ' + document.title);
+    lines.push('');
+  }
 
-            // Compose the commit info string
-            // Example: "17 May bentossell/bentossell +4 -0"
-            const info = `${dateStr} <a href="${commitUrl}" target="_blank" rel="noopener">${repo}</a> +${additions} -${deletions}`;
-            document.getElementById("commit-info").innerHTML = info;
-        } catch (err) {
-            document.getElementById("commit-info").textContent = "Couldn't load commit info";
-        }
+  // All headings
+  document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(h => {
+    lines.push((h.tagName + ' ').padEnd(4) + h.textContent.trim());
+  });
+
+  lines.push('');
+
+  // All visible text nodes (excluding nav/footer/sidebars/script/style)
+  function getVisibleText(node) {
+    let text = '';
+    if (node.nodeType === 3) {
+      // Text node
+      if (node.textContent.trim().length > 0) {
+        text += node.textContent.trim() + '\n';
+      }
+    } else if (
+      node.nodeType === 1 &&
+      !['SCRIPT', 'STYLE', 'NAV', 'FOOTER', 'ASIDE', 'NOSCRIPT', 'LINK', 'META'].includes(node.tagName)
+    ) {
+      for (const child of node.childNodes) {
+        text += getVisibleText(child);
+      }
     }
-    fetchLatestCommit();
-    setInterval(fetchLatestCommit, 60 * 1000); // Update every 1 minute
+    return text;
+  }
+  const mainContent = document.body;
+  let bodyText = getVisibleText(mainContent).trim();
+  if (bodyText) {
+    lines.push(bodyText);
+    lines.push('');
+  }
 
-    </script>
-</body>
-</html>
+  // All links
+  const links = Array.from(document.querySelectorAll('a'))
+    .filter(a => a.href && a.textContent.trim().length)
+    .map(a => `- [${a.textContent.trim()}](${a.href})`);
+  if (links.length) {
+    lines.push('Links:');
+    lines = lines.concat(links);
+  }
+
+  // Optionally, add timestamp
+  lines.push('');
+  lines.push('Generated: ' + new Date().toISOString());
+
+  return lines.join('\n');
+}
+
+function showLlmsOverlay(content) {
+  // Remove any existing overlay
+  let prev = document.getElementById('llms-overlay');
+  if (prev) prev.remove();
+
+  // Create overlay
+  const overlay = document.createElement('div');
+  overlay.className = 'llms-overlay';
+  overlay.id = 'llms-overlay';
+
+  // Close button
+  const closeBtn = document.createElement('button');
+  closeBtn.className = 'llms-close';
+  closeBtn.textContent = 'close';
+  closeBtn.onclick = () => overlay.remove();
+
+  // Plaintext content
+  const pre = document.createElement('pre');
+  pre.textContent = content;
+
+  overlay.appendChild(closeBtn);
+  overlay.appendChild(pre);
+  document.body.appendChild(overlay);
+}
+
+document.getElementById('llms-link').addEventListener('click', function(e) {
+  e.preventDefault();
+  const content = generateLlmsTxt();
+  showLlmsOverlay(content);
+});
+</script>

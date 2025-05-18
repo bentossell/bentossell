@@ -1,0 +1,10 @@
+# llms.txt
+# This file is intended for consumption by large language models (LLMs) and other automated crawlers.
+# Please update this file whenever you add, remove, or change pages on the site.
+
+site: /
+pages:
+  - /
+  - /llms.txt
+
+# Add new pages here as you expand your site.
