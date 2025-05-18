@@ -375,7 +375,7 @@ body.resizing {
   display: block;
   font-size: 0.875rem;
   padding: 3rem;
-  background-color: #8f8f8f;
+  background-color: #f3f3f3;
 }
 .file-header {
   display: flex;
