@@ -374,7 +374,7 @@ body.resizing {
 .tab-content.active {
   display: block;
   font-size: 0.875rem;
-  padding: 3rem;
+  padding: 2rem 2.5rem;
   background-color: #f3f3f3;
 }
 .file-header {
