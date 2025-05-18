@@ -102,7 +102,7 @@ body.dark-mode .file-header {
   border-top: 1px solid;
   border-left: 1px solid;
   border-right: 1px solid;
-  border-color: #717171
+  border-color: #717171;
   color: #fff; /* make header text white for contrast */
 }
 
