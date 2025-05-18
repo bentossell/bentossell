@@ -384,7 +384,7 @@ body.resizing {
   border-bottom: 1px solid var(--color-divider);
   padding: 1rem;
   background-color:  #ffffff;
-  background-radius: 0.375rem 0.375rem 0 0;
+  border-radius: 0.375rem 0.375rem 0 0;
 }
 .file-btn {
   display: flex;
