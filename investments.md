@@ -1,7 +1,5 @@
-# Investments
-
+### Investments
 Here are some of the companies I've backed:
-
 - supabase
 - etched
 - sf compute
