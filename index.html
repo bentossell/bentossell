@@ -115,27 +115,35 @@
             document.getElementById(target).textContent = 'Failed to load';
         }
     }
-    function handleTabChange(tab){
+      function handleTabChange(tab){
         if(tab === "investments"){
             loadMarkdown("investments.md","investments-content");
         }else if(tab === "tools"){
             loadMarkdown("tools.md","tools-content");
         }
-    }
-    document.querySelectorAll('.tab-trigger').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.tab-trigger').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            btn.classList.add('active');
+      }
+
+      function animateSidebarLines(){
+          const lines = document.querySelectorAll('.sidebar li, .sidebar h5');
+          lines.forEach((el, idx) => {
+              setTimeout(() => { el.style.opacity = '1'; }, idx * 80);
+          });
+      }
+      document.querySelectorAll('.tab-trigger').forEach(btn => {
+          btn.addEventListener('click', () => {
+              document.querySelectorAll('.tab-trigger').forEach(b => b.classList.remove('active'));
+              document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+              btn.classList.add('active');
             const id = btn.dataset.tab;
             document.getElementById(id).classList.add('active');
             handleTabChange(id);
         });
-    });
-    // sidebar resize
-    handleTabChange("investments");
-    const sidebar = document.querySelector('.sidebar');
-    const resizer = document.querySelector('.resizer');
+      });
+      // sidebar resize
+      handleTabChange("investments");
+      animateSidebarLines();
+      const sidebar = document.querySelector('.sidebar');
+      const resizer = document.querySelector('.resizer');
     let startX = 0;
     let startWidth = 0;
     function onMouseMove(e){
