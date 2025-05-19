@@ -426,7 +426,7 @@ body {
 .actions {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0rem;
 }
 /* Remove previous .actions svg rule to avoid conflicts */
 .sidebar {
