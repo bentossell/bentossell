@@ -371,7 +371,7 @@ body {
   justify-content: center;
 }
 .topbar h1 {
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   margin: 0;
   font-weight: 600;
   line-height: 1.2;
@@ -380,6 +380,7 @@ body {
   font-size: 0.75rem;
   margin: 0;
   line-height: 1.2;
+  font-color: #5d5d5d;
 }
 .actions {
   display: flex;
