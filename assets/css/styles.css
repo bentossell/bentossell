@@ -443,10 +443,16 @@ body {
   font-size: 0.875rem;
   margin-top: 1rem;
   margin-bottom: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.2s ease-in;
 }
 .sidebar ul {
   padding-left: 1.2rem;
   font-size: 0.875rem;
+}
+.sidebar li {
+  opacity: 0;
+  transition: opacity 0.2s ease-in;
 }
 .container {
   display: flex;
