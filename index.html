@@ -204,7 +204,7 @@
             const info = `${dateStr} <a href="${commitUrl}" target="_blank" rel="noopener">${repo}</a> +${additions} -${deletions}`;
             document.getElementById("commit-info").innerHTML = info;
         } catch (err) {
-            document.getElementById("commit-info").textContent = "Couldn't load commit info";
+            document.getElementById("commit-info").textContent = "cant load commit info";
         }
     }
     fetchLatestCommit();
