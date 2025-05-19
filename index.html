@@ -149,63 +149,101 @@
     });
     // simple tabs
     const repoBase = "https://raw.githubusercontent.com/bentossell/bentossell/main/";
-    async function loadMarkdown(file, target){
-        try{
+    
+    // Function to create typewriter effect for content
+    function applyTypewriterEffect(element, text, speed = 20) {
+        const container = element;
+        container.innerHTML = '';
+        
+        // Create a wrapper for the code element
+        const codeWrapper = document.createElement('code');
+        codeWrapper.className = 'typewriter-lines';
+        container.appendChild(codeWrapper);
+        
+        // Split the text into lines
+        const lines = text.split('\n');
+        
+        // Create elements for each line
+        lines.forEach(line => {
+            const lineElement = document.createElement('div');
+            lineElement.className = 'line';
+            lineElement.textContent = line;
+            codeWrapper.appendChild(lineElement);
+        });
+    }
+    
+    async function loadMarkdown(file, target) {
+        try {
+            // Show loading state
+            document.getElementById(target).innerHTML = '<code>Loading...</code>';
+            
             const resp = await fetch(repoBase + file);
             if(!resp.ok) throw new Error('fetch failed');
             const text = await resp.text();
+            
+            // Process the text
             const escaped = text
                 .replace(/&/g, '&amp;')
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;');
+            
             const linked = escaped.replace(/\[([^\]]+)\]\(([^\)]+)\)/g,
                 '<a href="$2" target="_blank" rel="noopener">[$1]($2)</a>');
-            document.getElementById(target).innerHTML = '<code>' + linked + '</code>';
-        }catch(e){
+            
+            // Apply typewriter effect to the content
+            const targetElement = document.getElementById(target);
+            applyTypewriterEffect(targetElement, linked);
+        } catch(e) {
             document.getElementById(target).textContent = 'Failed to load';
         }
     }
-      function handleTabChange(tab){
-        if(tab === "investments"){
-            loadMarkdown("investments.md","investments-content");
-        }else if(tab === "tools"){
-            loadMarkdown("tools.md","tools-content");
+    
+    function handleTabChange(tab) {
+        if(tab === "investments") {
+            loadMarkdown("investments.md", "investments-content");
+        } else if(tab === "tools") {
+            loadMarkdown("tools.md", "tools-content");
         }
-      }
+    }
 
-      function animateSidebarLines(){
-          const lines = document.querySelectorAll('.sidebar li, .sidebar h5');
-          lines.forEach((el, idx) => {
-              setTimeout(() => { el.style.opacity = '1'; }, idx * 80);
-          });
-      }
-      document.querySelectorAll('.tab-trigger').forEach(btn => {
-          btn.addEventListener('click', () => {
-              document.querySelectorAll('.tab-trigger').forEach(b => b.classList.remove('active'));
-              document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-              btn.classList.add('active');
+    function animateSidebarLines() {
+        const lines = document.querySelectorAll('.sidebar li, .sidebar h5');
+        lines.forEach((el, idx) => {
+            setTimeout(() => { el.style.opacity = '1'; }, idx * 80);
+        });
+    }
+    
+    document.querySelectorAll('.tab-trigger').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.tab-trigger').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            btn.classList.add('active');
             const id = btn.dataset.tab;
             document.getElementById(id).classList.add('active');
             handleTabChange(id);
         });
-      });
-      // sidebar resize
-      handleTabChange("investments");
-      animateSidebarLines();
-      const sidebar = document.querySelector('.sidebar');
-      const resizer = document.querySelector('.resizer');
+    });
+    
+    // sidebar resize
+    handleTabChange("investments");
+    animateSidebarLines();
+    const sidebar = document.querySelector('.sidebar');
+    const resizer = document.querySelector('.resizer');
     let startX = 0;
     let startWidth = 0;
-    function onMouseMove(e){
+    
+    function onMouseMove(e) {
         const delta = e.clientX - startX;
         const width = Math.min(600, Math.max(250, startWidth + delta));
         sidebar.style.width = width + 'px';
     }
-    function onMouseUp(){
+    
+    function onMouseUp() {
         document.body.classList.remove('resizing');
         document.removeEventListener('mousemove', onMouseMove);
         document.removeEventListener('mouseup', onMouseUp);
     }
+    
     resizer.addEventListener('mousedown', e => {
         startX = e.clientX;
         startWidth = sidebar.offsetWidth;
@@ -213,11 +251,13 @@
         document.addEventListener('mousemove', onMouseMove);
         document.addEventListener('mouseup', onMouseUp);
     });
+    
     // theme toggle
     const themeToggleBtn = document.getElementById('theme-toggle');
     const themeIcon = document.getElementById('theme-toggle-icon');
-    function updateThemeIcon(){
-        if(document.body.classList.contains('dark-mode')){
+    
+    function updateThemeIcon() {
+        if(document.body.classList.contains('dark-mode')) {
             themeIcon.setAttribute('class', 'lucide lucide-sun-icon lucide-sun');
             themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
         } else {
@@ -225,10 +265,12 @@
             themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/>';
         }
     }
+    
     themeToggleBtn.addEventListener('click', () => {
         document.body.classList.toggle('dark-mode');
         updateThemeIcon();
     });
+    
     updateThemeIcon();
 
     // --- GitHub commit info updater ---
