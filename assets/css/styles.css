@@ -633,3 +633,58 @@ body.resizing {
   height: 0.875rem;
   fill: currentColor;
 }
+
+/* --- keyboard shortcut modal --- */
+.modal {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0,0,0,0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal.open {
+  display: flex;
+}
+.modal-content {
+  background-color: var(--color-background);
+  color: var(--color-text);
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  max-width: 90%;
+}
+.modal-content h2 {
+  margin-bottom: 0.5rem;
+  font-size: 1.125rem;
+}
+.modal-content ul {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 1rem;
+}
+.modal-content li {
+  margin-bottom: 0.25rem;
+}
+.modal-content kbd {
+  display: inline-block;
+  padding: 0.1rem 0.25rem;
+  border-radius: 0.25rem;
+  background-color: rgba(0,0,0,0.05);
+  border: 1px solid var(--color-divider);
+  font-size: 0.875rem;
+}
+.modal-content .close-btn {
+  margin-top: 0.5rem;
+  background: none;
+  border: 1px solid var(--color-divider);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font: inherit;
+}
+body.dark-mode .modal-content {
+  background-color: #171717;
+  color: var(--color-text);
+}

@@ -129,18 +129,24 @@
               setTimeout(() => { el.style.opacity = '1'; }, idx * 80);
           });
       }
+      function activateTab(id){
+          document.querySelectorAll('.tab-trigger').forEach(b => b.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+          const trigger = document.querySelector(`.tab-trigger[data-tab="${id}"]`);
+          const content = document.getElementById(id);
+          if(trigger && content){
+              trigger.classList.add('active');
+              content.classList.add('active');
+              handleTabChange(id);
+          }
+      }
       document.querySelectorAll('.tab-trigger').forEach(btn => {
           btn.addEventListener('click', () => {
-              document.querySelectorAll('.tab-trigger').forEach(b => b.classList.remove('active'));
-              document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-              btn.classList.add('active');
-            const id = btn.dataset.tab;
-            document.getElementById(id).classList.add('active');
-            handleTabChange(id);
+              activateTab(btn.dataset.tab);
         });
       });
       // sidebar resize
-      handleTabChange("investments");
+      activateTab("investments");
       animateSidebarLines();
       const sidebar = document.querySelector('.sidebar');
       const resizer = document.querySelector('.resizer');
@@ -181,6 +187,36 @@
     });
     updateThemeIcon();
 
+    const modal = document.getElementById('shortcut-modal');
+    const closeBtn = modal.querySelector('.close-btn');
+    function toggleModal(show){
+        if(show){
+            modal.classList.add('open');
+            modal.setAttribute('aria-hidden','false');
+        }else{
+            modal.classList.remove('open');
+            modal.setAttribute('aria-hidden','true');
+        }
+    }
+    closeBtn.addEventListener('click', () => toggleModal(false));
+    document.addEventListener('keydown', e => {
+        const key = e.key.toLowerCase();
+        if((e.metaKey || e.ctrlKey) && key === 'k'){
+            e.preventDefault();
+            toggleModal(true);
+            return;
+        }
+        if(modal.classList.contains('open')){
+            if(key === 'escape') toggleModal(false);
+            return;
+        }
+        if(key === 'i'){
+            activateTab('investments');
+        } else if(key === 't'){
+            activateTab('tools');
+        }
+    });
+
     // --- GitHub commit info updater ---
     async function fetchLatestCommit() {
         try {
@@ -219,5 +255,16 @@
     setInterval(fetchLatestCommit, 60 * 1000); // Update every 1 minute
 
     </script>
+    <div id="shortcut-modal" class="modal" aria-hidden="true">
+        <div class="modal-content">
+            <h2>keyboard shortcuts</h2>
+            <ul>
+                <li><kbd>cmd</kbd> + <kbd>k</kbd> – show this help</li>
+                <li><kbd>i</kbd> – open investments tab</li>
+                <li><kbd>t</kbd> – open tools tab</li>
+            </ul>
+            <button class="close-btn" aria-label="Close">close</button>
+        </div>
+    </div>
 </body>
 </html>
