@@ -380,7 +380,7 @@ body {
   font-size: 0.75rem;
   margin: 0;
   line-height: 1.2;
-  font-color: #5d5d5d;
+  color: #5d5d5d;
 }
 .actions {
   display: flex;
@@ -484,10 +484,10 @@ body.resizing {
   border: none;
   cursor: pointer;
   font: inherit;
-  font-color: var(--color-text-secondary);
+  color: #5d5d5d;
 }
 .tab-trigger.active {
-  font-color: var(--color-text);
+  color: var(--color-text);
   font-weight: 600;
 }
 .tab-content {
