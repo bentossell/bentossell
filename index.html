@@ -88,6 +88,56 @@
             </div>
         </main>
     </div>
+
+    <!-- Command Palette Modal -->
+    <div id="command-palette" class="command-palette">
+        <div class="command-palette-content">
+            <div class="command-palette-header">
+                <h2>Keyboard Shortcuts</h2>
+                <button id="close-command-palette" class="icon-btn" aria-label="Close command palette">
+                    <div class="relative">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </div>
+                </button>
+            </div>
+            <div class="command-palette-body">
+                <div class="shortcut-group">
+                    <h3>Navigation</h3>
+                    <div class="shortcut-item">
+                        <div class="shortcut-keys">
+                            <kbd>i</kbd>
+                        </div>
+                        <div class="shortcut-description">Go to Investments tab</div>
+                    </div>
+                    <div class="shortcut-item">
+                        <div class="shortcut-keys">
+                            <kbd>t</kbd>
+                        </div>
+                        <div class="shortcut-description">Go to Tools tab</div>
+                    </div>
+                </div>
+                <div class="shortcut-group">
+                    <h3>Commands</h3>
+                    <div class="shortcut-item">
+                        <div class="shortcut-keys">
+                            <kbd><span class="cmd-key">⌘</span>+k</kbd>
+                        </div>
+                        <div class="shortcut-description">Toggle command palette</div>
+                    </div>
+                    <div class="shortcut-item">
+                        <div class="shortcut-keys">
+                            <kbd>Esc</kbd>
+                        </div>
+                        <div class="shortcut-description">Close command palette</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
     document.getElementById('share').addEventListener('click', async () => {
@@ -217,6 +267,57 @@
     }
     fetchLatestCommit();
     setInterval(fetchLatestCommit, 60 * 1000); // Update every 1 minute
+
+    // --- Keyboard shortcuts and command palette ---
+    const commandPalette = document.getElementById('command-palette');
+    const closeCommandPaletteBtn = document.getElementById('close-command-palette');
+
+    // Toggle command palette visibility
+    function toggleCommandPalette() {
+        commandPalette.classList.toggle('active');
+    }
+
+    // Close command palette
+    function closeCommandPalette() {
+        commandPalette.classList.remove('active');
+    }
+
+    // Navigate to a specific tab
+    function navigateToTab(tabId) {
+        const tabTrigger = document.querySelector(`.tab-trigger[data-tab="${tabId}"]`);
+        if (tabTrigger) {
+            tabTrigger.click();
+        }
+    }
+
+    // Close button event listener
+    closeCommandPaletteBtn.addEventListener('click', closeCommandPalette);
+
+    // Global keyboard event listener
+    document.addEventListener('keydown', function(event) {
+        // Skip if user is typing in an input or textarea
+        if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+            return;
+        }
+
+        // Command+K (or Ctrl+K) to toggle command palette
+        if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
+            event.preventDefault();
+            toggleCommandPalette();
+        } 
+        // Escape to close command palette
+        else if (event.key === 'Escape') {
+            closeCommandPalette();
+        } 
+        // 'i' to navigate to investments tab
+        else if (event.key === 'i' && !commandPalette.classList.contains('active')) {
+            navigateToTab('investments');
+        } 
+        // 't' to navigate to tools tab
+        else if (event.key === 't' && !commandPalette.classList.contains('active')) {
+            navigateToTab('tools');
+        }
+    });
 
     </script>
 </body>
