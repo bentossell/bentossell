@@ -361,21 +361,31 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.25rem 0.5rem;
+  padding: 0.3rem 1rem;
   border-bottom: 1px solid var(--color-divider);
+  height: auto;
+}
+.title-block {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .topbar h1 {
-  font-size: 0.875rem;
+  font-size: 1rem;
   margin: 0;
   font-weight: 600;
+  line-height: 1.2;
 }
 .commit-info {
   font-size: 0.75rem;
+  margin: 0;
+  line-height: 1.2;
 }
 .actions {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  height: 100%;
 }
 .icon-btn {
   display: inline-flex;
@@ -422,11 +432,6 @@ body {
   stroke: currentColor;
   color: inherit;
   transition: color 0.2s, stroke 0.2s;
-}
-.actions {
-  display: flex;
-  align-items: center;
-  gap: 0rem;
 }
 /* Remove previous .actions svg rule to avoid conflicts */
 .sidebar {
