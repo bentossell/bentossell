@@ -507,6 +507,12 @@ body.resizing {
   padding: 2rem 2.5rem;
   background-color: #f3f3f3;
 }
+/* ensure markdown sections display immediately without animation */
+.tab-content,
+.tab-content * {
+  opacity: 1 !important;
+  transition: none !important;
+}
 .file-header {
   display: flex;
   align-items: center;
