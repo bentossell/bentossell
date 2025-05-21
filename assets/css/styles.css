@@ -49,12 +49,11 @@ body.dark-mode {
 }
 
 /* Make sure theme toggle icon matches social icon color in dark mode */
-body.dark-mode #theme-toggle-icon {
-  color: var(--color-text-secondary);
-  stroke: var(--color-text-secondary);
-}
-body.dark-mode .icon-btn:hover #theme-toggle-icon,
-body.dark-mode .icon-btn:focus-visible #theme-toggle-icon {
+/* Removed specific dark mode styles for #theme-toggle-icon to allow inheritance */
+
+/* Ensure theme icon inherits same hover/focus color as icon-btn in dark mode */
+body.dark-mode #theme-toggle:hover #theme-toggle-icon,
+body.dark-mode #theme-toggle:focus-visible #theme-toggle-icon {
   color: var(--color-link-hover);
   stroke: var(--color-link-hover);
 }
@@ -411,12 +410,18 @@ body {
   outline: none;
 }
 
-/* Ensure theme icon inherits same hover/focus color as icon-btn */
+/* 
+   The rule below was previously here, but it's more specific than the general .icon-btn:hover svg.
+   It's removed to allow #theme-toggle-icon to behave exactly like other svgs in .icon-btn.
+   The general .icon-btn:hover svg rule will handle the hover/focus for #theme-toggle-icon in light mode.
+*/
+/*
 #theme-toggle:hover #theme-toggle-icon,
 #theme-toggle:focus-visible #theme-toggle-icon {
   color: var(--color-link-hover);
   stroke: var(--color-link-hover);
 }
+*/
 .icon-btn .relative {
   display: flex;
   align-items: center;
