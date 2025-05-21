@@ -126,6 +126,12 @@
                         </div>
                         <div class="shortcut-description">Go to Tools tab</div>
                     </div>
+                    <div class="shortcut-item">
+                        <div class="shortcut-keys">
+                            <kbd>f</kbd>
+                        </div>
+                        <div class="shortcut-description">Go to Food tab</div>
+                    </div>
                 </div>
                 <div class="shortcut-group">
                     <h3>Commands</h3>
@@ -326,6 +332,10 @@
         // 't' to navigate to tools tab
         else if (event.key === 't' && !commandPalette.classList.contains('active')) {
             navigateToTab('tools');
+        }
+        // 'f' to navigate to food tab
+        else if (event.key === 'f' && !commandPalette.classList.contains('active')) {
+            navigateToTab('food');
         }
     });
 
