@@ -303,7 +303,7 @@ td:last-child {
 #theme-toggle {
   background: none;
   border: none;
-  color: var(--color-text);
+  color: var(--color-text-secondary);
   cursor: pointer;
 }
 
