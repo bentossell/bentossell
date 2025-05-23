@@ -72,6 +72,7 @@
                 <button class="tab-trigger active" data-tab="investments">investments</button>
                 <button class="tab-trigger" data-tab="tools">tools i use</button>
                 <button class="tab-trigger" data-tab="food">food i like</button>
+                <button class="tab-trigger" data-tab="blog">blog</button>
             </div>
             <div class="tab-content active" id="investments">
                 <div class="file-header">
@@ -93,6 +94,13 @@
                     <div class="badges"><span class="badge green">+0</span><span class="badge red">-0</span></div>
                 </div>
                 <div class="diff-block" id="food-content">Select a tab to load</div>
+            </div>
+            <div class="tab-content" id="blog">
+                <div class="file-header">
+                    <button class="file-btn"><svg viewBox="0 0 16 16"><path d="M3.75 1.5a.25.25 0 00-.25.25v12.5c0 .138.112.25.25.25h9.5a.25.25 0 00.25-.25V4.664a.25.25 0 00-.073-.177l-2.914-2.914a.25.25 0 00-.177-.073H3.75zM2 1.75C2 .784 2.784 0 3.75 0h6.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0113.25 16h-9.5A1.75 1.75 0 012 14.25V1.75z"></path><path d="M4.75 4a.75.75 0 01.75.75v2.5a.75.75 0 01-1.5 0v-2.5A.75.75 0 014.75 4zm4.25 0a.75.75 0 000 1.5h1.5a.75.75 0 000-1.5H9z"></path></svg><span>blog/</span></button>
+                    <div class="badges"><span class="badge green">+0</span><span class="badge red">-0</span></div>
+                </div>
+                <div class="diff-block blog-content" id="blog-content">Select a tab to load</div>
             </div>
         </main>
     </div>
@@ -132,6 +140,12 @@
                         </div>
                         <div class="shortcut-description">Go to Food tab</div>
                     </div>
+                    <div class="shortcut-item">
+                        <div class="shortcut-keys">
+                            <kbd>b</kbd>
+                        </div>
+                        <div class="shortcut-description">Go to Blog tab</div>
+                    </div>
                 </div>
                 <div class="shortcut-group">
                     <h3>Commands</h3>
@@ -163,21 +177,107 @@
     });
     // simple tabs
     const repoBase = "https://raw.githubusercontent.com/bentossell/bentossell/main/";
-    async function loadMarkdown(file, target){
+    
+    async function loadMarkdown(file, target, isRichContent = false){
         try{
             const resp = await fetch(repoBase + file);
             if(!resp.ok) throw new Error('fetch failed');
             const text = await resp.text();
-            const escaped = text
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;');
-            const linked = escaped.replace(/\[([^\]]+)\]\(([^\)]+)\)/g,
-                '<a href="$2" target="_blank" rel="noopener">[$1]($2)</a>');
-            document.getElementById(target).innerHTML = '<code>' + linked + '</code>';
+            
+            if (isRichContent) {
+                // Use marked.js for rich markdown rendering
+                const htmlContent = marked.parse(text);
+                document.getElementById(target).innerHTML = htmlContent;
+            } else {
+                // Simple rendering for existing tabs
+                const escaped = text
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;');
+                const linked = escaped.replace(/\[([^\]]+)\]\(([^\)]+)\)/g,
+                    '<a href="$2" target="_blank" rel="noopener">[$1]($2)</a>');
+                document.getElementById(target).innerHTML = '<code>' + linked + '</code>';
+            }
         }catch(e){
             document.getElementById(target).textContent = 'Failed to load';
         }
+    }
+
+    async function loadBlogIndex(target) {
+        try {
+            const resp = await fetch(repoBase + 'blog/index.md');
+            if(!resp.ok) throw new Error('fetch failed');
+            const text = await resp.text();
+            const htmlContent = marked.parse(text);
+            document.getElementById(target).innerHTML = htmlContent;
+            
+            // Add click handlers for blog post links
+            const blogLinks = document.querySelectorAll('#blog-content a[href*="/blog/posts/"]');
+            blogLinks.forEach(link => {
+                link.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    const postPath = link.getAttribute('href').replace('/blog/posts/', 'blog/posts/');
+                    await loadBlogPost(postPath, target);
+                });
+            });
+        } catch(e) {
+            document.getElementById(target).textContent = 'Failed to load blog';
+        }
+    }
+
+    async function loadBlogPost(postPath, target) {
+        try {
+            const resp = await fetch(repoBase + postPath);
+            if(!resp.ok) throw new Error('fetch failed');
+            const text = await resp.text();
+            
+            // Parse frontmatter and content
+            const frontmatterRegex = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/;
+            const match = text.match(frontmatterRegex);
+            
+            let content = text;
+            let frontmatter = {};
+            
+            if (match) {
+                // Parse YAML-like frontmatter
+                const frontmatterText = match[1];
+                content = match[2];
+                
+                frontmatterText.split('\n').forEach(line => {
+                    const colonIndex = line.indexOf(':');
+                    if (colonIndex > -1) {
+                        const key = line.substring(0, colonIndex).trim();
+                        const value = line.substring(colonIndex + 1).trim().replace(/^["']|["']$/g, '');
+                        frontmatter[key] = value;
+                    }
+                });
+            }
+            
+            // Render content with marked.js
+            const htmlContent = marked.parse(content);
+            
+            // Create blog post HTML with back button
+            const blogPostHtml = `
+                <div class="blog-post">
+                    <button class="back-to-blog" onclick="loadBlogIndex('blog-content')">&larr; Back to Blog</button>
+                    ${frontmatter.date ? `<div class="blog-meta">Published on ${formatDate(frontmatter.date)}</div>` : ''}
+                    ${htmlContent}
+                </div>
+            `;
+            
+            document.getElementById(target).innerHTML = blogPostHtml;
+        } catch(e) {
+            document.getElementById(target).textContent = 'Failed to load blog post';
+        }
+    }
+
+    function formatDate(dateStr) {
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
     }
       function handleTabChange(tab){
         if(tab === "investments"){
@@ -186,6 +286,8 @@
             loadMarkdown("tools.md","tools-content");
         }else if(tab === "food"){
             loadMarkdown("food.md","food-content");
+        }else if(tab === "blog"){
+            loadBlogIndex("blog-content");
         }
       }
 
@@ -336,6 +438,10 @@
         // 'f' to navigate to food tab
         else if (event.key === 'f' && !commandPalette.classList.contains('active')) {
             navigateToTab('food');
+        }
+        // 'b' to navigate to blog tab
+        else if (event.key === 'b' && !commandPalette.classList.contains('active')) {
+            navigateToTab('blog');
         }
     });
 

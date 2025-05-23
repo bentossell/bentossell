@@ -1,0 +1,20 @@
+{
+  "name": "ben-tossell-website",
+  "version": "1.0.0",
+  "description": "Ben Tossell's personal website with blog functionality",
+  "main": "index.html",
+  "scripts": {
+    "new-post": "node create-post.js",
+    "serve": "python3 -m http.server 8000"
+  },
+  "keywords": [
+    "blog",
+    "personal-website",
+    "markdown",
+    "static-site"
+  ],
+  "author": "Ben Tossell",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {}
+}
