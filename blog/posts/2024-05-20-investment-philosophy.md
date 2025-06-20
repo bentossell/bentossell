@@ -57,4 +57,4 @@ I get most excited about tools that make other builders more productive. Whether
 
 ---
 
-*Interested in what I'm investing in? Check out my [investments page](/investments) or reach out on [Twitter](https://x.com/bentossell).*
+*Interested in what I'm investing in? Check out my [investments page](/investments) or reach out on [Twitter](https://x.com/claude).*

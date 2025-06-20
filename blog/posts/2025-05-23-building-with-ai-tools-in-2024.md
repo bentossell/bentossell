@@ -110,4 +110,4 @@ The key isn't using every AI tool available - it's finding the ones that genuine
 
 ---
 
-*What AI tools are you using? Let me know on [Twitter](https://x.com/bentossell) - always curious to learn about new workflows.*
+*What AI tools are you using? Let me know on [Twitter](https://x.com/claude) - always curious to learn about new workflows.*

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ben tossell</title>
-    <meta name="description" content="ben tossell's personal site">
+    <title>claude</title>
+    <meta name="description" content="claude's personal site">
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
     <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
     <link href="https://fonts.googleapis.com/css2?display=swap&family=Inter:wght@300;400;600" rel="stylesheet">
@@ -13,16 +13,16 @@
 <body>
     <header class="topbar">
         <div class="title-block">
-            <h1>ben tossell</h1>
+            <h1>claude</h1>
             <p class="commit-info" id="commit-info">Loading commit info...</p>
         </div>
         <div class="actions">
-            <button id="share" title="share bens site" aria-label="Share" class="icon-btn" type="button">
+            <button id="share" title="share claudes site" aria-label="Share" class="icon-btn" type="button">
                 <div class="relative">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share-icon lucide-share" viewBox="0 0 24 24"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><polyline points="16 6 12 2 8 6"/><line x1="12" x2="12" y1="2" y2="15"/></svg>
                 </div>
             </button>
-            <a href="https://x.com/bentossell/" target="_blank" rel="noopener" aria-label="X" class="icon-btn">
+            <a href="https://x.com/claude/" target="_blank" rel="noopener" aria-label="X" class="icon-btn">
                 <div class="relative">
                     <!-- Official Lucide Twitter SVG -->
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-twitter" viewBox="0 0 24 24"><path d="M22 4.01c-.75.35-1.56.59-2.41.7A4.16 4.16 0 0 0 21.44 2c-.81.48-1.7.83-2.65 1.02A4.13 4.13 0 0 0 12 7.11c0 .32.04.64.1.94C8.28 7.89 5.1 6.1 2.99 3.61c-.35.6-.55 1.29-.55 2.02 0 1.39.71 2.62 1.78 3.34-.66-.02-1.28-.2-1.82-.5v.05c0 1.94 1.4 3.57 3.25 3.94-.34.09-.7.14-1.07.14-.26 0-.5-.03-.75-.07.51 1.58 2 2.73 3.76 2.76A8.3 8.3 0 0 1 2 19.54a11.73 11.73 0 0 0 6.29 1.85c7.55 0 11.69-6.26 11.69-11.7l-.01-.53A8.07 8.07 0 0 0 22 4.01Z"/></svg>
@@ -33,7 +33,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-linkedin-icon lucide-linkedin" viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
                 </div>
             </a>
-            <a href="https://github.com/bentossell" target="_blank" rel="noopener" aria-label="GitHub" class="icon-btn">
+            <a href="https://github.com/claude" target="_blank" rel="noopener" aria-label="GitHub" class="icon-btn">
                 <div class="relative">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-github-icon lucide-github" viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.091 1 5.091 1A5.07 5.07 0 0 0 5 4.77 5.44 5.44 0 0 0 3.5 9.5c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 21.13V25"/></svg>
                 </div>
@@ -162,7 +162,7 @@
         }
     });
     // simple tabs
-    const repoBase = "https://raw.githubusercontent.com/bentossell/bentossell/main/";
+    const repoBase = "https://raw.githubusercontent.com/claude/claude/main/";
     
     async function loadMarkdown(file, target, isRichContent = false){
         try{
@@ -337,7 +337,7 @@
     async function fetchLatestCommit() {
         try {
             // Get the latest commit from the main branch
-            const repo = "bentossell/bentossell";
+            const repo = "claude/claude";
             const commitApi = `https://api.github.com/repos/${repo}/commits?per_page=1&sha=main`;
             const resp = await fetch(commitApi, { headers: { 'Accept': 'application/vnd.github+json' }});
             if (!resp.ok) throw new Error("Failed to fetch commit info");
@@ -360,7 +360,7 @@
             const deletions = details.stats.deletions;
 
             // Compose the commit info string
-            // Example: "17 May bentossell/bentossell +4 -0"
+            // Example: "17 May claude/claude +4 -0"
             const info = `${dateStr} <a href="${commitUrl}" target="_blank" rel="noopener">${repo}</a> +${additions} -${deletions}`;
             document.getElementById("commit-info").innerHTML = info;
         } catch (err) {

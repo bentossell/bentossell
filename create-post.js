@@ -86,7 +86,7 @@ Or embed from platforms like YouTube:
 
 ---
 
-*Thanks for reading! Share your thoughts on [Twitter](https://x.com/bentossell).*
+*Thanks for reading! Share your thoughts on [Twitter](https://x.com/claude).*
 `;
 
   // Write the file
