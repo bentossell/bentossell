@@ -1,8 +1,8 @@
 - founder & solo-gp ben’s bites
-- i invest $100-200k into technical founders building technical tools like; supabase, flutterflow, etched, sf compute, factory, wordware, crewai, pika, solve intelligence, and others
-- i write a newsletter where I show what tools im building with, interesting tools and content im seeing. 125k+ others love it
-- twin dad (1 of each btw)
+- i invest $200k into technical founders building technical tools like; supabase, flutterflow, etched, sf compute, factory, wordware, crewai, pika, solve intelligence, and others
+- i write a newsletter where I show what tools im building with, interesting tools and content im seeing. 140k+ others love it
+- twin dad (1 of each)
 - built and sold the biggest no-code community, makerpad, to zapier (in 18 months)
-- scouted for a16z and invested in; gamma, cosine, etc
+- scouted for a16z and invested in; gamma, cosine, julius.ai, lex, texel, and llamaindex
 - led the product hunt community & homepage, testing 1000s of products along the way
 - lived in china when I was in uni
