@@ -408,6 +408,113 @@ body {
 .icon-btn:focus-visible {
   background-color: var(--color-divider);
   color: var(--color-link-hover);
+
+}
+
+.music-player {
+
+
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 1100; /* above command palette */
+  background-color: var(--color-background);
+  border: 1px solid var(--color-divider);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  font-family: var(--font-family);
+  font-size: 0.75rem;
+  width: 220px;
+}
+
+body.dark-mode .music-player {
+  background-color: #212121;
+  border-color: var(--color-divider);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.mp-title {
+  font-weight: 600;
+  color: var(--color-text);
+  text-align: center;
+  margin-bottom: 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+body.dark-mode .mp-title {
+  color: var(--color-text);
+}
+
+.mp-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mp-btn {
+  background: none;
+  border: 1px solid var(--color-divider);
+  color: var(--color-text);
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  transition: background-color 0.2s ease;
+}
+
+body.dark-mode .mp-btn {
+  border-color: var(--color-divider);
+  color: var(--color-text);
+}
+
+.mp-btn:hover,
+.mp-btn:focus-visible {
+  background-color: var(--color-divider);
+}
+
+.mp-volume {
+  flex: 1;
+  -webkit-appearance: none;
+  height: 4px;
+  background: var(--color-divider);
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.mp-volume::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--color-text);
+  cursor: pointer;
+}
+
+.mp-volume::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--color-text);
+  border: none;
+  cursor: pointer;
+}
+
+body.dark-mode .mp-volume {
+  background: var(--color-divider);
+}
+
+body.dark-mode .mp-volume::-webkit-slider-thumb,
+body.dark-mode .mp-volume::-moz-range-thumb {
+  background: var(--color-text);
+}
   outline: none;
 }
 
