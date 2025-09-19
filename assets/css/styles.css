@@ -408,6 +408,137 @@ body {
 .icon-btn:focus-visible {
   background-color: var(--color-divider);
   color: var(--color-link-hover);
+.mini-music-player {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 1050;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 320px;
+  background-color: var(--color-background);
+  border: 1px solid var(--color-divider);
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  padding: 0.75rem 0.75rem 0.5rem;
+  transition: height 0.3s ease, width 0.3s ease, transform 0.3s ease;
+}
+
+.mini-music-player.minimized {
+  height: 3.25rem; /* just control row */
+  overflow: hidden;
+  width: 220px;
+}
+
+.player-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.25rem;
+}
+
+.player-controls .icon-btn {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+.player-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.mini-music-player.expanded .player-details {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.track-info {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.progress-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.progress-wrapper .time {
+  font-size: 0.625rem;
+  color: var(--color-text-secondary);
+  min-width: 2rem;
+  text-align: center;
+}
+
+/* Range slider */
+#progress-bar {
+  -webkit-appearance: none;
+  appearance: none;
+  flex: 1;
+  height: 4px;
+  background: var(--color-divider);
+  border-radius: 9999px;
+  outline: none;
+  cursor: pointer;
+}
+
+#progress-bar::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  background: var(--color-link-hover);
+  border-radius: 50%;
+  cursor: pointer;
+  margin-top: -4px; /* centers thumb */
+}
+
+#progress-bar::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  background: var(--color-link-hover);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* Dark mode overrides */
+body.dark-mode .mini-music-player {
+  background-color: #171717;
+  border-color: var(--color-divider);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+body.dark-mode #progress-bar {
+  background: var(--color-divider);
+}
+
+body.dark-mode #progress-bar::-webkit-slider-thumb,
+body.dark-mode #progress-bar::-moz-range-thumb {
+  background: var(--color-link-hover);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 480px) {
+  .mini-music-player {
+    right: 10px;
+    bottom: 10px;
+    width: calc(90vw - 20px);
+  }
+  .mini-music-player.minimized {
+    width: calc(90vw - 20px);
+  }
+}
+
   outline: none;
 }
 

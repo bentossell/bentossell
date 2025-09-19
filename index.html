@@ -152,6 +152,75 @@
         </div>
     </div>
 
+    <!-- Mini Music Player -->
+    <div class="mini-music-player minimized" aria-label="Mini music player">
+        <!-- Controls Row -->
+        <div class="player-controls">
+            <button class="icon-btn" id="prev-track" aria-label="Previous track" type="button">
+                <div class="relative">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                         class="lucide lucide-skip-back">
+                        <polygon points="19 20 9 12 19 4 19 20"></polygon>
+                        <line x1="5" y1="19" x2="5" y2="5"></line>
+                    </svg>
+                </div>
+            </button>
+            <button class="icon-btn" id="play-pause" aria-label="Play or pause" type="button">
+                <div class="relative">
+                    <svg id="play-pause-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                         class="lucide lucide-play">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                </div>
+            </button>
+            <button class="icon-btn" id="next-track" aria-label="Next track" type="button">
+                <div class="relative">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                         class="lucide lucide-skip-forward">
+                        <polygon points="5 4 15 12 5 20 5 4"></polygon>
+                        <line x1="19" y1="5" x2="19" y2="19"></line>
+                    </svg>
+                </div>
+            </button>
+            <button class="icon-btn" id="volume-toggle" aria-label="Toggle mute" type="button">
+                <div class="relative">
+                    <svg id="volume-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                         class="lucide lucide-volume-2">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                        <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                    </svg>
+                </div>
+            </button>
+            <button class="icon-btn" id="toggle-player" aria-label="Expand or collapse player" type="button">
+                <div class="relative">
+                    <svg id="toggle-player-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                         class="lucide lucide-chevron-up">
+                        <polyline points="18 15 12 9 6 15"></polyline>
+                    </svg>
+                </div>
+            </button>
+        </div>
+
+        <!-- Expanded Details -->
+        <div class="player-details">
+            <div class="track-info">
+                <span id="track-title">Track Title</span> &mdash; <span id="track-artist">Artist</span>
+            </div>
+            <div class="progress-wrapper">
+                <span id="current-time" class="time">0:00</span>
+                <input type="range" id="progress-bar" min="0" max="100" value="0" aria-label="Seek bar">
+                <span id="duration" class="time">0:00</span>
+            </div>
+        </div>
+        <!-- (Audio element will be inserted / controlled via JS) -->
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
     document.getElementById('share').addEventListener('click', async () => {
@@ -425,6 +494,126 @@
         }
     });
 
+    /* ===== MINI MUSIC PLAYER LOGIC ===== */
+    (function () {
+        // --- Elements ---
+        const player      = document.querySelector('.mini-music-player');
+        const playBtn     = document.getElementById('play-pause');
+        const prevBtn     = document.getElementById('prev-track');
+        const nextBtn     = document.getElementById('next-track');
+        const volumeBtn   = document.getElementById('volume-toggle');
+        const toggleBtn   = document.getElementById('toggle-player');
+        const progressBar = document.getElementById('progress-bar');
+        const titleEl     = document.getElementById('track-title');
+        const artistEl    = document.getElementById('track-artist');
+        const currentTimeEl = document.getElementById('current-time');
+        const durationEl    = document.getElementById('duration');
+        const playIcon   = document.getElementById('play-pause-icon');
+        const volumeIcon = document.getElementById('volume-icon');
+        const chevronIcon = document.getElementById('toggle-player-icon');
+
+        // --- Demo playlist (replace with real mp3 urls) ---
+        const playlist = [
+            { title: 'Demo Track 1', artist: 'Unknown', src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' },
+            { title: 'Demo Track 2', artist: 'Unknown', src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3' },
+            { title: 'Demo Track 3', artist: 'Unknown', src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3' }
+        ];
+
+        let currentIndex = 0;
+        const audio = new Audio();
+        audio.preload = 'metadata';
+
+        /* ---------- Helpers ---------- */
+        function format(sec) {
+            const m = Math.floor(sec / 60) || 0;
+            const s = Math.floor(sec % 60) || 0;
+            return `${m}:${s.toString().padStart(2,'0')}`;
+        }
+
+        function updateIcons(isPlaying = !audio.paused) {
+            playIcon.innerHTML = isPlaying
+                ? '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>'
+                : '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
+        }
+
+        function updateVolumeIcon() {
+            volumeIcon.innerHTML = audio.muted || audio.volume === 0
+                ? '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line>'
+                : '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>';
+        }
+
+        function loadTrack(index) {
+            currentIndex = (index + playlist.length) % playlist.length;
+            const track = playlist[currentIndex];
+            audio.src = track.src;
+            titleEl.textContent = track.title;
+            artistEl.textContent = track.artist;
+            audio.load();
+            progressBar.value = 0;
+            currentTimeEl.textContent = '0:00';
+            durationEl.textContent = '--:--';
+        }
+
+        function playTrack() {
+            audio.play();
+            updateIcons(true);
+        }
+
+        function pauseTrack() {
+            audio.pause();
+            updateIcons(false);
+        }
+
+        /* ---------- Event bindings ---------- */
+        playBtn.addEventListener('click', () => {
+            audio.paused ? playTrack() : pauseTrack();
+        });
+
+        prevBtn.addEventListener('click', () => {
+            loadTrack(currentIndex - 1);
+            playTrack();
+        });
+
+        nextBtn.addEventListener('click', () => {
+            loadTrack(currentIndex + 1);
+            playTrack();
+        });
+
+        volumeBtn.addEventListener('click', () => {
+            audio.muted = !audio.muted;
+            updateVolumeIcon();
+        });
+
+        toggleBtn.addEventListener('click', () => {
+            const minimized = player.classList.toggle('minimized');
+            player.classList.toggle('expanded', !minimized);
+            chevronIcon.innerHTML = minimized
+                ? '<polyline points="18 15 12 9 6 15"></polyline>'
+                : '<polyline points="6 9 12 15 18 9"></polyline>';
+        });
+
+        progressBar.addEventListener('input', () => {
+            const seekTime = (progressBar.value / 100) * audio.duration;
+            audio.currentTime = seekTime;
+        });
+
+        audio.addEventListener('timeupdate', () => {
+            if (!isNaN(audio.duration)) {
+                const percent = (audio.currentTime / audio.duration) * 100;
+                progressBar.value = percent;
+                currentTimeEl.textContent = format(audio.currentTime);
+                durationEl.textContent = format(audio.duration);
+            }
+        });
+
+        audio.addEventListener('ended', () => nextBtn.click());
+        audio.addEventListener('volumechange', updateVolumeIcon);
+
+        // Initialize
+        loadTrack(currentIndex);
+        updateIcons(false);
+        updateVolumeIcon();
+    })();
     </script>
 </body>
 </html>
