@@ -8,6 +8,8 @@
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
     <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
     <link href="https://fonts.googleapis.com/css2?display=swap&family=Inter:wght@300;400;600" rel="stylesheet">
+    <!-- Retro arcade font for mini-player -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
@@ -424,7 +426,31 @@
             navigateToTab('blog');
         }
     });
-
     </script>
+
+    <!-- Retro Mini Music Player -->
+    <div id="retro-miniplayer" class="retro-miniplayer" aria-live="polite">
+      <div class="retro-chassis">
+        <div class="retro-top">
+          <span class="retro-title">arcade</span>
+          <span class="retro-led" aria-hidden="true"></span>
+        </div>
+        <div class="retro-display">
+          <span id="retro-track">Press ▶ to start</span>
+        </div>
+        <div class="retro-controls">
+          <button id="retro-prev" class="retro-btn" aria-label="Previous" type="button">⏮</button>
+          <button id="retro-play" class="retro-btn primary" aria-label="Play/Pause" type="button">▶</button>
+          <button id="retro-next" class="retro-btn" aria-label="Next" type="button">⏭</button>
+          <div class="retro-knob">
+            <label for="retro-volume">vol</label>
+            <input id="retro-volume" type="range" min="0" max="100" value="65" step="1" aria-label="Volume">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mini-player logic -->
+    <script type="module" src="assets/js/retro-miniplayer.js"></script>
 </body>
 </html>
