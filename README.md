@@ -6,3 +6,4 @@
 - scouted for a16z and invested in; gamma, cosine, julius.ai, lex, texel, and llamaindex
 - led the product hunt community & homepage, testing 1000s of products along the way
 - lived in china when I was in uni
+- see [agents](agents.md) for my available assistants/agents
