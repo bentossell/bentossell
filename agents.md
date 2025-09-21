@@ -1,44 +1,69 @@
-# Agents (bentossell/bentossell)
+# Agents Guide (bentossell/bentossell)
 
-Small, practical agents that operate on this repo (static site + blog). All actions map to files here.
+This is my personal website. Use this guide to add features while keeping the same stack, look, and patterns.
 
-## Available agents
+## Architecture Overview
+- Static site: `index.html` + `assets/css/styles.css` + Markdown content.
+- Blog content: `blog/index.md` (listing) and `blog/posts/*.md` (posts with YAML-like frontmatter).
+- Client-side rendering: `marked.js` parses Markdown in the browser; posts loaded from GitHub raw.
+- Post generation: `create-post.js` script creates `blog/posts/YYYY-MM-DD-slug.md` and updates `blog/index.md`.
+- Local preview: `npm run serve` (Python SimpleHTTPServer on http://localhost:8000).
 
-### blog-post-generator
-- Purpose: create a new post and update the blog index.
-- Inputs: title, optional tags, optional excerpt.
-- How to run:
-  - `npm run new-post` or `node create-post.js "Post Title" "tag1,tag2" "Short excerpt"`
-- Outputs:
-  - New file in `blog/posts/YYYY-MM-DD-slug.md` with frontmatter
-  - Updated `blog/index.md` entry
-- Source: [`create-post.js`](create-post.js), see [BLOG](BLOG.md)
+## Languages & Tools
+- HTML, CSS, vanilla JavaScript (no framework/build step).
+- Node.js for the post generator; Python for local serving.
+- No external backend or database.
 
-### image-assets-checker
-- Purpose: ensure required images exist for icons/OG previews.
-- Inputs: files in `assets/images/`.
-- Checks:
-  - `favicon.png` (32x32)
-  - `apple-touch-icon.png` (180x180)
-  - `card.jpg` (1200x630)
-- Output: ready-to-ship images per [assets/images/README](assets/images/README.md)
+## Design System & UI Patterns
+- Typography: Google Fonts Inter (300/400/600).
+- Layout: top bar with actions; left sidebar; resizable divider; tabbed main content (investments/tools/blog).
+- Icons: Lucide inline SVGs; keep size ~24px in header buttons.
+- Colors: CSS custom properties in `assets/css/styles.css`; supports light/dark mode via `body.dark-mode`.
+- Components: badges, file headers, diff blocks, blog typography styles; keep spacing and sizes consistent.
+- Keyboard: `i`/`t`/`b` for tab nav; `Cmd/Ctrl+K` to toggle command palette.
 
-### docs-curator
-- Purpose: keep written pages tidy and cross-referenced.
-- Scope: `BLOG.md`, `blog/index.md`, `tools.md`, `investments.md`.
-- Actions:
-  - Verify new posts appear in `blog/index.md` (generator should do this; fix if missing)
-  - Keep lists concise and up to date
-  - Add minimal cross-links where relevant (e.g., from a post to tools/investments)
+## Blog Conventions
+- File name: `YYYY-MM-DD-slug.md`.
+- Frontmatter keys: `title`, `date`, `author`, `tags`, `excerpt` (YAML-like top block).
+- Links and media: standard Markdown; avoid inline scripts or untrusted HTML.
+- Blog index: `blog/index.md` lists posts; generator inserts newest first.
 
-### local-preview
-- Purpose: run the site locally for review.
-- How to run: `npm run serve` (Python simple HTTP server at http://localhost:8000)
-- Inputs: current repo state
-- Output: locally rendered site using `index.html` + `assets/css/styles.css`
+## Security Considerations
+- Content is rendered with `marked.parse` and injected as HTML; only add trusted Markdown.
+- Do not add `<script>` tags or unsafe inline JS to posts.
+- External links should use `target="_blank" rel="noopener"` (already applied where rendered).
+- No secrets/keys in repo; commit info uses public GitHub APIs client-side.
 
-## Notes
-- Blog rendering is client-side via `marked.js` in `index.html`.
-- Blog posts require YAML-like frontmatter at the top (see examples in `blog/posts/`).
+## Git Workflow
+- Branch from `main`; small, focused PRs.
+- Fast-forward merges only; open a PR for all changes.
+- Commit style: `feat:`, `fix:`, `docs:` etc.; write clear messages.
+- Before opening PR: preview locally, test dark mode + mobile, verify keyboard shortcuts still work.
 
-Back to the [README](README.md).
+## Coding Conventions
+- Keep it simple (HTML/CSS/vanilla JS). Avoid adding frameworks or build tooling.
+- Reuse existing CSS tokens and classes; match spacing, sizes, and icon style.
+- Put images in `assets/images/`; follow `assets/images/README.md` for required icons (`favicon.png`, `apple-touch-icon.png`, `card.jpg`).
+- Keep Markdown concise; prefer lists; maintain consistent tone.
+
+## Common Tasks
+- New post: `npm run new-post` → edit generated file → commit.
+- Local preview: `npm run serve` and visit http://localhost:8000.
+- Styling tweaks: edit `assets/css/styles.css`; ensure dark mode parity.
+
+## Minimal Directory Map
+- `index.html` — app shell, UI, client-side blog renderer.
+- `assets/css/styles.css` — design tokens + components + dark mode.
+- `assets/images/` — icons/OG images (see README in folder).
+- `blog/index.md` — blog landing + post list.
+- `blog/posts/*.md` — individual posts.
+- `create-post.js` — post generator.
+- `README.md` — short bio.
+
+## PR Checklist (for agents)
+- [ ] Matches existing design (typography, spacing, icons)
+- [ ] Light/dark mode verified
+- [ ] Keyboard shortcuts unaffected
+- [ ] Mobile layout OK
+- [ ] No unsafe HTML/scripts in Markdown
+- [ ] No new build/deps introduced without approval
