@@ -425,6 +425,179 @@
         }
     });
 
+    // --- Mini Music Player (retro-sound.js) ---
+    (function initMiniPlayer(){
+        // Create UI
+        const player = document.createElement('div');
+        player.className = 'mini-player';
+        player.innerHTML = `
+          <button class="icon-btn" id="mp-prev" title="Previous" aria-label="Previous" type="button">
+            <div class="relative">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-skip-back" viewBox="0 0 24 24"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5"></line></svg>
+            </div>
+          </button>
+          <button class="icon-btn" id="mp-toggle" title="Play" aria-label="Play/Pause" type="button">
+            <div class="relative" id="mp-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-play" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+            </div>
+          </button>
+          <button class="icon-btn" id="mp-next" title="Next" aria-label="Next" type="button">
+            <div class="relative">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-skip-forward" viewBox="0 0 24 24"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg>
+            </div>
+          </button>
+          <span class="track-name" id="mp-track">loading…</span>
+        `;
+        document.body.appendChild(player);
+
+        let Sound, WhiteNoise;
+        let AC, master;
+        let ready = false;
+        let playing = false;
+        let currentTrack = 0;
+
+        // A small utility to create a basic chiptune voice
+        function createVoice() {
+            return new Sound(AC, 'square')
+              .withFilter('lowpass', 1400)
+              .toDestination(master);
+        }
+
+        // Simple helper to play a short blip for a note
+        function playNote(note, duration = 0.18, voiceFactory = createVoice){
+            const v = voiceFactory();
+            v.play(note)
+             .rampToVolumeAtTime(0, duration)
+             .waitDispose();
+        }
+
+        // Define 5 short arcade-style loops (inspired, not literal melodies)
+        const tracks = [
+          {
+            name: 'tetris-ish',
+            tempo: 140,
+            pattern: ['E5','B4','C5','D5','C5','B4','A4','A4','C4','E4','A4','B4','A4','G#4','E4','C4','E4','G#4','B4','C5','D5','E5'],
+          },
+          {
+            name: 'kong-ish',
+            tempo: 120,
+            pattern: ['C4','E4','G4','E4','C4','G3','Bb3','C4','Bb3','G3','E4','G4','Bb4','G4','E4'],
+          },
+          {
+            name: 'galaga-ish',
+            tempo: 150,
+            pattern: ['A4','C5','E5','C5','A4','E4','G4','B4','G4','E4'],
+          },
+          {
+            name: 'pac-ish',
+            tempo: 160,
+            pattern: ['C5','B4','A4','G4','A4','B4','C5','E5','C5','G4'],
+          },
+          {
+            name: 'invaders-ish',
+            tempo: 110,
+            pattern: ['C4','C4','Ab3','Ab3','F3','F3','Db3','Db3'],
+          }
+        ];
+
+        const trackLabel = document.getElementById('mp-track');
+        const toggleBtn = document.getElementById('mp-toggle');
+        const nextBtn = document.getElementById('mp-next');
+        const prevBtn = document.getElementById('mp-prev');
+        const iconWrap = document.getElementById('mp-icon');
+
+        let stepTimer = null;
+        let stepIndex = 0;
+
+        function setIcon(state){
+          if(state === 'play') {
+            iconWrap.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-play" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>';
+          } else {
+            iconWrap.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pause" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>';
+          }
+        }
+
+        function updateLabel(){
+          trackLabel.textContent = tracks[currentTrack].name;
+        }
+
+        function step(){
+          const tr = tracks[currentTrack];
+          const beatMs = Math.round(60000 / tr.tempo);
+          const note = tr.pattern[stepIndex % tr.pattern.length];
+          playNote(note, Math.min(0.22, beatMs/1000 * 0.9));
+          stepIndex++;
+          stepTimer = setTimeout(step, beatMs);
+        }
+
+        function start(){
+          if(stepTimer) return;
+          step();
+        }
+        function stop(){
+          if(stepTimer) clearTimeout(stepTimer);
+          stepTimer = null;
+        }
+        function reset(){
+          stop();
+          stepIndex = 0;
+        }
+
+        async function ensureReady(){
+          if(ready) return;
+          try {
+            const mod = await import('https://esm.sh/retro-sound@latest');
+            Sound = mod.Sound; WhiteNoise = mod.WhiteNoise; // eslint-disable-line no-unused-vars
+            AC = new (window.AudioContext || window.webkitAudioContext)();
+            master = AC.createGain();
+            master.gain.setValueAtTime(0.25, 0);
+            master.connect(AC.destination);
+            ready = true;
+          } catch (e) {
+            trackLabel.textContent = 'audio unavailable';
+            console.error('mini-player failed to load', e);
+          }
+        }
+
+        function setPlaying(on){
+          playing = on;
+          setIcon(on ? 'pause' : 'play');
+        }
+
+        toggleBtn.addEventListener('click', async () => {
+          await ensureReady();
+          if(!ready) return;
+          if(!playing){
+            await AC.resume();
+            start();
+            setPlaying(true);
+          } else {
+            setPlaying(false);
+            stop();
+          }
+        });
+
+        nextBtn.addEventListener('click', async () => {
+          await ensureReady();
+          if(!ready) return;
+          currentTrack = (currentTrack + 1) % tracks.length;
+          updateLabel();
+          reset();
+          if(playing){ start(); }
+        });
+
+        prevBtn.addEventListener('click', async () => {
+          await ensureReady();
+          if(!ready) return;
+          currentTrack = (currentTrack - 1 + tracks.length) % tracks.length;
+          updateLabel();
+          reset();
+          if(playing){ start(); }
+        });
+
+        updateLabel();
+    })();
+
     </script>
 </body>
 </html>
