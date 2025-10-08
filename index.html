@@ -38,6 +38,13 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-github-icon lucide-github" viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.091 1 5.091 1A5.07 5.07 0 0 0 5 4.77 5.44 5.44 0 0 0 3.5 9.5c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 21.13V25"/></svg>
                 </div>
             </a>
+            <button id="color-palette-toggle" aria-label="Change color theme" class="icon-btn" type="button">
+                <div class="relative">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><circle cx="12.5" cy="13.5" r=".5"/><circle cx="16.5" cy="17.5" r=".5"/><circle cx="20.5" cy="14.5" r=".5"/><path d="M9 12h.01M9 16h.01M12 9h.01M16 9h.01M20 9h.01M6 16h.01M20 16h.01M6 20h.01M12 20h.01M16 20h.01M20 20h.01"/>
+                    </svg>
+                </div>
+            </button>
             <button id="theme-toggle" aria-label="Toggle dark mode" class="icon-btn" type="button">
                 <div class="relative">
                     <svg id="theme-toggle-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon-icon lucide-moon" viewBox="0 0 24 24" style="transition: color 0.2s;"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>
@@ -147,6 +154,75 @@
                         </div>
                         <div class="shortcut-description">Close command palette</div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Color Palette Picker Modal -->
+    <div id="color-palette-modal" class="color-palette-modal">
+        <div class="color-palette-content">
+            <div class="color-palette-header">
+                <h3>Choose Color Theme</h3>
+                <button id="close-color-palette" class="icon-btn" aria-label="Close color palette">
+                    <div class="relative">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </div>
+                </button>
+            </div>
+            <div class="color-palette-body">
+                <div class="color-themes">
+                    <button class="color-theme active" data-theme="default">
+                        <div class="color-preview">
+                            <span class="color-dot" style="background-color: #24292F;"></span>
+                            <span class="color-dot" style="background-color: #8f8f8f;"></span>
+                            <span class="color-dot" style="background-color: #e6e6e6;"></span>
+                        </div>
+                        <span class="color-theme-name">Default</span>
+                    </button>
+                    <button class="color-theme" data-theme="blue">
+                        <div class="color-preview">
+                            <span class="color-dot" style="background-color: #1e40af;"></span>
+                            <span class="color-dot" style="background-color: #60a5fa;"></span>
+                            <span class="color-dot" style="background-color: #dbeafe;"></span>
+                        </div>
+                        <span class="color-theme-name">Ocean Blue</span>
+                    </button>
+                    <button class="color-theme" data-theme="green">
+                        <div class="color-preview">
+                            <span class="color-dot" style="background-color: #166534;"></span>
+                            <span class="color-dot" style="background-color: #4ade80;"></span>
+                            <span class="color-dot" style="background-color: #dcfce7;"></span>
+                        </div>
+                        <span class="color-theme-name">Forest Green</span>
+                    </button>
+                    <button class="color-theme" data-theme="purple">
+                        <div class="color-preview">
+                            <span class="color-dot" style="background-color: #7c3aed;"></span>
+                            <span class="color-dot" style="background-color: #a78bfa;"></span>
+                            <span class="color-dot" style="background-color: #f3e8ff;"></span>
+                        </div>
+                        <span class="color-theme-name">Royal Purple</span>
+                    </button>
+                    <button class="color-theme" data-theme="red">
+                        <div class="color-preview">
+                            <span class="color-dot" style="background-color: #dc2626;"></span>
+                            <span class="color-dot" style="background-color: #f87171;"></span>
+                            <span class="color-dot" style="background-color: #fecaca;"></span>
+                        </div>
+                        <span class="color-theme-name">Cherry Red</span>
+                    </button>
+                    <button class="color-theme" data-theme="orange">
+                        <div class="color-preview">
+                            <span class="color-dot" style="background-color: #ea580c;"></span>
+                            <span class="color-dot" style="background-color: #fb923c;"></span>
+                            <span class="color-dot" style="background-color: #fed7aa;"></span>
+                        </div>
+                        <span class="color-theme-name">Sunset Orange</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -370,6 +446,111 @@
     fetchLatestCommit();
     setInterval(fetchLatestCommit, 15 * 60 * 1000); // Update every 15 minutes
 
+    // --- Color Palette Functionality ---
+    const colorPaletteModal = document.getElementById('color-palette-modal');
+    const colorPaletteToggle = document.getElementById('color-palette-toggle');
+    const closeColorPaletteBtn = document.getElementById('close-color-palette');
+
+    // Color theme definitions
+    const colorThemes = {
+        default: {
+            '--color-text': '#24292F',
+            '--color-text-secondary': '#8f8f8f',
+            '--color-link': '#24292F',
+            '--color-link-hover': '#000000',
+            '--color-divider': '#e6e6e6'
+        },
+        blue: {
+            '--color-text': '#1e40af',
+            '--color-text-secondary': '#60a5fa',
+            '--color-link': '#1e40af',
+            '--color-link-hover': '#1e3a8a',
+            '--color-divider': '#dbeafe'
+        },
+        green: {
+            '--color-text': '#166534',
+            '--color-text-secondary': '#4ade80',
+            '--color-link': '#166534',
+            '--color-link-hover': '#14532d',
+            '--color-divider': '#dcfce7'
+        },
+        purple: {
+            '--color-text': '#7c3aed',
+            '--color-text-secondary': '#a78bfa',
+            '--color-link': '#7c3aed',
+            '--color-link-hover': '#6d28d9',
+            '--color-divider': '#f3e8ff'
+        },
+        red: {
+            '--color-text': '#dc2626',
+            '--color-text-secondary': '#f87171',
+            '--color-link': '#dc2626',
+            '--color-link-hover': '#b91c1c',
+            '--color-divider': '#fecaca'
+        },
+        orange: {
+            '--color-text': '#ea580c',
+            '--color-text-secondary': '#fb923c',
+            '--color-link': '#ea580c',
+            '--color-link-hover': '#c2410c',
+            '--color-divider': '#fed7aa'
+        }
+    };
+
+    // Apply color theme
+    function applyColorTheme(themeName) {
+        const theme = colorThemes[themeName];
+        if (!theme) return;
+
+        const root = document.documentElement;
+        Object.entries(theme).forEach(([property, value]) => {
+            root.style.setProperty(property, value);
+        });
+
+        // Update active theme button
+        document.querySelectorAll('.color-theme').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelector(`[data-theme="${themeName}"]`).classList.add('active');
+
+        // Save theme preference
+        localStorage.setItem('selectedColorTheme', themeName);
+    }
+
+    // Toggle color palette modal
+    function toggleColorPalette() {
+        colorPaletteModal.classList.toggle('active');
+    }
+
+    // Close color palette modal
+    function closeColorPalette() {
+        colorPaletteModal.classList.remove('active');
+    }
+
+    // Event listeners for color palette
+    colorPaletteToggle.addEventListener('click', toggleColorPalette);
+    closeColorPaletteBtn.addEventListener('click', closeColorPalette);
+
+    // Close modal when clicking outside
+    colorPaletteModal.addEventListener('click', (e) => {
+        if (e.target === colorPaletteModal) {
+            closeColorPalette();
+        }
+    });
+
+    // Color theme selection
+    document.querySelectorAll('.color-theme').forEach(button => {
+        button.addEventListener('click', () => {
+            const themeName = button.dataset.theme;
+            applyColorTheme(themeName);
+            closeColorPalette();
+        });
+    });
+
+    // Load saved color theme on page load
+    const savedTheme = localStorage.getItem('selectedColorTheme') || 'default';
+    applyColorTheme(savedTheme);
+
     // --- Keyboard shortcuts and command palette ---
     const commandPalette = document.getElementById('command-palette');
     const closeCommandPaletteBtn = document.getElementById('close-command-palette');
@@ -407,9 +588,10 @@
             event.preventDefault();
             toggleCommandPalette();
         } 
-        // Escape to close command palette
+        // Escape to close command palette or color palette
         else if (event.key === 'Escape') {
             closeCommandPalette();
+            closeColorPalette();
         } 
         // 'i' to navigate to investments tab
         else if (event.key === 'i' && !commandPalette.classList.contains('active')) {
