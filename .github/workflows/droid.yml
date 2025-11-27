@@ -71,6 +71,9 @@ jobs:
           COMMENT_BODY: ${{ github.event.comment.body }}
           ISSUE_BODY: ${{ github.event.issue.body }}
           PR_BODY: ${{ github.event.pull_request.body }}
+          ISSUE_NUM: ${{ github.event.pull_request.number || github.event.issue.number }}
+          REPO: ${{ github.repository }}
+          IS_PR: ${{ github.event.issue.pull_request != null || github.event.pull_request != null }}
         run: |
           # Extract the text containing @droid from environment variables
           if [ -n "$COMMENT_BODY" ]; then
@@ -81,24 +84,17 @@ jobs:
             TEXT="$PR_BODY"
           fi
           
+          # Extract prompt after @droid
           PROMPT=$(echo "$TEXT" | sed 's/.*@droid//')
-          
-          # Determine issue/PR number
-          if [ -n "${{ github.event.pull_request.number }}" ]; then
-            ISSUE_NUM="${{ github.event.pull_request.number }}"
-          else
-            ISSUE_NUM="${{ github.event.issue.number }}"
-          fi
-          
-          REPO="${{ github.repository }}"
 
-          if [ -n "${{ github.event.issue.pull_request }}" ] || [ -n "${{ github.event.pull_request }}" ]; then
-            # This is a PR
-            cat > prompt.txt << 'EOF'
+          # Write prompt file using heredoc (handles multiline safely)
+          if [ "$IS_PR" = "true" ]; then
+            cat > prompt.txt <<PROMPT_EOF
           Repository: $REPO
           Pull Request: #$ISSUE_NUM
 
-          Task: $PROMPT
+          Task:
+          $PROMPT
 
           This is a PR - you can make file changes:
           - Make the necessary code changes
@@ -107,14 +103,14 @@ jobs:
 
           If this is just a question:
           - Use: gh pr comment $ISSUE_NUM --body "your response"
-          EOF
+          PROMPT_EOF
           else
-            # This is a regular issue
-            cat > prompt.txt << 'EOF'
+            cat > prompt.txt <<PROMPT_EOF
           Repository: $REPO
           Issue: #$ISSUE_NUM
 
-          Task: $PROMPT
+          Task:
+          $PROMPT
 
           This is a regular issue - you CANNOT make file changes directly to main.
 
@@ -122,18 +118,14 @@ jobs:
           1. Create a new branch: git checkout -b droid/issue-$ISSUE_NUM
           2. Make the code changes and commit them with a clear message
           3. Push the branch: git push -u origin droid/issue-$ISSUE_NUM
-          4. Automatically create a PR by running this command:
-             gh pr create --title "Fix: <short description>" --body "Closes #$ISSUE_NUM\n\nCreated by @droid\n\n<brief description of changes>"
+          4. Create a PR: gh pr create --title "Fix: <description>" --body "Closes #$ISSUE_NUM"
           
-          IMPORTANT: You must actually execute the gh pr create command, don't just leave instructions. The PR should be created automatically.
+          IMPORTANT: You must actually execute the gh pr create command.
 
-          For questions or information that don't require code changes:
+          For questions that don't require code changes:
           - Use: gh issue comment $ISSUE_NUM --body "your response"
-          EOF
+          PROMPT_EOF
           fi
-
-          # Replace variables in prompt
-          sed -i.bak "s|\$REPO|$REPO|g; s|\$ISSUE_NUM|$ISSUE_NUM|g; s|\$PROMPT|$PROMPT|g" prompt.txt
 
           droid exec --auto high -f prompt.txt
 
