@@ -466,6 +466,7 @@ const commands = {
 
   <span class="cmd">space</span>       space invaders
   <span class="cmd">snake</span>       classic snake
+  <span class="cmd">tetris</span>      tetris
 
   <span class="muted">type</span> <span class="cmd">leaderboard [game]</span> <span class="muted">to see high scores</span>
 `;
@@ -489,6 +490,13 @@ const commands = {
       return '';
     },
   },
+  tetris: {
+    desc: "play tetris",
+    fn: () => {
+      startTetris();
+      return '';
+    },
+  },
   leaderboard: {
     desc: "game high scores",
     fn: (args) => {
@@ -497,10 +505,13 @@ const commands = {
         return showLeaderboard('space-invaders', 'SPACE INVADERS');
       } else if (game === 'snake') {
         return showLeaderboard('snake', 'SNAKE');
+      } else if (game === 'tetris') {
+        return showLeaderboard('tetris', 'TETRIS');
       } else {
         let output = '\n  <span class="bold white">LEADERBOARDS</span>\n\n';
         output += '  <span class="cmd">leaderboard space</span>  space invaders scores\n';
         output += '  <span class="cmd">leaderboard snake</span>  snake scores\n';
+        output += '  <span class="cmd">leaderboard tetris</span> tetris scores\n';
         return output;
       }
     },
@@ -849,6 +860,8 @@ function startSnakeGame() {
     enteringName: false,
     playerName: '',
     saved: false,
+    tick: 0,
+    speed: 150,
   };
   
   spawnFood();
@@ -904,11 +917,13 @@ function startSnakeGame() {
   
   document.addEventListener("keydown", snakeKeyHandler);
   
-  gameInterval = setInterval(() => {
+  function snakeLoop() {
     if (!gameActive) return;
     updateSnake();
     renderSnake(output);
-  }, 120);
+    gameInterval = setTimeout(snakeLoop, snakeState.speed);
+  }
+  snakeLoop();
 }
 
 function spawnFood() {
@@ -926,6 +941,12 @@ function spawnFood() {
 function updateSnake() {
   const s = snakeState;
   if (s.gameOver) return;
+  
+  s.tick++;
+  
+  // Vertical movement is every 2 ticks to compensate for taller chars
+  const isVertical = s.nextDirection.y !== 0;
+  if (isVertical && s.tick % 2 !== 0) return;
   
   s.direction = s.nextDirection;
   const head = s.snake[0];
@@ -949,6 +970,8 @@ function updateSnake() {
   if (newHead.x === s.food.x && newHead.y === s.food.y) {
     s.score += 10;
     spawnFood();
+    // Speed up! Reduce interval by 5ms per food, min 50ms
+    s.speed = Math.max(50, s.speed - 5);
   } else {
     s.snake.pop();
   }
@@ -1018,7 +1041,7 @@ function renderSnake(output) {
 function endSnakeGame(savedContent, inputLine, keyHandler) {
   gameActive = false;
   if (gameInterval) {
-    clearInterval(gameInterval);
+    clearTimeout(gameInterval);
     gameInterval = null;
   }
   document.removeEventListener("keydown", keyHandler);
@@ -1026,6 +1049,278 @@ function endSnakeGame(savedContent, inputLine, keyHandler) {
   inputLine.style.display = "flex";
   document.getElementById("command-input").focus();
   appendOutput('\n  <span class="muted">game ended. score: ' + (snakeState?.score || 0) + '</span>\n\n');
+}
+
+// Tetris Game
+let tetrisState = null;
+
+const TETRIS_PIECES = [
+  { shape: [[1,1,1,1]], color: 'I' },           // I
+  { shape: [[1,1],[1,1]], color: 'O' },         // O
+  { shape: [[0,1,0],[1,1,1]], color: 'T' },     // T
+  { shape: [[1,0,0],[1,1,1]], color: 'L' },     // L
+  { shape: [[0,0,1],[1,1,1]], color: 'J' },     // J
+  { shape: [[0,1,1],[1,1,0]], color: 'S' },     // S
+  { shape: [[1,1,0],[0,1,1]], color: 'Z' },     // Z
+];
+
+function startTetris() {
+  const terminalBody = document.getElementById("terminal-body");
+  const output = document.getElementById("output");
+  const inputLine = document.querySelector(".terminal-input");
+  
+  const savedContent = output.innerHTML;
+  inputLine.style.display = "none";
+  
+  tetrisState = {
+    width: 10,
+    height: 20,
+    board: Array(20).fill(null).map(() => Array(10).fill(0)),
+    piece: null,
+    pieceX: 0,
+    pieceY: 0,
+    score: 0,
+    lines: 0,
+    level: 1,
+    gameOver: false,
+    enteringName: false,
+    playerName: '',
+    saved: false,
+    speed: 500,
+  };
+  
+  spawnTetrisPiece();
+  gameActive = true;
+  
+  const tetrisKeyHandler = (e) => {
+    if (!gameActive) return;
+    
+    if (e.key === "Escape") {
+      endTetris(savedContent, inputLine, tetrisKeyHandler);
+      return;
+    }
+    
+    if (tetrisState.gameOver) {
+      if (tetrisState.enteringName) {
+        e.preventDefault();
+        if (e.key === "Enter" && tetrisState.playerName.trim()) {
+          saveScore(tetrisState.playerName.trim(), tetrisState.score, 'tetris');
+          tetrisState.saved = true;
+          tetrisState.enteringName = false;
+          renderTetris(output);
+        } else if (e.key === "Backspace") {
+          tetrisState.playerName = tetrisState.playerName.slice(0, -1);
+          renderTetris(output);
+        } else if (e.key.length === 1 && tetrisState.playerName.length < 10) {
+          tetrisState.playerName += e.key;
+          renderTetris(output);
+        }
+      } else if (!tetrisState.saved && e.key !== "Escape") {
+        tetrisState.enteringName = true;
+        renderTetris(output);
+      } else if (e.key === "Enter") {
+        endTetris(savedContent, inputLine, tetrisKeyHandler);
+      }
+      return;
+    }
+    
+    const t = tetrisState;
+    if (e.key === "ArrowLeft" || e.key === "a") {
+      e.preventDefault();
+      if (canMove(t.piece, t.pieceX - 1, t.pieceY)) t.pieceX--;
+    } else if (e.key === "ArrowRight" || e.key === "d") {
+      e.preventDefault();
+      if (canMove(t.piece, t.pieceX + 1, t.pieceY)) t.pieceX++;
+    } else if (e.key === "ArrowDown" || e.key === "s") {
+      e.preventDefault();
+      if (canMove(t.piece, t.pieceX, t.pieceY + 1)) {
+        t.pieceY++;
+        t.score += 1;
+      }
+    } else if (e.key === "ArrowUp" || e.key === "w") {
+      e.preventDefault();
+      const rotated = rotatePiece(t.piece);
+      if (canMove(rotated, t.pieceX, t.pieceY)) t.piece = rotated;
+    } else if (e.key === " ") {
+      e.preventDefault();
+      while (canMove(t.piece, t.pieceX, t.pieceY + 1)) {
+        t.pieceY++;
+        t.score += 2;
+      }
+    }
+    renderTetris(output);
+  };
+  
+  document.addEventListener("keydown", tetrisKeyHandler);
+  
+  function tetrisLoop() {
+    if (!gameActive || tetrisState.gameOver) return;
+    updateTetris();
+    renderTetris(output);
+    gameInterval = setTimeout(tetrisLoop, tetrisState.speed);
+  }
+  tetrisLoop();
+}
+
+function spawnTetrisPiece() {
+  const t = tetrisState;
+  const piece = TETRIS_PIECES[Math.floor(Math.random() * TETRIS_PIECES.length)];
+  t.piece = piece.shape.map(row => [...row]);
+  t.pieceX = Math.floor((t.width - t.piece[0].length) / 2);
+  t.pieceY = 0;
+  
+  if (!canMove(t.piece, t.pieceX, t.pieceY)) {
+    t.gameOver = true;
+  }
+}
+
+function canMove(piece, x, y) {
+  const t = tetrisState;
+  for (let py = 0; py < piece.length; py++) {
+    for (let px = 0; px < piece[py].length; px++) {
+      if (piece[py][px]) {
+        const newX = x + px;
+        const newY = y + py;
+        if (newX < 0 || newX >= t.width || newY >= t.height) return false;
+        if (newY >= 0 && t.board[newY][newX]) return false;
+      }
+    }
+  }
+  return true;
+}
+
+function rotatePiece(piece) {
+  const rows = piece.length;
+  const cols = piece[0].length;
+  const rotated = [];
+  for (let c = 0; c < cols; c++) {
+    rotated[c] = [];
+    for (let r = rows - 1; r >= 0; r--) {
+      rotated[c].push(piece[r][c]);
+    }
+  }
+  return rotated;
+}
+
+function lockPiece() {
+  const t = tetrisState;
+  for (let py = 0; py < t.piece.length; py++) {
+    for (let px = 0; px < t.piece[py].length; px++) {
+      if (t.piece[py][px]) {
+        const boardY = t.pieceY + py;
+        const boardX = t.pieceX + px;
+        if (boardY >= 0) t.board[boardY][boardX] = 1;
+      }
+    }
+  }
+  clearLines();
+  spawnTetrisPiece();
+}
+
+function clearLines() {
+  const t = tetrisState;
+  let cleared = 0;
+  for (let y = t.height - 1; y >= 0; y--) {
+    if (t.board[y].every(cell => cell)) {
+      t.board.splice(y, 1);
+      t.board.unshift(Array(t.width).fill(0));
+      cleared++;
+      y++;
+    }
+  }
+  if (cleared > 0) {
+    const points = [0, 100, 300, 500, 800];
+    t.score += points[cleared] * t.level;
+    t.lines += cleared;
+    t.level = Math.floor(t.lines / 10) + 1;
+    t.speed = Math.max(100, 500 - (t.level - 1) * 50);
+  }
+}
+
+function updateTetris() {
+  const t = tetrisState;
+  if (t.gameOver) return;
+  
+  if (canMove(t.piece, t.pieceX, t.pieceY + 1)) {
+    t.pieceY++;
+  } else {
+    lockPiece();
+  }
+}
+
+function renderTetris(output) {
+  const t = tetrisState;
+  let screen = t.board.map(row => [...row]);
+  
+  // Draw current piece
+  if (t.piece && !t.gameOver) {
+    for (let py = 0; py < t.piece.length; py++) {
+      for (let px = 0; px < t.piece[py].length; px++) {
+        if (t.piece[py][px]) {
+          const y = t.pieceY + py;
+          const x = t.pieceX + px;
+          if (y >= 0 && y < t.height && x >= 0 && x < t.width) {
+            screen[y][x] = 2;
+          }
+        }
+      }
+    }
+  }
+  
+  let html = '<pre style="line-height: 1.2; margin: 0;">';
+  html += `<span class="accent">TETRIS</span>  Score: <span class="success">${t.score}</span>  Lines: ${t.lines}  Level: ${t.level}\n\n`;
+  
+  // Top border
+  html += '┌' + '──'.repeat(t.width) + '┐\n';
+  
+  for (let y = 0; y < t.height; y++) {
+    html += '│';
+    for (let x = 0; x < t.width; x++) {
+      if (screen[y][x] === 2) {
+        html += '[]';
+      } else if (screen[y][x] === 1) {
+        html += '##';
+      } else {
+        html += '  ';
+      }
+    }
+    html += '│\n';
+  }
+  
+  // Bottom border
+  html += '└' + '──'.repeat(t.width) + '┘\n';
+  
+  html += '\n<span class="muted">← → move  ↑ rotate  ↓ soft drop  SPACE hard drop  ESC quit</span>';
+  
+  if (t.gameOver) {
+    html += '\n\n<span class="error">*** GAME OVER ***</span>';
+    
+    if (t.enteringName) {
+      html += `\n\n<span class="bold white">Enter your name:</span> <span class="accent">${t.playerName}</span><span class="cursor">_</span>`;
+      html += '\n<span class="muted">Press ENTER to save</span>';
+    } else if (t.saved) {
+      html += `\n\n<span class="success">Score saved!</span>`;
+      html += '\n<span class="muted">Press ENTER to exit</span>';
+    } else {
+      html += '\n<span class="muted">Press any key to save score, ESC to skip</span>';
+    }
+  }
+  
+  html += '</pre>';
+  output.innerHTML = html;
+}
+
+function endTetris(savedContent, inputLine, keyHandler) {
+  gameActive = false;
+  if (gameInterval) {
+    clearTimeout(gameInterval);
+    gameInterval = null;
+  }
+  document.removeEventListener("keydown", keyHandler);
+  document.getElementById("output").innerHTML = savedContent;
+  inputLine.style.display = "flex";
+  document.getElementById("command-input").focus();
+  appendOutput('\n  <span class="muted">game ended. score: ' + (tetrisState?.score || 0) + '</span>\n\n');
 }
 
 function getAge() {
