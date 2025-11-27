@@ -4,427 +4,281 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ben tossell</title>
-    <meta name="description" content="ben tossell's personal site">
+    <meta name="description" content="ben tossell's personal terminal - type 'help' to get started">
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
     <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
-    <link href="https://fonts.googleapis.com/css2?display=swap&family=Inter:wght@300;400;600" rel="stylesheet">
+    <meta property="og:title" content="ben tossell">
+    <meta property="og:description" content="Interactive CLI-style personal website">
+    <meta property="og:image" content="assets/images/card.jpg">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
     <link rel="stylesheet" href="assets/css/styles.css">
 </head>
-<body>
-    <header class="topbar">
-        <div class="title-block">
-            <h1>ben tossell</h1>
-            <p class="commit-info" id="commit-info">Loading commit info...</p>
+<body class="theme-midnight">
+    <div class="terminal-wrapper">
+        <div class="terminal" id="terminal">
+            <div class="terminal-title">
+                <div class="title-buttons">
+                    <span class="title-btn close"></span>
+                    <span class="title-btn minimize"></span>
+                    <span class="title-btn maximize"></span>
+                </div>
+                <span class="title-text">ben@tossell ~ bash</span>
+                <div class="title-actions">
+                    <button class="help-btn" id="help-btn" aria-label="Show help">?</button>
+                </div>
+            </div>
+            <div class="terminal-body" id="terminal-body">
+                <div id="output" role="log" aria-live="polite"></div>
+            </div>
+            <div class="terminal-input">
+                <span class="input-prompt">$</span>
+                <form id="command-form" autocomplete="off">
+                    <input 
+                        type="text" 
+                        id="command-input" 
+                        placeholder="type a command..."
+                        aria-label="Command input"
+                        spellcheck="false"
+                        autocapitalize="none"
+                        autocorrect="off"
+                    >
+                </form>
+            </div>
         </div>
-        <div class="actions">
-            <button id="share" title="share bens site" aria-label="Share" class="icon-btn" type="button">
-                <div class="relative">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share-icon lucide-share" viewBox="0 0 24 24"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><polyline points="16 6 12 2 8 6"/><line x1="12" x2="12" y1="2" y2="15"/></svg>
-                </div>
-            </button>
-            <a href="https://x.com/bentossell/" target="_blank" rel="noopener" aria-label="X" class="icon-btn">
-                <div class="relative">
-                    <!-- Official Lucide Twitter SVG -->
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-twitter" viewBox="0 0 24 24"><path d="M22 4.01c-.75.35-1.56.59-2.41.7A4.16 4.16 0 0 0 21.44 2c-.81.48-1.7.83-2.65 1.02A4.13 4.13 0 0 0 12 7.11c0 .32.04.64.1.94C8.28 7.89 5.1 6.1 2.99 3.61c-.35.6-.55 1.29-.55 2.02 0 1.39.71 2.62 1.78 3.34-.66-.02-1.28-.2-1.82-.5v.05c0 1.94 1.4 3.57 3.25 3.94-.34.09-.7.14-1.07.14-.26 0-.5-.03-.75-.07.51 1.58 2 2.73 3.76 2.76A8.3 8.3 0 0 1 2 19.54a11.73 11.73 0 0 0 6.29 1.85c7.55 0 11.69-6.26 11.69-11.7l-.01-.53A8.07 8.07 0 0 0 22 4.01Z"/></svg>
-                </div>
-            </a>
-            <a href="https://www.linkedin.com/in/ben-tossell-70453537/" target="_blank" rel="noopener" aria-label="LinkedIn" class="icon-btn">
-                <div class="relative">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-linkedin-icon lucide-linkedin" viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
-                </div>
-            </a>
-            <a href="https://github.com/bentossell" target="_blank" rel="noopener" aria-label="GitHub" class="icon-btn">
-                <div class="relative">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-github-icon lucide-github" viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.091 1 5.091 1A5.07 5.07 0 0 0 5 4.77 5.44 5.44 0 0 0 3.5 9.5c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 21.13V25"/></svg>
-                </div>
-            </a>
-            <button id="theme-toggle" aria-label="Toggle dark mode" class="icon-btn" type="button">
-                <div class="relative">
-                    <svg id="theme-toggle-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon-icon lucide-moon" viewBox="0 0 24 24" style="transition: color 0.2s;"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>
-                </div>
-            </button>
-        </div>
-    </header>
-    <div class="container">
-        <aside class="sidebar">
-            <h5 class>now:</h5>
-            <ul>
-                <li>founder &amp; solo-gp <a href="https://bensbites.com" target="_blank" rel="noopener">ben's bites</a></li>
-                <li>i invest $100-200k into technical founders building technical tools like; supabase, etched, sf compute, factory, wordware, crewai, see my investments.md</li>
-                <li>i write a newsletter where I show what tools im building with, interesting tools and content im seeing. 125k+ others love it</li>
-                <li>twin dad (1 of each btw)</li>
-            </ul>
-            <h5 class>previously:</h5>
-            <ul>
-                <li>built and sold the biggest no-code community, makerpad, to zapier (in 18 months)</li>
-                <li>scouted for a16z and invested in; gamma, cosine, and more</li>
-                <li>led the product hunt community &amp; homepage, testing 1000s of products along the way</li>
-                <li>lived in china when I was in uni</li>
-            </ul>
-            <h5 class="testing-title">testing</h5>
-            <ul class="testing-list">
-                <li><svg viewBox="0 0 16 16" class="check"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"></path></svg><code>codex</code><button class="more" aria-label="More"><svg viewBox="0 0 16 16"><path d="M10 13a1 1 0 100-2 1 1 0 000 2zm-4 0a1 1 0 100-2 1 1 0 000 2zm1-5a1 1 0 11-2 0 1 1 0 012 0zm3 1a1 1 0 100-2 1 1 0 000 2z"></path></svg></button></li>
-            </ul>
-        </aside>
-        <div class="resizer"></div>
-        <main class="content">
-            <div class="tabs">
-                <button class="tab-trigger active" data-tab="investments">investments</button>
-                <button class="tab-trigger" data-tab="tools">tools i use</button>
-                <button class="tab-trigger" data-tab="blog">blog</button>
-            </div>
-            <div class="tab-content active" id="investments">
-                <div class="file-header">
-                    <button class="file-btn"><svg viewBox="0 0 16 16"><path d="M3.75 1.5a.25.25 0 00-.25.25v12.5c0 .138.112.25.25.25h9.5a.25.25 0 00.25-.25V4.664a.25.25 0 00-.073-.177l-2.914-2.914a.25.25 0 00-.177-.073H3.75zM2 1.75C2 .784 2.784 0 3.75 0h6.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0113.25 16h-9.5A1.75 1.75 0 012 14.25V1.75z"></path><path d="M4.75 4a.75.75 0 01.75.75v2.5a.75.75 0 01-1.5 0v-2.5A.75.75 0 014.75 4zm4.25 0a.75.75 0 000 1.5h1.5a.75.75 0 000-1.5H9z"></path></svg><span>investments.md</span></button>
-                    <div class="badges"><span class="badge green">+0</span><span class="badge red">-0</span></div>
-                </div>
-                <div class="diff-block" id="investments-content">Loading...</div>
-            </div>
-            <div class="tab-content" id="tools">
-                <div class="file-header">
-                    <button class="file-btn"><svg viewBox="0 0 16 16"><path d="M3.75 1.5a.25.25 0 00-.25.25v12.5c0 .138.112.25.25.25h9.5a.25.25 0 00.25-.25V4.664a.25.25 0 00-.073-.177l-2.914-2.914a.25.25 0 00-.177-.073H3.75zM2 1.75C2 .784 2.784 0 3.75 0h6.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0113.25 16h-9.5A1.75 1.75 0 012 14.25V1.75z"></path><path d="M4.75 4a.75.75 0 01.75.75v2.5a.75.75 0 01-1.5 0v-2.5A.75.75 0 014.75 4zm4.25 0a.75.75 0 000 1.5h1.5a.75.75 0 000-1.5H9z"></path></svg><span>tools.md</span></button>
-                    <div class="badges"><span class="badge green">+0</span><span class="badge red">-0</span></div>
-                </div>
-                <div class="diff-block" id="tools-content">Select a tab to load</div>
-            </div>
-            <div class="tab-content" id="blog">
-                <div class="file-header">
-                    <button class="file-btn"><svg viewBox="0 0 16 16"><path d="M3.75 1.5a.25.25 0 00-.25.25v12.5c0 .138.112.25.25.25h9.5a.25.25 0 00.25-.25V4.664a.25.25 0 00-.073-.177l-2.914-2.914a.25.25 0 00-.177-.073H3.75zM2 1.75C2 .784 2.784 0 3.75 0h6.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0113.25 16h-9.5A1.75 1.75 0 012 14.25V1.75z"></path><path d="M4.75 4a.75.75 0 01.75.75v2.5a.75.75 0 01-1.5 0v-2.5A.75.75 0 014.75 4zm4.25 0a.75.75 0 000 1.5h1.5a.75.75 0 000-1.5H9z"></path></svg><span>blog/</span></button>
-                    <div class="badges"><span class="badge green">+0</span><span class="badge red">-0</span></div>
-                </div>
-                <div class="diff-block blog-content" id="blog-content">Select a tab to load</div>
-            </div>
-        </main>
-    </div>
-
-    <!-- Command Palette Modal -->
-    <div id="command-palette" class="command-palette">
-        <div class="command-palette-content">
-            <div class="command-palette-header">
-                <h2>Keyboard Shortcuts</h2>
-                <button id="close-command-palette" class="icon-btn" aria-label="Close command palette">
-                    <div class="relative">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
-                    </div>
-                </button>
-            </div>
-            <div class="command-palette-body">
-                <div class="shortcut-group">
-                    <h3>Navigation</h3>
-                    <div class="shortcut-item">
-                        <div class="shortcut-keys">
-                            <kbd>i</kbd>
-                        </div>
-                        <div class="shortcut-description">Go to Investments tab</div>
-                    </div>
-                    <div class="shortcut-item">
-                        <div class="shortcut-keys">
-                            <kbd>t</kbd>
-                        </div>
-                        <div class="shortcut-description">Go to Tools tab</div>
-                    </div>
-                    <div class="shortcut-item">
-                        <div class="shortcut-keys">
-                            <kbd>b</kbd>
-                        </div>
-                        <div class="shortcut-description">Go to Blog tab</div>
-                    </div>
-                </div>
-                <div class="shortcut-group">
-                    <h3>Commands</h3>
-                    <div class="shortcut-item">
-                        <div class="shortcut-keys">
-                            <kbd><span class="cmd-key">⌘</span>+k</kbd>
-                        </div>
-                        <div class="shortcut-description">Toggle command palette</div>
-                    </div>
-                    <div class="shortcut-item">
-                        <div class="shortcut-keys">
-                            <kbd>Esc</kbd>
-                        </div>
-                        <div class="shortcut-description">Close command palette</div>
-                    </div>
-                </div>
-            </div>
+        
+        <div class="theme-switcher">
+            <button class="theme-btn active" data-theme="midnight">midnight</button>
+            <button class="theme-btn" data-theme="phosphor">phosphor</button>
+            <button class="theme-btn" data-theme="amber">amber</button>
+            <button class="theme-btn" data-theme="matrix">matrix</button>
+            <button class="theme-btn" data-theme="contrast">contrast</button>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <div id="music-player" class="music-player" aria-live="polite" aria-label="Retro soundtrack music player">
+        <div class="music-meta">
+            <span class="music-label">arcade radio</span>
+            <span id="music-title" class="music-title">select a track</span>
+        </div>
+        <div class="music-controls" role="group" aria-label="Music controls">
+            <button type="button" id="music-prev" class="music-btn" aria-label="Previous track">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="19 20 9 12 19 4 19 20"></polygon>
+                    <line x1="5" y1="19" x2="5" y2="5"></line>
+                </svg>
+            </button>
+            <button type="button" id="music-toggle" class="music-btn" aria-label="Play or pause">
+                <svg class="icon icon-play" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                <svg class="icon icon-pause" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="6" y="4" width="4" height="16"></rect>
+                    <rect x="14" y="4" width="4" height="16"></rect>
+                </svg>
+            </button>
+            <button type="button" id="music-next" class="music-btn" aria-label="Next track">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="5 4 15 12 5 20 5 4"></polygon>
+                    <line x1="19" y1="5" x2="19" y2="19"></line>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script src="assets/js/terminal.js"></script>
     <script>
-    document.getElementById('share').addEventListener('click', async () => {
-        try {
-            await navigator.clipboard.writeText(window.location.href);
-        } catch (e) {
-            console.error('Copy failed', e);
-        }
-    });
-    // simple tabs
-    const repoBase = "https://raw.githubusercontent.com/bentossell/bentossell/main/";
-    
-    async function loadMarkdown(file, target, isRichContent = false){
-        try{
-            const resp = await fetch(repoBase + file);
-            if(!resp.ok) throw new Error('fetch failed');
-            const text = await resp.text();
-            
-            if (isRichContent) {
-                // Use marked.js for rich markdown rendering
-                const htmlContent = marked.parse(text);
-                document.getElementById(target).innerHTML = htmlContent;
-            } else {
-                // Simple rendering for existing tabs
-                const escaped = text
-                    .replace(/&/g, '&amp;')
-                    .replace(/</g, '&lt;')
-                    .replace(/>/g, '&gt;');
-                const linked = escaped.replace(/\[([^\]]+)\]\(([^\)]+)\)/g,
-                    '<a href="$2" target="_blank" rel="noopener">[$1]($2)</a>');
-                document.getElementById(target).innerHTML = '<code>' + linked + '</code>';
+    (function() {
+        const playerContainer = document.getElementById('music-player');
+        const titleEl = document.getElementById('music-title');
+        const playToggle = document.getElementById('music-toggle');
+        const nextBtn = document.getElementById('music-next');
+        const prevBtn = document.getElementById('music-prev');
+
+        const noteFreq = {
+            'C2': 65.41, 'D2': 73.42, 'E2': 82.41, 'F2': 87.31, 'G2': 98.00, 'A2': 110.00, 'B2': 123.47,
+            'C3': 130.81, 'D3': 146.83, 'E3': 164.81, 'F3': 174.61, 'G3': 196.00, 'A3': 220.00, 'B3': 246.94,
+            'C4': 261.63, 'D4': 293.66, 'E4': 329.63, 'F4': 349.23, 'G4': 392.00, 'A4': 440.00, 'B4': 493.88,
+            'C5': 523.25, 'D5': 587.33, 'E5': 659.25, 'F5': 698.46, 'G5': 783.99, 'A5': 880.00, 'B5': 987.77,
+            'C6': 1046.50
+        };
+
+        const tracks = [
+            {
+                title: 'Tetris Theme',
+                bpm: 140,
+                wave: 'square',
+                notes: [
+                    'E4', 'B3', 'C4', 'D4', 'C4', 'B3', 'A3', '-', 'A3', 'C4', 'E4', 'D4', 'C4', 'B3', '-',
+                    'C4', 'D4', 'E4', 'C4', 'A3', 'A3', '-', '-'
+                ]
+            },
+            {
+                title: 'Mario Theme',
+                bpm: 180,
+                wave: 'square',
+                notes: [
+                    'E4', 'E4', '-', 'E4', '-', 'C4', 'E4', '-', 'G4', '-', '-', '-', 'G3', '-', '-', '-'
+                ]
+            },
+            {
+                title: 'Zelda Lullaby',
+                bpm: 90,
+                wave: 'triangle',
+                notes: [
+                    'B4', 'D5', 'A4', '-', 'G4', 'A4', '-', 'B4', 'D5', 'A4', '-', '-', '-', '-', '-', '-'
+                ]
+            },
+            {
+                title: 'Pac-Man',
+                bpm: 160,
+                wave: 'sine',
+                notes: [
+                    'B4', 'B5', 'F5', 'D5', 'B5', 'F5', 'D5', '-', 'C5', 'C6', 'G5', 'E5', 'C6', 'G5', 'E5', '-'
+                ]
+            },
+            {
+                title: 'Space Invaders',
+                bpm: 120,
+                wave: 'sawtooth',
+                notes: [
+                    'E3', '-', 'D3', '-', 'E3', '-', 'D3', '-', 'C3', '-', 'D3', '-', 'E3', '-', '-', '-'
+                ]
             }
-        }catch(e){
-            document.getElementById(target).textContent = 'Failed to load';
-        }
-    }
+        ];
 
-    async function loadBlogIndex(target) {
-        try {
-            const resp = await fetch(repoBase + 'blog/index.md');
-            if(!resp.ok) throw new Error('fetch failed');
-            const text = await resp.text();
-            const htmlContent = marked.parse(text);
-            document.getElementById(target).innerHTML = htmlContent;
-            
-            // Add click handlers for blog post links
-            const blogLinks = document.querySelectorAll('#blog-content a[href*="/blog/posts/"]');
-            blogLinks.forEach(link => {
-                link.addEventListener('click', async (e) => {
-                    e.preventDefault();
-                    const postPath = link.getAttribute('href').replace('/blog/posts/', 'blog/posts/');
-                    await loadBlogPost(postPath, target);
-                });
-            });
-        } catch(e) {
-            document.getElementById(target).textContent = 'Failed to load blog';
-        }
-    }
+        let audioContext = null;
+        let currentIndex = 0;
+        let isPlaying = false;
+        let scheduledNotes = [];
+        let nextNoteTime = 0;
+        let currentNote = 0;
+        let timerID = null;
 
-    async function loadBlogPost(postPath, target) {
-        try {
-            const resp = await fetch(repoBase + postPath);
-            if(!resp.ok) throw new Error('fetch failed');
-            const text = await resp.text();
-            
-            // Parse frontmatter and content
-            const frontmatterRegex = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/;
-            const match = text.match(frontmatterRegex);
-            
-            let content = text;
-            let frontmatter = {};
-            
-            if (match) {
-                // Parse YAML-like frontmatter
-                const frontmatterText = match[1];
-                content = match[2];
-                
-                frontmatterText.split('\n').forEach(line => {
-                    const colonIndex = line.indexOf(':');
-                    if (colonIndex > -1) {
-                        const key = line.substring(0, colonIndex).trim();
-                        const value = line.substring(colonIndex + 1).trim().replace(/^["']|["']$/g, '');
-                        frontmatter[key] = value;
-                    }
-                });
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
             }
-            
-            // Render content with marked.js
-            const htmlContent = marked.parse(content);
-            
-            // Create blog post HTML with back button
-            const blogPostHtml = `
-                <div class="blog-post">
-                    <button class="back-to-blog" onclick="loadBlogIndex('blog-content')">&larr; Back to Blog</button>
-                    ${frontmatter.date ? `<div class="blog-meta">Published on ${formatDate(frontmatter.date)}</div>` : ''}
-                    ${htmlContent}
-                </div>
-            `;
-            
-            document.getElementById(target).innerHTML = blogPostHtml;
-        } catch(e) {
-            document.getElementById(target).textContent = 'Failed to load blog post';
+            return audioContext;
         }
-    }
 
-    function formatDate(dateStr) {
-        const date = new Date(dateStr);
-        return date.toLocaleDateString('en-US', { 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-        });
-    }
-      function handleTabChange(tab){
-        if(tab === "investments"){
-            loadMarkdown("investments.md","investments-content");
-        }else if(tab === "tools"){
-            loadMarkdown("tools.md","tools-content");
-        }else if(tab === "blog"){
-            loadBlogIndex("blog-content");
+        function playNote(freq, time, duration, waveType) {
+            const ctx = initAudio();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            const filter = ctx.createBiquadFilter();
+
+            osc.type = waveType;
+            osc.frequency.setValueAtTime(freq, time);
+
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(2000, time);
+            filter.Q.setValueAtTime(1, time);
+
+            const volume = 0.08;
+            const attack = 0.01;
+            const decay = 0.05;
+            const sustain = 0.6;
+            const release = 0.1;
+
+            gain.gain.setValueAtTime(0, time);
+            gain.gain.linearRampToValueAtTime(volume, time + attack);
+            gain.gain.linearRampToValueAtTime(volume * sustain, time + attack + decay);
+            gain.gain.setValueAtTime(volume * sustain, time + duration - release);
+            gain.gain.linearRampToValueAtTime(0, time + duration);
+
+            osc.connect(filter);
+            filter.connect(gain);
+            gain.connect(ctx.destination);
+
+            osc.start(time);
+            osc.stop(time + duration + 0.1);
+
+            scheduledNotes.push({ osc, gain });
         }
-      }
 
-      function animateSidebarLines(){
-          const lines = document.querySelectorAll('.sidebar li, .sidebar h5');
-          lines.forEach((el, idx) => {
-              setTimeout(() => { el.style.opacity = '1'; }, idx * 80);
-          });
-      }
-      document.querySelectorAll('.tab-trigger').forEach(btn => {
-          btn.addEventListener('click', () => {
-              document.querySelectorAll('.tab-trigger').forEach(b => b.classList.remove('active'));
-              document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-              btn.classList.add('active');
-            const id = btn.dataset.tab;
-            document.getElementById(id).classList.add('active');
-            handleTabChange(id);
-        });
-      });
-      // sidebar resize
-      handleTabChange("investments");
-      animateSidebarLines();
-      const sidebar = document.querySelector('.sidebar');
-      const resizer = document.querySelector('.resizer');
-    let startX = 0;
-    let startWidth = 0;
-    function onMouseMove(e){
-        const delta = e.clientX - startX;
-        const width = Math.min(600, Math.max(250, startWidth + delta));
-        sidebar.style.width = width + 'px';
-    }
-    function onMouseUp(){
-        document.body.classList.remove('resizing');
-        document.removeEventListener('mousemove', onMouseMove);
-        document.removeEventListener('mouseup', onMouseUp);
-    }
-    resizer.addEventListener('mousedown', e => {
-        startX = e.clientX;
-        startWidth = sidebar.offsetWidth;
-        document.body.classList.add('resizing');
-        document.addEventListener('mousemove', onMouseMove);
-        document.addEventListener('mouseup', onMouseUp);
-    });
-    // theme toggle
-    const themeToggleBtn = document.getElementById('theme-toggle');
-    const themeIcon = document.getElementById('theme-toggle-icon');
-    function updateThemeIcon(){
-        if(document.body.classList.contains('dark-mode')){
-            themeIcon.setAttribute('class', 'lucide lucide-sun-icon lucide-sun');
-            themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
-        } else {
-            themeIcon.setAttribute('class', 'lucide lucide-moon-icon lucide-moon');
-            themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/>';
+        function scheduleNote() {
+            const track = tracks[currentIndex];
+            const secondsPerBeat = 60.0 / track.bpm;
+            const noteDuration = secondsPerBeat * 0.8;
+
+            while (nextNoteTime < audioContext.currentTime + 0.1) {
+                const note = track.notes[currentNote];
+                if (note !== '-' && noteFreq[note]) {
+                    playNote(noteFreq[note], nextNoteTime, noteDuration, track.wave);
+                }
+                nextNoteTime += secondsPerBeat;
+                currentNote = (currentNote + 1) % track.notes.length;
+            }
         }
-    }
-    themeToggleBtn.addEventListener('click', () => {
-        document.body.classList.toggle('dark-mode');
-        updateThemeIcon();
-    });
-    updateThemeIcon();
 
-    // --- GitHub commit info updater ---
-    async function fetchLatestCommit() {
-        try {
-            // Get the latest commit from the main branch
-            const repo = "bentossell/bentossell";
-            const commitApi = `https://api.github.com/repos/${repo}/commits?per_page=1&sha=main`;
-            const resp = await fetch(commitApi, { headers: { 'Accept': 'application/vnd.github+json' }});
-            if (!resp.ok) throw new Error("Failed to fetch commit info");
-            const [commit] = await resp.json();
+        function scheduler() {
+            if (!isPlaying) return;
+            scheduleNote();
+            timerID = setTimeout(scheduler, 25);
+        }
 
-            // Get stats for the latest commit
-            const commitSha = commit.sha;
-            const commitUrl = commit.html_url;
-            const author = commit.commit.author.name;
-            const date = new Date(commit.commit.author.date);
-            const dateStr = date.toLocaleDateString(undefined, { day: "2-digit", month: "short" });
-            
-            // Get the commit stats (additions/deletions)
-            const detailResp = await fetch(`https://api.github.com/repos/${repo}/commits/${commitSha}`, {
-                headers: { 'Accept': 'application/vnd.github+json' }
+        function startPlayback() {
+            if (isPlaying) return;
+            initAudio();
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+            isPlaying = true;
+            currentNote = 0;
+            nextNoteTime = audioContext.currentTime;
+            scheduler();
+            updateUI();
+        }
+
+        function stopPlayback() {
+            isPlaying = false;
+            if (timerID) {
+                clearTimeout(timerID);
+                timerID = null;
+            }
+            scheduledNotes.forEach(n => {
+                try {
+                    n.osc.stop();
+                    n.osc.disconnect();
+                    n.gain.disconnect();
+                } catch(e) {}
             });
-            if (!detailResp.ok) throw new Error("Failed to fetch commit details");
-            const details = await detailResp.json();
-            const additions = details.stats.additions;
-            const deletions = details.stats.deletions;
-
-            // Compose the commit info string
-            // Example: "17 May bentossell/bentossell +4 -0"
-            const info = `${dateStr} <a href="${commitUrl}" target="_blank" rel="noopener">${repo}</a> +${additions} -${deletions}`;
-            document.getElementById("commit-info").innerHTML = info;
-        } catch (err) {
-            document.getElementById("commit-info").textContent = "cant load commit info";
-        }
-    }
-    fetchLatestCommit();
-    setInterval(fetchLatestCommit, 15 * 60 * 1000); // Update every 15 minutes
-
-    // --- Keyboard shortcuts and command palette ---
-    const commandPalette = document.getElementById('command-palette');
-    const closeCommandPaletteBtn = document.getElementById('close-command-palette');
-
-    // Toggle command palette visibility
-    function toggleCommandPalette() {
-        commandPalette.classList.toggle('active');
-    }
-
-    // Close command palette
-    function closeCommandPalette() {
-        commandPalette.classList.remove('active');
-    }
-
-    // Navigate to a specific tab
-    function navigateToTab(tabId) {
-        const tabTrigger = document.querySelector(`.tab-trigger[data-tab="${tabId}"]`);
-        if (tabTrigger) {
-            tabTrigger.click();
-        }
-    }
-
-    // Close button event listener
-    closeCommandPaletteBtn.addEventListener('click', closeCommandPalette);
-
-    // Global keyboard event listener
-    document.addEventListener('keydown', function(event) {
-        // Skip if user is typing in an input or textarea
-        if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
-            return;
+            scheduledNotes = [];
+            updateUI();
         }
 
-        // Command+K (or Ctrl+K) to toggle command palette
-        if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
-            event.preventDefault();
-            toggleCommandPalette();
-        } 
-        // Escape to close command palette
-        else if (event.key === 'Escape') {
-            closeCommandPalette();
-        } 
-        // 'i' to navigate to investments tab
-        else if (event.key === 'i' && !commandPalette.classList.contains('active')) {
-            navigateToTab('investments');
-        } 
-        // 't' to navigate to tools tab
-        else if (event.key === 't' && !commandPalette.classList.contains('active')) {
-            navigateToTab('tools');
+        function updateUI() {
+            titleEl.textContent = tracks[currentIndex].title;
+            playToggle.classList.toggle('playing', isPlaying);
         }
-        // 'b' to navigate to blog tab
-        else if (event.key === 'b' && !commandPalette.classList.contains('active')) {
-            navigateToTab('blog');
-        }
-    });
 
+        function nextTrack() {
+            const wasPlaying = isPlaying;
+            stopPlayback();
+            currentIndex = (currentIndex + 1) % tracks.length;
+            updateUI();
+            if (wasPlaying) startPlayback();
+        }
+
+        function prevTrack() {
+            const wasPlaying = isPlaying;
+            stopPlayback();
+            currentIndex = (currentIndex - 1 + tracks.length) % tracks.length;
+            updateUI();
+            if (wasPlaying) startPlayback();
+        }
+
+        playToggle.addEventListener('click', () => {
+            if (isPlaying) stopPlayback();
+            else startPlayback();
+        });
+
+        nextBtn.addEventListener('click', nextTrack);
+        prevBtn.addEventListener('click', prevTrack);
+
+        updateUI();
+    })();
     </script>
 </body>
 </html>
