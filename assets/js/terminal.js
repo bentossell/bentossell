@@ -469,6 +469,25 @@ const commands = {
     desc: "alias for start",
     fn: () => commands.start.fn(),
   },
+  leaderboard: {
+    desc: "space invaders high scores",
+    fn: () => {
+      const scores = JSON.parse(localStorage.getItem('invaders-leaderboard') || '[]');
+      if (scores.length === 0) {
+        return '\n  <span class="muted">no scores yet. type</span> <span class="cmd">start</span> <span class="muted">to play!</span>\n';
+      }
+      let output = '\n  <span class="bold white">LEADERBOARD</span>\n\n';
+      scores.slice(0, 10).forEach((entry, i) => {
+        const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '  ';
+        output += `  ${medal} <span class="accent">${String(i + 1).padStart(2)}</span>. ${entry.name.padEnd(10)} <span class="success">${String(entry.score).padStart(5)}</span>\n`;
+      });
+      return output;
+    },
+  },
+  scores: {
+    desc: "alias for leaderboard",
+    fn: () => commands.leaderboard.fn(),
+  },
 };
 
 // Space Invaders Game
@@ -505,6 +524,9 @@ function startSpaceInvaders() {
     score: 0,
     gameOver: false,
     won: false,
+    enteringName: false,
+    playerName: '',
+    saved: false,
   };
   
   // Create aliens - fit within borders
@@ -533,7 +555,24 @@ function startSpaceInvaders() {
     }
     
     if (gameState.gameOver) {
-      if (e.key === "Enter") {
+      if (gameState.enteringName) {
+        e.preventDefault();
+        if (e.key === "Enter" && gameState.playerName.trim()) {
+          saveScore(gameState.playerName.trim(), gameState.score);
+          gameState.saved = true;
+          gameState.enteringName = false;
+          renderGame(output);
+        } else if (e.key === "Backspace") {
+          gameState.playerName = gameState.playerName.slice(0, -1);
+          renderGame(output);
+        } else if (e.key.length === 1 && gameState.playerName.length < 10) {
+          gameState.playerName += e.key;
+          renderGame(output);
+        }
+      } else if (!gameState.saved && e.key !== "Escape") {
+        gameState.enteringName = true;
+        renderGame(output);
+      } else if (e.key === "Enter") {
         endGame(savedContent, inputLine, gameKeyHandler);
       }
       return;
@@ -555,12 +594,12 @@ function startSpaceInvaders() {
   
   document.addEventListener("keydown", gameKeyHandler);
   
-  // Game loop - 150ms for smoother pace
+  // Game loop
   gameInterval = setInterval(() => {
     if (!gameActive) return;
     updateGame();
     renderGame(output);
-  }, 150);
+  }, 120);
 }
 
 function updateGame() {
@@ -710,11 +749,27 @@ function renderGame(output) {
     } else {
       html += '<span class="error">*** GAME OVER ***</span>';
     }
-    html += '\n<span class="muted">Press ENTER to exit</span>';
+    
+    if (g.enteringName) {
+      html += `\n\n<span class="bold white">Enter your name:</span> <span class="accent">${g.playerName}</span><span class="cursor">_</span>`;
+      html += '\n<span class="muted">Press ENTER to save</span>';
+    } else if (g.saved) {
+      html += `\n\n<span class="success">Score saved!</span>`;
+      html += '\n<span class="muted">Press ENTER to exit, or type</span> <span class="cmd">leaderboard</span>';
+    } else {
+      html += '\n<span class="muted">Press any key to save score, ESC to skip</span>';
+    }
   }
   
   html += '</pre>';
   output.innerHTML = html;
+}
+
+function saveScore(name, score) {
+  const scores = JSON.parse(localStorage.getItem('invaders-leaderboard') || '[]');
+  scores.push({ name, score, date: new Date().toISOString() });
+  scores.sort((a, b) => b.score - a.score);
+  localStorage.setItem('invaders-leaderboard', JSON.stringify(scores.slice(0, 50)));
 }
 
 function endGame(savedContent, inputLine, keyHandler) {
