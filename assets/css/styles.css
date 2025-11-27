@@ -164,12 +164,14 @@
 }
 
 /* ===== BASE STYLES ===== */
-html, body {
+html {
     height: 100%;
-    overflow: hidden;
 }
 
 body {
+    /* Use dvh for mobile browsers to account for address bar; fallback to vh */
+    min-height: 100vh;
+    min-height: 100dvh;
     font-family: var(--font-mono);
     font-size: var(--font-size);
     line-height: var(--line-height);
@@ -177,6 +179,9 @@ body {
     color: var(--text-primary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Allow mobile browsers to detect scroll for address bar hide */
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 a {
@@ -196,7 +201,9 @@ a:hover {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    /* Use dvh for proper mobile viewport handling; fallback to vh */
     min-height: 100vh;
+    min-height: 100dvh;
     padding: var(--space-lg);
     background: var(--bg-primary);
 }
@@ -204,7 +211,9 @@ a:hover {
 .terminal {
     width: 100%;
     max-width: 1000px;
+    /* Use dvh for proper mobile viewport handling; fallback to vh */
     height: 80vh;
+    height: 80dvh;
     max-height: 700px;
     display: flex;
     flex-direction: column;
@@ -596,7 +605,9 @@ a:hover {
     }
     
     .terminal {
+        /* Use dvh for mobile address bar; fallback to vh */
         height: 85vh;
+        height: 85dvh;
         max-height: none;
         border-radius: var(--radius-md);
     }
@@ -635,7 +646,9 @@ a:hover {
     }
     
     .terminal {
+        /* Use dvh for mobile address bar; fallback to vh */
         height: 90vh;
+        height: 90dvh;
         border-radius: var(--radius-sm);
     }
     
