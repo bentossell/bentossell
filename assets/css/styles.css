@@ -676,6 +676,10 @@ a:hover {
     .status-left {
         display: none;
     }
+    
+    #command-input {
+        font-size: 16px; /* Prevents mobile browser zoom on focus */
+    }
 }
 
 /* ===== ACCESSIBILITY ===== */
