@@ -458,7 +458,270 @@ const commands = {
 `;
     },
   },
+  start: {
+    desc: "start space invaders",
+    fn: () => {
+      startSpaceInvaders();
+      return '';
+    },
+  },
+  invaders: {
+    desc: "alias for start",
+    fn: () => commands.start.fn(),
+  },
 };
+
+// Space Invaders Game
+let gameActive = false;
+let gameInterval = null;
+let gameState = null;
+
+function startSpaceInvaders() {
+  const terminalBody = document.getElementById("terminal-body");
+  const output = document.getElementById("output");
+  const inputLine = document.querySelector(".terminal-input");
+  const commandInput = document.getElementById("command-input");
+  
+  // Hide input and save terminal content
+  const savedContent = output.innerHTML;
+  inputLine.style.display = "none";
+  
+  // Calculate game dimensions based on terminal size
+  const charWidth = 8;
+  const charHeight = 16;
+  const width = Math.floor(terminalBody.clientWidth / charWidth) - 4;
+  const height = Math.floor(terminalBody.clientHeight / charHeight) - 4;
+  
+  // Initialize game state
+  gameState = {
+    width: Math.min(width, 60),
+    height: Math.min(height, 25),
+    player: { x: Math.floor(Math.min(width, 60) / 2), lives: 3 },
+    bullets: [],
+    aliens: [],
+    alienBullets: [],
+    alienDirection: 1,
+    alienMoveCounter: 0,
+    score: 0,
+    gameOver: false,
+    won: false,
+  };
+  
+  // Create aliens
+  const alienRows = 4;
+  const alienCols = Math.floor(gameState.width / 4);
+  for (let row = 0; row < alienRows; row++) {
+    for (let col = 0; col < alienCols; col++) {
+      gameState.aliens.push({
+        x: col * 4 + 2,
+        y: row * 2 + 2,
+        type: row === 0 ? 2 : row === 1 ? 1 : 0,
+      });
+    }
+  }
+  
+  gameActive = true;
+  
+  // Game key handler
+  const gameKeyHandler = (e) => {
+    if (!gameActive) return;
+    
+    if (e.key === "Escape") {
+      endGame(savedContent, inputLine, gameKeyHandler);
+      return;
+    }
+    
+    if (gameState.gameOver) {
+      if (e.key === "Enter") {
+        endGame(savedContent, inputLine, gameKeyHandler);
+      }
+      return;
+    }
+    
+    if (e.key === "ArrowLeft" || e.key === "a") {
+      e.preventDefault();
+      gameState.player.x = Math.max(1, gameState.player.x - 1);
+    } else if (e.key === "ArrowRight" || e.key === "d") {
+      e.preventDefault();
+      gameState.player.x = Math.min(gameState.width - 2, gameState.player.x + 1);
+    } else if (e.key === " " || e.key === "ArrowUp") {
+      e.preventDefault();
+      if (gameState.bullets.length < 3) {
+        gameState.bullets.push({ x: gameState.player.x, y: gameState.height - 3 });
+      }
+    }
+  };
+  
+  document.addEventListener("keydown", gameKeyHandler);
+  
+  // Game loop
+  gameInterval = setInterval(() => {
+    if (!gameActive) return;
+    updateGame();
+    renderGame(output);
+  }, 100);
+}
+
+function updateGame() {
+  if (gameState.gameOver) return;
+  
+  // Move bullets up
+  gameState.bullets = gameState.bullets.filter(b => {
+    b.y--;
+    return b.y > 0;
+  });
+  
+  // Move alien bullets down
+  gameState.alienBullets = gameState.alienBullets.filter(b => {
+    b.y++;
+    return b.y < gameState.height - 1;
+  });
+  
+  // Check bullet-alien collisions
+  gameState.bullets.forEach((bullet, bi) => {
+    gameState.aliens.forEach((alien, ai) => {
+      if (Math.abs(bullet.x - alien.x) <= 1 && Math.abs(bullet.y - alien.y) <= 1) {
+        gameState.bullets.splice(bi, 1);
+        gameState.aliens.splice(ai, 1);
+        gameState.score += (alien.type + 1) * 10;
+      }
+    });
+  });
+  
+  // Check alien bullet-player collision
+  gameState.alienBullets.forEach((bullet, i) => {
+    if (Math.abs(bullet.x - gameState.player.x) <= 1 && bullet.y >= gameState.height - 2) {
+      gameState.alienBullets.splice(i, 1);
+      gameState.player.lives--;
+      if (gameState.player.lives <= 0) {
+        gameState.gameOver = true;
+      }
+    }
+  });
+  
+  // Move aliens
+  gameState.alienMoveCounter++;
+  if (gameState.alienMoveCounter >= 5) {
+    gameState.alienMoveCounter = 0;
+    
+    let hitEdge = false;
+    gameState.aliens.forEach(alien => {
+      alien.x += gameState.alienDirection;
+      if (alien.x <= 1 || alien.x >= gameState.width - 2) hitEdge = true;
+    });
+    
+    if (hitEdge) {
+      gameState.alienDirection *= -1;
+      gameState.aliens.forEach(alien => {
+        alien.y++;
+        if (alien.y >= gameState.height - 3) {
+          gameState.gameOver = true;
+        }
+      });
+    }
+    
+    // Random alien shooting
+    if (gameState.aliens.length > 0 && Math.random() < 0.3) {
+      const shooter = gameState.aliens[Math.floor(Math.random() * gameState.aliens.length)];
+      gameState.alienBullets.push({ x: shooter.x, y: shooter.y + 1 });
+    }
+  }
+  
+  // Check win condition
+  if (gameState.aliens.length === 0) {
+    gameState.gameOver = true;
+    gameState.won = true;
+  }
+}
+
+function renderGame(output) {
+  const g = gameState;
+  let screen = [];
+  
+  // Initialize empty screen
+  for (let y = 0; y < g.height; y++) {
+    screen[y] = new Array(g.width).fill(' ');
+  }
+  
+  // Draw borders
+  for (let x = 0; x < g.width; x++) {
+    screen[0][x] = '─';
+    screen[g.height - 1][x] = '─';
+  }
+  for (let y = 0; y < g.height; y++) {
+    screen[y][0] = '│';
+    screen[y][g.width - 1] = '│';
+  }
+  screen[0][0] = '┌';
+  screen[0][g.width - 1] = '┐';
+  screen[g.height - 1][0] = '└';
+  screen[g.height - 1][g.width - 1] = '┘';
+  
+  // Draw aliens
+  const alienChars = ['👾', '◈', '◆'];
+  g.aliens.forEach(alien => {
+    if (alien.y > 0 && alien.y < g.height - 1 && alien.x > 0 && alien.x < g.width - 1) {
+      screen[alien.y][alien.x] = alienChars[alien.type] || '◆';
+    }
+  });
+  
+  // Draw bullets
+  g.bullets.forEach(b => {
+    if (b.y > 0 && b.y < g.height - 1 && b.x > 0 && b.x < g.width - 1) {
+      screen[b.y][b.x] = '│';
+    }
+  });
+  
+  // Draw alien bullets
+  g.alienBullets.forEach(b => {
+    if (b.y > 0 && b.y < g.height - 1 && b.x > 0 && b.x < g.width - 1) {
+      screen[b.y][b.x] = '·';
+    }
+  });
+  
+  // Draw player
+  if (g.player.x > 0 && g.player.x < g.width - 1) {
+    screen[g.height - 2][g.player.x] = '▲';
+    if (g.player.x > 1) screen[g.height - 2][g.player.x - 1] = '◄';
+    if (g.player.x < g.width - 2) screen[g.height - 2][g.player.x + 1] = '►';
+  }
+  
+  // Build output string
+  let html = '<pre style="line-height: 1.2; margin: 0;">';
+  html += `<span class="accent">SPACE INVADERS</span>  Score: <span class="success">${g.score}</span>  Lives: <span class="error">${'♥'.repeat(g.player.lives)}</span>\n\n`;
+  
+  for (let y = 0; y < g.height; y++) {
+    html += screen[y].join('') + '\n';
+  }
+  
+  html += '\n<span class="muted">← → move  SPACE shoot  ESC quit</span>';
+  
+  if (g.gameOver) {
+    html += '\n\n';
+    if (g.won) {
+      html += '<span class="success">*** YOU WIN! ***</span>';
+    } else {
+      html += '<span class="error">*** GAME OVER ***</span>';
+    }
+    html += '\n<span class="muted">Press ENTER to exit</span>';
+  }
+  
+  html += '</pre>';
+  output.innerHTML = html;
+}
+
+function endGame(savedContent, inputLine, keyHandler) {
+  gameActive = false;
+  if (gameInterval) {
+    clearInterval(gameInterval);
+    gameInterval = null;
+  }
+  document.removeEventListener("keydown", keyHandler);
+  document.getElementById("output").innerHTML = savedContent;
+  inputLine.style.display = "flex";
+  document.getElementById("command-input").focus();
+  appendOutput('\n  <span class="muted">game ended. score: ' + (gameState?.score || 0) + '</span>\n\n');
+}
 
 function getAge() {
   const birth = new Date(1990, 7, 21);
