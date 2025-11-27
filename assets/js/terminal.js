@@ -507,13 +507,14 @@ function startSpaceInvaders() {
     won: false,
   };
   
-  // Create aliens
+  // Create aliens - fit within borders
   const alienRows = 4;
-  const alienCols = Math.floor(gameState.width / 4);
+  const alienCols = Math.min(Math.floor((gameState.width - 6) / 4), 10);
+  const startX = 3;
   for (let row = 0; row < alienRows; row++) {
     for (let col = 0; col < alienCols; col++) {
       gameState.aliens.push({
-        x: col * 4 + 2,
+        x: col * 4 + startX,
         y: row * 2 + 2,
         type: row === 0 ? 2 : row === 1 ? 1 : 0,
       });
@@ -554,12 +555,12 @@ function startSpaceInvaders() {
   
   document.addEventListener("keydown", gameKeyHandler);
   
-  // Game loop
+  // Game loop - 150ms for smoother pace
   gameInterval = setInterval(() => {
     if (!gameActive) return;
     updateGame();
     renderGame(output);
-  }, 100);
+  }, 150);
 }
 
 function updateGame() {
@@ -601,27 +602,33 @@ function updateGame() {
   
   // Move aliens
   gameState.alienMoveCounter++;
-  if (gameState.alienMoveCounter >= 5) {
+  if (gameState.alienMoveCounter >= 8) {
     gameState.alienMoveCounter = 0;
     
+    // Check if any alien would hit edge
     let hitEdge = false;
     gameState.aliens.forEach(alien => {
-      alien.x += gameState.alienDirection;
-      if (alien.x <= 1 || alien.x >= gameState.width - 2) hitEdge = true;
+      if (alien.x + gameState.alienDirection <= 2 || alien.x + gameState.alienDirection >= gameState.width - 3) {
+        hitEdge = true;
+      }
     });
     
     if (hitEdge) {
       gameState.alienDirection *= -1;
       gameState.aliens.forEach(alien => {
         alien.y++;
-        if (alien.y >= gameState.height - 3) {
+        if (alien.y >= gameState.height - 4) {
           gameState.gameOver = true;
         }
+      });
+    } else {
+      gameState.aliens.forEach(alien => {
+        alien.x += gameState.alienDirection;
       });
     }
     
     // Random alien shooting
-    if (gameState.aliens.length > 0 && Math.random() < 0.3) {
+    if (gameState.aliens.length > 0 && Math.random() < 0.2) {
       const shooter = gameState.aliens[Math.floor(Math.random() * gameState.aliens.length)];
       gameState.alienBullets.push({ x: shooter.x, y: shooter.y + 1 });
     }
