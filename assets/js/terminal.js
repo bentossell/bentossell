@@ -458,35 +458,56 @@ const commands = {
 `;
     },
   },
-  start: {
-    desc: "start space invaders",
+  game: {
+    desc: "list available games",
+    fn: () => {
+      return `
+  <span class="bold white">GAMES</span>
+
+  <span class="cmd">space</span>       space invaders
+  <span class="cmd">snake</span>       classic snake
+
+  <span class="muted">type</span> <span class="cmd">leaderboard [game]</span> <span class="muted">to see high scores</span>
+`;
+    },
+  },
+  games: {
+    desc: "alias for game",
+    fn: () => commands.game.fn(),
+  },
+  space: {
+    desc: "play space invaders",
     fn: () => {
       startSpaceInvaders();
       return '';
     },
   },
-  invaders: {
-    desc: "alias for start",
-    fn: () => commands.start.fn(),
+  snake: {
+    desc: "play snake",
+    fn: () => {
+      startSnakeGame();
+      return '';
+    },
   },
   leaderboard: {
-    desc: "space invaders high scores",
-    fn: () => {
-      const scores = JSON.parse(localStorage.getItem('invaders-leaderboard') || '[]');
-      if (scores.length === 0) {
-        return '\n  <span class="muted">no scores yet. type</span> <span class="cmd">start</span> <span class="muted">to play!</span>\n';
+    desc: "game high scores",
+    fn: (args) => {
+      const game = args && args[0] ? args[0].toLowerCase() : null;
+      if (game === 'space') {
+        return showLeaderboard('space-invaders', 'SPACE INVADERS');
+      } else if (game === 'snake') {
+        return showLeaderboard('snake', 'SNAKE');
+      } else {
+        let output = '\n  <span class="bold white">LEADERBOARDS</span>\n\n';
+        output += '  <span class="cmd">leaderboard space</span>  space invaders scores\n';
+        output += '  <span class="cmd">leaderboard snake</span>  snake scores\n';
+        return output;
       }
-      let output = '\n  <span class="bold white">LEADERBOARD</span>\n\n';
-      scores.slice(0, 10).forEach((entry, i) => {
-        const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '  ';
-        output += `  ${medal} <span class="accent">${String(i + 1).padStart(2)}</span>. ${entry.name.padEnd(10)} <span class="success">${String(entry.score).padStart(5)}</span>\n`;
-      });
-      return output;
     },
   },
   scores: {
     desc: "alias for leaderboard",
-    fn: () => commands.leaderboard.fn(),
+    fn: (args) => commands.leaderboard.fn(args),
   },
 };
 
@@ -703,11 +724,11 @@ function renderGame(output) {
   screen[g.height - 1][0] = '└';
   screen[g.height - 1][g.width - 1] = '┘';
   
-  // Draw aliens
-  const alienChars = ['👾', '◈', '◆'];
+  // Draw aliens - use ASCII chars for consistent width
+  const alienChars = ['W', 'M', 'X'];
   g.aliens.forEach(alien => {
     if (alien.y > 0 && alien.y < g.height - 1 && alien.x > 0 && alien.x < g.width - 1) {
-      screen[alien.y][alien.x] = alienChars[alien.type] || '◆';
+      screen[alien.y][alien.x] = alienChars[alien.type] || 'X';
     }
   });
   
@@ -765,11 +786,26 @@ function renderGame(output) {
   output.innerHTML = html;
 }
 
-function saveScore(name, score) {
-  const scores = JSON.parse(localStorage.getItem('invaders-leaderboard') || '[]');
+function saveScore(name, score, game = 'space-invaders') {
+  const key = `leaderboard-${game}`;
+  const scores = JSON.parse(localStorage.getItem(key) || '[]');
   scores.push({ name, score, date: new Date().toISOString() });
   scores.sort((a, b) => b.score - a.score);
-  localStorage.setItem('invaders-leaderboard', JSON.stringify(scores.slice(0, 50)));
+  localStorage.setItem(key, JSON.stringify(scores.slice(0, 50)));
+}
+
+function showLeaderboard(game, title) {
+  const key = `leaderboard-${game}`;
+  const scores = JSON.parse(localStorage.getItem(key) || '[]');
+  if (scores.length === 0) {
+    return `\n  <span class="muted">no ${title.toLowerCase()} scores yet.</span>\n`;
+  }
+  let output = `\n  <span class="bold white">${title} LEADERBOARD</span>\n\n`;
+  scores.slice(0, 10).forEach((entry, i) => {
+    const medal = i === 0 ? '1.' : i === 1 ? '2.' : i === 2 ? '3.' : `${i + 1}.`;
+    output += `  <span class="accent">${medal.padStart(3)}</span> ${entry.name.padEnd(10)} <span class="success">${String(entry.score).padStart(5)}</span>\n`;
+  });
+  return output;
 }
 
 function endGame(savedContent, inputLine, keyHandler) {
@@ -783,6 +819,213 @@ function endGame(savedContent, inputLine, keyHandler) {
   inputLine.style.display = "flex";
   document.getElementById("command-input").focus();
   appendOutput('\n  <span class="muted">game ended. score: ' + (gameState?.score || 0) + '</span>\n\n');
+}
+
+// Snake Game
+let snakeState = null;
+
+function startSnakeGame() {
+  const terminalBody = document.getElementById("terminal-body");
+  const output = document.getElementById("output");
+  const inputLine = document.querySelector(".terminal-input");
+  
+  const savedContent = output.innerHTML;
+  inputLine.style.display = "none";
+  
+  const charWidth = 8;
+  const charHeight = 16;
+  const width = Math.floor(terminalBody.clientWidth / charWidth) - 4;
+  const height = Math.floor(terminalBody.clientHeight / charHeight) - 6;
+  
+  snakeState = {
+    width: Math.min(width, 50),
+    height: Math.min(height, 20),
+    snake: [{ x: Math.floor(Math.min(width, 50) / 2), y: Math.floor(Math.min(height, 20) / 2) }],
+    direction: { x: 1, y: 0 },
+    nextDirection: { x: 1, y: 0 },
+    food: null,
+    score: 0,
+    gameOver: false,
+    enteringName: false,
+    playerName: '',
+    saved: false,
+  };
+  
+  spawnFood();
+  gameActive = true;
+  
+  const snakeKeyHandler = (e) => {
+    if (!gameActive) return;
+    
+    if (e.key === "Escape") {
+      endSnakeGame(savedContent, inputLine, snakeKeyHandler);
+      return;
+    }
+    
+    if (snakeState.gameOver) {
+      if (snakeState.enteringName) {
+        e.preventDefault();
+        if (e.key === "Enter" && snakeState.playerName.trim()) {
+          saveScore(snakeState.playerName.trim(), snakeState.score, 'snake');
+          snakeState.saved = true;
+          snakeState.enteringName = false;
+          renderSnake(output);
+        } else if (e.key === "Backspace") {
+          snakeState.playerName = snakeState.playerName.slice(0, -1);
+          renderSnake(output);
+        } else if (e.key.length === 1 && snakeState.playerName.length < 10) {
+          snakeState.playerName += e.key;
+          renderSnake(output);
+        }
+      } else if (!snakeState.saved && e.key !== "Escape") {
+        snakeState.enteringName = true;
+        renderSnake(output);
+      } else if (e.key === "Enter") {
+        endSnakeGame(savedContent, inputLine, snakeKeyHandler);
+      }
+      return;
+    }
+    
+    const s = snakeState;
+    if ((e.key === "ArrowUp" || e.key === "w") && s.direction.y === 0) {
+      e.preventDefault();
+      s.nextDirection = { x: 0, y: -1 };
+    } else if ((e.key === "ArrowDown" || e.key === "s") && s.direction.y === 0) {
+      e.preventDefault();
+      s.nextDirection = { x: 0, y: 1 };
+    } else if ((e.key === "ArrowLeft" || e.key === "a") && s.direction.x === 0) {
+      e.preventDefault();
+      s.nextDirection = { x: -1, y: 0 };
+    } else if ((e.key === "ArrowRight" || e.key === "d") && s.direction.x === 0) {
+      e.preventDefault();
+      s.nextDirection = { x: 1, y: 0 };
+    }
+  };
+  
+  document.addEventListener("keydown", snakeKeyHandler);
+  
+  gameInterval = setInterval(() => {
+    if (!gameActive) return;
+    updateSnake();
+    renderSnake(output);
+  }, 120);
+}
+
+function spawnFood() {
+  const s = snakeState;
+  let pos;
+  do {
+    pos = {
+      x: Math.floor(Math.random() * (s.width - 2)) + 1,
+      y: Math.floor(Math.random() * (s.height - 2)) + 1,
+    };
+  } while (s.snake.some(seg => seg.x === pos.x && seg.y === pos.y));
+  s.food = pos;
+}
+
+function updateSnake() {
+  const s = snakeState;
+  if (s.gameOver) return;
+  
+  s.direction = s.nextDirection;
+  const head = s.snake[0];
+  let newHead = { x: head.x + s.direction.x, y: head.y + s.direction.y };
+  
+  // Wrap through walls
+  if (newHead.x <= 0) newHead.x = s.width - 2;
+  if (newHead.x >= s.width - 1) newHead.x = 1;
+  if (newHead.y <= 0) newHead.y = s.height - 2;
+  if (newHead.y >= s.height - 1) newHead.y = 1;
+  
+  // Check self collision
+  if (s.snake.some(seg => seg.x === newHead.x && seg.y === newHead.y)) {
+    s.gameOver = true;
+    return;
+  }
+  
+  s.snake.unshift(newHead);
+  
+  // Check food
+  if (newHead.x === s.food.x && newHead.y === s.food.y) {
+    s.score += 10;
+    spawnFood();
+  } else {
+    s.snake.pop();
+  }
+}
+
+function renderSnake(output) {
+  const s = snakeState;
+  let screen = [];
+  
+  for (let y = 0; y < s.height; y++) {
+    screen[y] = new Array(s.width).fill(' ');
+  }
+  
+  // Draw borders
+  for (let x = 0; x < s.width; x++) {
+    screen[0][x] = '─';
+    screen[s.height - 1][x] = '─';
+  }
+  for (let y = 0; y < s.height; y++) {
+    screen[y][0] = '│';
+    screen[y][s.width - 1] = '│';
+  }
+  screen[0][0] = '┌';
+  screen[0][s.width - 1] = '┐';
+  screen[s.height - 1][0] = '└';
+  screen[s.height - 1][s.width - 1] = '┘';
+  
+  // Draw food
+  if (s.food && s.food.y > 0 && s.food.y < s.height - 1) {
+    screen[s.food.y][s.food.x] = '*';
+  }
+  
+  // Draw snake
+  s.snake.forEach((seg, i) => {
+    if (seg.y > 0 && seg.y < s.height - 1 && seg.x > 0 && seg.x < s.width - 1) {
+      screen[seg.y][seg.x] = i === 0 ? '@' : 'o';
+    }
+  });
+  
+  let html = '<pre style="line-height: 1.2; margin: 0;">';
+  html += `<span class="accent">SNAKE</span>  Score: <span class="success">${s.score}</span>  Length: ${s.snake.length}\n\n`;
+  
+  for (let y = 0; y < s.height; y++) {
+    html += screen[y].join('') + '\n';
+  }
+  
+  html += '\n<span class="muted">WASD/Arrows to move  ESC quit</span>';
+  
+  if (s.gameOver) {
+    html += '\n\n<span class="error">*** GAME OVER ***</span>';
+    
+    if (s.enteringName) {
+      html += `\n\n<span class="bold white">Enter your name:</span> <span class="accent">${s.playerName}</span><span class="cursor">_</span>`;
+      html += '\n<span class="muted">Press ENTER to save</span>';
+    } else if (s.saved) {
+      html += `\n\n<span class="success">Score saved!</span>`;
+      html += '\n<span class="muted">Press ENTER to exit</span>';
+    } else {
+      html += '\n<span class="muted">Press any key to save score, ESC to skip</span>';
+    }
+  }
+  
+  html += '</pre>';
+  output.innerHTML = html;
+}
+
+function endSnakeGame(savedContent, inputLine, keyHandler) {
+  gameActive = false;
+  if (gameInterval) {
+    clearInterval(gameInterval);
+    gameInterval = null;
+  }
+  document.removeEventListener("keydown", keyHandler);
+  document.getElementById("output").innerHTML = savedContent;
+  inputLine.style.display = "flex";
+  document.getElementById("command-input").focus();
+  appendOutput('\n  <span class="muted">game ended. score: ' + (snakeState?.score || 0) + '</span>\n\n');
 }
 
 function getAge() {
