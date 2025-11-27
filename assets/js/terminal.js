@@ -47,16 +47,29 @@ const commands = {
         "",
         '  <span class="bold white">Available Commands</span>',
         "",
-        '  <span class="cmd">help</span>          show this help message',
+        '  <span class="muted">--- about ---</span>',
         '  <span class="cmd">whoami</span>        who is ben tossell',
+        '  <span class="cmd">tldr</span>          ultra-short bio',
         '  <span class="cmd">now</span>           what im doing',
         '  <span class="cmd">prev</span>          previous work',
+        '  <span class="cmd">projects</span>      notable projects',
+        "",
+        '  <span class="muted">--- content ---</span>',
         '  <span class="cmd">investments</span>   my investments',
         '  <span class="cmd">tools</span>         tools i use daily',
         '  <span class="cmd">models</span>        ai models i use',
-        '  <span class="cmd">contact</span>       find me',
-        '  <span class="cmd">theme</span>         list available themes',
-        '  <span class="cmd">theme [name]</span>  switch theme',
+        '  <span class="cmd">search [term]</span> search site content',
+        "",
+        '  <span class="muted">--- contact ---</span>',
+        '  <span class="cmd">contact</span>       find me online',
+        '  <span class="cmd">lp</span>            interested in the fund',
+        '  <span class="cmd">pitch</span>         pitch your startup',
+        '  <span class="cmd">tweet</span>         tweet at me',
+        '  <span class="cmd">newsletter</span>    subscribe to ben\'s bites',
+        '  <span class="cmd">copy twitter</span>  copy handle to clipboard',
+        "",
+        '  <span class="muted">--- terminal ---</span>',
+        '  <span class="cmd">theme</span>         list/change themes',
         '  <span class="cmd">clear</span>         clear the terminal',
         '  <span class="cmd">music</span>         toggle music player',
         "",
@@ -196,6 +209,8 @@ const commands = {
   • <a href="https://pika.art" target="_blank" rel="noopener">pika</a> <span class="muted">[series A]</span>
   • <a href="https://crewai.com" target="_blank" rel="noopener">crewai</a> <span class="muted">[seed]</span>
   • <a href="https://julius.ai" target="_blank" rel="noopener">julius</a> <span class="muted">[pre-seed]</span>
+
+  <span class="muted">interested? type</span> <span class="cmd">lp</span> <span class="muted">or</span> <span class="cmd">pitch</span>
 `;
     },
   },
@@ -318,6 +333,122 @@ const commands = {
                     Shell: bash
                     Terminal: bentossell
 `,
+  },
+  lp: {
+    desc: "interested in the fund",
+    fn: () => {
+      window.open('mailto:ben.tossell@gmail.com?subject=Interested%20in%20the%20fund');
+      return '\n  <span class="success">opening email client...</span>\n';
+    },
+  },
+  pitch: {
+    desc: "pitch your startup",
+    fn: () => {
+      return `
+  <span class="bold white">pitch guidelines:</span>
+
+  <span class="muted">i'm looking for:</span>
+  • dev tools & infra only
+  • cli-first ideas preferred
+
+  <span class="muted">email format:</span> [stage], [tagline]
+  <span class="muted">example:</span> "Pre-seed, GitHub Copilot for databases"
+
+  <a href="mailto:ben.tossell@gmail.com?subject=%5Bstage%5D%2C%20%5Btagline%5D" target="_blank" rel="noopener">→ click here to send pitch</a>
+
+  <span class="muted">or type</span> <span class="cmd">pitch send</span> <span class="muted">to open email</span>
+`;
+    },
+  },
+  cal: {
+    desc: "book a call",
+    fn: () => '\n  <span class="muted">sorry, calls are tough for me.</span>\n  try <span class="cmd">lp</span> or <span class="cmd">pitch</span> to reach out via email instead.\n',
+  },
+  book: {
+    desc: "alias for cal",
+    fn: () => commands.cal.fn(),
+  },
+  tweet: {
+    desc: "tweet at me",
+    fn: () => {
+      window.open('https://twitter.com/intent/tweet?text=@bentossell%20');
+      return '\n  <span class="success">opening twitter...</span>\n';
+    },
+  },
+  copy: {
+    desc: "copy email or twitter handle",
+    fn: async (args) => {
+      if (!args || args.length === 0) {
+        return '\n  usage: <span class="cmd">copy email</span> or <span class="cmd">copy twitter</span>\n';
+      }
+      const what = args[0].toLowerCase();
+      if (what === 'email') {
+        await navigator.clipboard.writeText('ben.tossell@gmail.com');
+        return '\n  <span class="success">copied ben.tossell@gmail.com to clipboard</span>\n';
+      }
+      if (what === 'twitter' || what === 'x') {
+        await navigator.clipboard.writeText('@bentossell');
+        return '\n  <span class="success">copied @bentossell to clipboard</span>\n';
+      }
+      return '\n  <span class="error">unknown option: ' + what + '</span>\n  try: <span class="cmd">copy email</span> or <span class="cmd">copy twitter</span>\n';
+    },
+  },
+  newsletter: {
+    desc: "subscribe to ben's bites",
+    fn: () => {
+      window.open('https://bensbites.com', '_blank');
+      return '\n  <span class="success">opening ben\'s bites...</span>\n';
+    },
+  },
+  projects: {
+    desc: "notable projects",
+    fn: () => {
+      return `
+  <span class="bold white">projects:</span>
+
+  • <a href="https://archive.is/Ze3Ka" target="_blank" rel="noopener">makerpad</a> <span class="muted">['19-'21]</span> <span class="success">[acquired by zapier]</span>
+  • <a href="https://bensbites.com" target="_blank" rel="noopener">ben's bites</a> <span class="muted">['22-present]</span>
+  • <a href="https://github.com/bentossell/bentossell" target="_blank" rel="noopener">this website</a> <span class="muted">tui-style personal site</span> <span class="accent">[open source]</span>
+  • <a href="https://github.com/factory-ben/feed" target="_blank" rel="noopener">feed</a> <span class="muted">linear-style social tracker</span> <span class="accent">[open source]</span>
+`;
+    },
+  },
+  search: {
+    desc: "search site content",
+    fn: (args) => {
+      if (!args || args.length === 0) {
+        return '\n  usage: <span class="cmd">search [term]</span>\n  example: <span class="cmd">search supabase</span>\n';
+      }
+      const term = args.join(' ').toLowerCase();
+      const searchable = [
+        { cmd: 'whoami', keywords: ['ben', 'tossell', 'factory', 'devrel', 'investor', 'twin', 'dad', 'technical'] },
+        { cmd: 'investments', keywords: ['supabase', 'gamma', 'etched', 'scribe', 'factory', 'sf compute', 'flutterflow', 'wordware', 'pika', 'crewai', 'julius', 'invest', 'portfolio'] },
+        { cmd: 'tools', keywords: ['factory', 'github', 'linear', 'granola', 'ghostty', 'droid'] },
+        { cmd: 'projects', keywords: ['makerpad', 'zapier', 'bens bites', 'bensbites', 'feed', 'website', 'open source'] },
+        { cmd: 'now', keywords: ['baby', 'shipping', 'github', 'devtools', 'infra', 'newsletter'] },
+        { cmd: 'prev', keywords: ['makerpad', 'sequoia', 'a16z', 'scout', 'product hunt'] },
+        { cmd: 'models', keywords: ['opus', 'sonnet', 'gpt', 'codex', 'claude', 'ai', 'model'] },
+        { cmd: 'contact', keywords: ['twitter', 'linkedin', 'github', 'discord', 'email', 'social'] },
+      ];
+      const matches = searchable.filter(s => s.keywords.some(k => k.includes(term) || term.includes(k)));
+      if (matches.length === 0) {
+        return `\n  <span class="muted">no results for "${term}"</span>\n  try: investments, tools, projects, contact\n`;
+      }
+      let output = `\n  <span class="bold white">results for "${term}":</span>\n\n`;
+      matches.forEach(m => {
+        output += `  • type <span class="cmd">${m.cmd}</span>\n`;
+      });
+      return output;
+    },
+  },
+  tldr: {
+    desc: "ultra-short bio",
+    fn: () => {
+      return `
+  <span class="bold white">ben tossell</span> — head of devrel @ factory. investor in dev tools.
+  prev: founded makerpad (acq. zapier), sequoia/a16z scout.
+`;
+    },
   },
 };
 
