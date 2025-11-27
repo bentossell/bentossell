@@ -26,11 +26,92 @@ jobs:
       actions: read
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.ref || github.ref }}
 
-      - name: Run Droid Exec
-        uses: Factory-AI/droid-action@v1
-        with:
-          factory_api_key: ${{ secrets.FACTORY_API_KEY }}
+      - name: Setup git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Install Droid CLI
+        run: |
+          curl -fsSL https://cli.factory.ai/install.sh | sh
+          echo "$HOME/.factory/bin" >> $GITHUB_PATH
+
+      - name: Run Droid
+        env:
+          FACTORY_API_KEY: ${{ secrets.FACTORY_API_KEY }}
+          GH_TOKEN: ${{ github.token }}
+          COMMENT_BODY: ${{ github.event.comment.body }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          REVIEW_BODY: ${{ github.event.review.body }}
+          ISSUE_NUM: ${{ github.event.issue.number || github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+          IS_PR: ${{ github.event.pull_request.number != '' || github.event.issue.pull_request != null }}
+        run: |
+          # Determine the source text containing @droid
+          if [ -n "$COMMENT_BODY" ]; then
+            TEXT="$COMMENT_BODY"
+          elif [ -n "$REVIEW_BODY" ]; then
+            TEXT="$REVIEW_BODY"
+          elif [ -n "$ISSUE_BODY" ]; then
+            TEXT="$ISSUE_BODY"
+          else
+            TEXT="$PR_BODY"
+          fi
+
+          # Extract prompt after @droid (handles multiline)
+          PROMPT=$(echo "$TEXT" | sed 's/.*@droid//')
+
+          # Build prompt file directly using heredoc (handles multiline safely)
+          if [ "$IS_PR" = "true" ]; then
+            cat > prompt.txt << PROMPT_EOF
+          Repository: $REPO
+          Pull Request: #$ISSUE_NUM
+
+          Task:
+          $PROMPT
+
+          This is a PR - you can make file changes:
+          - Make the necessary code changes
+          - Commit them with a clear message
+          - The workflow will push them to the PR branch
+
+          If this is just a question:
+          - Use: gh pr comment $ISSUE_NUM --body "your response"
+          PROMPT_EOF
+          else
+            cat > prompt.txt << PROMPT_EOF
+          Repository: $REPO
+          Issue: #$ISSUE_NUM
+
+          Task:
+          $PROMPT
+
+          This is a regular issue - you CANNOT make file changes directly to main.
+
+          If the task requires code changes, you MUST:
+          1. Create a new branch: git checkout -b droid/issue-$ISSUE_NUM
+          2. Make the code changes and commit them with a clear message
+          3. Push the branch: git push -u origin droid/issue-$ISSUE_NUM
+          4. Create a PR: gh pr create --title "Fix: <description>" --body "Closes #$ISSUE_NUM"
+
+          For questions that don't require code changes:
+          - Use: gh issue comment $ISSUE_NUM --body "your response"
+          PROMPT_EOF
+          fi
+
+          $HOME/.factory/bin/droid exec --auto high -f prompt.txt
+
+      - name: Push changes to PR
+        if: success() && (github.event.pull_request.number != '' || github.event.issue.pull_request != null)
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            git add -A
+            git commit -m "Changes from @droid" || true
+            git push || true
+          fi
