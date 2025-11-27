@@ -23,7 +23,7 @@
                     <span class="title-btn minimize"></span>
                     <span class="title-btn maximize"></span>
                 </div>
-                <span class="title-text">ben@tossell ~ bash</span>
+                <span class="title-text">~/bentossell <a href="https://factory.ai" target="_blank" rel="noopener" class="title-link">droid</a></span>
                 <div class="title-actions">
                     <button class="help-btn" id="help-btn" aria-label="Show help">?</button>
                 </div>
@@ -32,7 +32,7 @@
                 <div id="output" role="log" aria-live="polite"></div>
             </div>
             <div class="terminal-input">
-                <span class="input-prompt">$</span>
+                <span class="input-prompt">&gt;</span>
                 <form id="command-form" autocomplete="off">
                     <input 
                         type="text" 
@@ -45,14 +45,26 @@
                     >
                 </form>
             </div>
+            <div class="terminal-status">
+                <div class="status-left">
+                    <span class="status-item" id="status-vibe">building things</span>
+                </div>
+                <div class="status-center">
+                    <span class="status-hint">shift+tab to cycle themes</span>
+                </div>
+                <div class="status-right">
+                    <span class="status-item" id="status-time">--:--</span>
+                    <span class="status-sep">|</span>
+                    <span class="status-item status-model" title="my default model atm">Opus 4.5</span>
+                </div>
+            </div>
         </div>
         
-        <div class="theme-switcher">
-            <button class="theme-btn active" data-theme="midnight">midnight</button>
-            <button class="theme-btn" data-theme="phosphor">phosphor</button>
-            <button class="theme-btn" data-theme="amber">amber</button>
-            <button class="theme-btn" data-theme="matrix">matrix</button>
-            <button class="theme-btn" data-theme="contrast">contrast</button>
+        <div class="command-shortcuts">
+            <button class="cmd-shortcut" data-cmd="whoami">whoami</button>
+            <button class="cmd-shortcut" data-cmd="now">now</button>
+            <button class="cmd-shortcut" data-cmd="investments">investments</button>
+            <button class="cmd-shortcut" data-cmd="tools">tools</button>
         </div>
     </div>
 
@@ -96,53 +108,67 @@
         const prevBtn = document.getElementById('music-prev');
 
         const noteFreq = {
-            'C2': 65.41, 'D2': 73.42, 'E2': 82.41, 'F2': 87.31, 'G2': 98.00, 'A2': 110.00, 'B2': 123.47,
-            'C3': 130.81, 'D3': 146.83, 'E3': 164.81, 'F3': 174.61, 'G3': 196.00, 'A3': 220.00, 'B3': 246.94,
-            'C4': 261.63, 'D4': 293.66, 'E4': 329.63, 'F4': 349.23, 'G4': 392.00, 'A4': 440.00, 'B4': 493.88,
-            'C5': 523.25, 'D5': 587.33, 'E5': 659.25, 'F5': 698.46, 'G5': 783.99, 'A5': 880.00, 'B5': 987.77,
+            'C2': 65.41, 'C#2': 69.30, 'D2': 73.42, 'D#2': 77.78, 'E2': 82.41, 'F2': 87.31, 'F#2': 92.50, 'G2': 98.00, 'G#2': 103.83, 'A2': 110.00, 'A#2': 116.54, 'B2': 123.47,
+            'C3': 130.81, 'C#3': 138.59, 'D3': 146.83, 'D#3': 155.56, 'E3': 164.81, 'F3': 174.61, 'F#3': 185.00, 'G3': 196.00, 'G#3': 207.65, 'A3': 220.00, 'A#3': 233.08, 'B3': 246.94,
+            'C4': 261.63, 'C#4': 277.18, 'D4': 293.66, 'D#4': 311.13, 'E4': 329.63, 'F4': 349.23, 'F#4': 369.99, 'G4': 392.00, 'G#4': 415.30, 'A4': 440.00, 'A#4': 466.16, 'B4': 493.88,
+            'C5': 523.25, 'C#5': 554.37, 'D5': 587.33, 'D#5': 622.25, 'E5': 659.25, 'F5': 698.46, 'F#5': 739.99, 'G5': 783.99, 'G#5': 830.61, 'A5': 880.00, 'A#5': 932.33, 'B5': 987.77,
             'C6': 1046.50
         };
 
+        // Tracks with proper tempos and note patterns (using eighth notes as base unit)
         const tracks = [
             {
                 title: 'Tetris Theme',
-                bpm: 140,
+                bpm: 300, // Eighth notes at this speed = 150 BPM quarter notes
                 wave: 'square',
                 notes: [
-                    'E4', 'B3', 'C4', 'D4', 'C4', 'B3', 'A3', '-', 'A3', 'C4', 'E4', 'D4', 'C4', 'B3', '-',
-                    'C4', 'D4', 'E4', 'C4', 'A3', 'A3', '-', '-'
+                    'E5', 'B4', 'C5', 'D5', 'C5', 'B4', 'A4', 'A4', 'A4', 'C5', 'E5', 'E5', 'D5', 'C5', 'B4', 'B4',
+                    'B4', 'C5', 'D5', 'D5', 'E5', 'E5', 'C5', 'C5', 'A4', 'A4', 'A4', 'A4', '-', '-', '-', '-',
+                    'D5', 'D5', 'F5', 'A5', 'A5', 'G5', 'F5', 'E5', 'E5', 'C5', 'E5', 'E5', 'D5', 'C5', 'B4', 'B4',
+                    'B4', 'C5', 'D5', 'D5', 'E5', 'E5', 'C5', 'C5', 'A4', 'A4', 'A4', 'A4', '-', '-', '-', '-'
                 ]
             },
             {
                 title: 'Mario Theme',
-                bpm: 180,
+                bpm: 400, // Fast sixteenth-note feel
                 wave: 'square',
                 notes: [
-                    'E4', 'E4', '-', 'E4', '-', 'C4', 'E4', '-', 'G4', '-', '-', '-', 'G3', '-', '-', '-'
+                    'E5', 'E5', '-', 'E5', '-', '-', 'C5', 'E5', '-', '-', 'G5', '-', '-', '-', '-', '-',
+                    'G4', '-', '-', '-', '-', '-', '-', '-',
+                    'C5', '-', '-', 'G4', '-', '-', 'E4', '-', '-', '-', 'A4', '-', '-', 'B4', '-', '-',
+                    'A#4', 'A4', '-', '-', 'G4', 'E5', 'G5', 'A5', '-', '-', 'F5', 'G5', '-', '-', 'E5', '-',
+                    '-', 'C5', 'D5', 'B4', '-', '-', '-', '-'
                 ]
             },
             {
                 title: 'Zelda Lullaby',
-                bpm: 90,
+                bpm: 160, // Gentle tempo
                 wave: 'triangle',
                 notes: [
-                    'B4', 'D5', 'A4', '-', 'G4', 'A4', '-', 'B4', 'D5', 'A4', '-', '-', '-', '-', '-', '-'
+                    'B4', '-', 'D5', 'D5', 'A4', 'A4', '-', '-', 'G4', '-', 'A4', '-', '-', '-',
+                    'B4', '-', 'D5', 'D5', 'A4', 'A4', '-', '-', '-', '-', '-', '-', '-', '-'
                 ]
             },
             {
                 title: 'Pac-Man',
-                bpm: 160,
+                bpm: 340, // Snappy arcade feel
                 wave: 'sine',
                 notes: [
-                    'B4', 'B5', 'F5', 'D5', 'B5', 'F5', 'D5', '-', 'C5', 'C6', 'G5', 'E5', 'C6', 'G5', 'E5', '-'
+                    'B4', 'B5', 'F#5', 'D#5', 'B5', 'F#5', 'D#5', '-',
+                    'C5', 'C6', 'G5', 'E5', 'C6', 'G5', 'E5', '-',
+                    'B4', 'B5', 'F#5', 'D#5', 'B5', 'F#5', 'D#5', '-',
+                    'D#5', 'E5', 'F5', 'F5', 'F#5', 'G5', 'G#5', 'A5'
                 ]
             },
             {
                 title: 'Space Invaders',
-                bpm: 120,
+                bpm: 220, // Menacing march
                 wave: 'sawtooth',
                 notes: [
-                    'E3', '-', 'D3', '-', 'E3', '-', 'D3', '-', 'C3', '-', 'D3', '-', 'E3', '-', '-', '-'
+                    'A2', '-', 'B2', '-', 'C3', '-', 'B2', '-',
+                    'A2', '-', 'B2', '-', 'C3', '-', 'B2', '-',
+                    'G#2', '-', 'A2', '-', 'A#2', '-', 'A2', '-',
+                    'G#2', '-', 'A2', '-', 'A#2', '-', 'B2', '-'
                 ]
             }
         ];

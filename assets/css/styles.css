@@ -203,7 +203,7 @@ a:hover {
 
 .terminal {
     width: 100%;
-    max-width: 800px;
+    max-width: 1000px;
     height: 80vh;
     max-height: 700px;
     display: flex;
@@ -250,6 +250,17 @@ a:hover {
     color: var(--text-secondary);
     flex: 1;
     text-align: center;
+}
+
+.title-link {
+    color: var(--accent);
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.title-link:hover {
+    color: var(--accent-hover);
+    text-decoration: underline;
 }
 
 .title-actions {
@@ -342,6 +353,15 @@ a:hover {
     font-weight: 600;
 }
 
+#output .white {
+    color: var(--text-primary);
+}
+
+#output .bold.white {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
 #output a {
     color: var(--link);
 }
@@ -354,6 +374,9 @@ a:hover {
     font-size: 10px;
     line-height: 1.1;
     letter-spacing: -0.5px;
+    white-space: pre;
+    overflow-x: auto;
+    display: block;
 }
 
 /* ===== INPUT LINE ===== */
@@ -406,15 +429,52 @@ a:hover {
     50% { opacity: 0; }
 }
 
-/* ===== THEME SWITCHER ===== */
-.theme-switcher {
+/* ===== TERMINAL STATUS BAR ===== */
+.terminal-status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-xs) var(--space-md);
+    background: var(--bg-tertiary);
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--text-muted);
+    user-select: none;
+}
+
+.status-left,
+.status-center,
+.status-right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.status-center {
+    color: var(--text-muted);
+}
+
+.status-hint {
+    opacity: 0.7;
+}
+
+.status-sep {
+    color: var(--border-strong);
+}
+
+.status-model {
+    color: var(--accent);
+}
+
+/* ===== COMMAND SHORTCUTS ===== */
+.command-shortcuts {
     display: flex;
     justify-content: center;
     gap: var(--space-sm);
     margin-top: var(--space-lg);
 }
 
-.theme-btn {
+.cmd-shortcut {
     padding: var(--space-xs) var(--space-md);
     background: transparent;
     border: 1px solid var(--border);
@@ -426,13 +486,14 @@ a:hover {
     transition: all 0.15s ease;
 }
 
-.theme-btn:hover {
+.cmd-shortcut:hover {
     background: var(--bg-hover);
     color: var(--text-primary);
     border-color: var(--border-strong);
 }
 
-.theme-btn.active {
+.cmd-shortcut:active,
+.cmd-shortcut.active {
     background: var(--accent);
     color: var(--bg-primary);
     border-color: var(--accent);
@@ -542,10 +603,20 @@ a:hover {
     
     .ascii-art {
         font-size: 8px;
+        white-space: pre;
+        overflow-x: auto;
     }
     
-    .theme-switcher {
+    .command-shortcuts {
         flex-wrap: wrap;
+    }
+    
+    .terminal-status {
+        font-size: 10px;
+    }
+    
+    .status-center {
+        display: none;
     }
     
     .music-player {
@@ -573,13 +644,24 @@ a:hover {
     }
     
     .ascii-art {
-        font-size: 6px;
+        font-size: 5px;
         letter-spacing: -1px;
+        white-space: pre;
+        overflow-x: auto;
     }
     
-    .theme-btn {
+    .cmd-shortcut {
         padding: var(--space-xs) var(--space-sm);
         font-size: 11px;
+    }
+    
+    .terminal-status {
+        font-size: 9px;
+        padding: var(--space-xs) var(--space-sm);
+    }
+    
+    .status-left {
+        display: none;
     }
 }
 
@@ -595,7 +677,7 @@ a:hover {
     outline: none;
 }
 
-.theme-btn:focus-visible,
+.cmd-shortcut:focus-visible,
 .help-btn:focus-visible,
 .music-btn:focus-visible {
     outline: 2px solid var(--accent);
