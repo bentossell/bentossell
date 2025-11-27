@@ -564,13 +564,24 @@ function getCompletions(partial) {
   return cmdNames.filter((c) => c.startsWith(partial.toLowerCase()));
 }
 
+async function fetchLatestPR() {
+  try {
+    const res = await fetch('https://api.github.com/repos/bentossell/bentossell/pulls?state=closed&sort=updated&direction=desc&per_page=1');
+    const prs = await res.json();
+    const merged = prs.find(pr => pr.merged_at);
+    if (merged) {
+      return { number: merged.number, title: merged.title, merged_at: merged.merged_at };
+    }
+  } catch (e) {}
+  return null;
+}
+
 async function boot() {
   const output = document.getElementById("output");
   const lines = [
     "initializing terminal...",
     "loading modules... done",
     "connecting to ben.tossell... connected",
-    "",
   ];
 
   for (const line of lines) {
@@ -578,6 +589,16 @@ async function boot() {
     await sleep(150);
     scrollToBottom();
   }
+
+  const latestPR = await fetchLatestPR();
+  const lastSeenPR = localStorage.getItem('last-seen-pr');
+  if (latestPR && latestPR.number.toString() !== lastSeenPR) {
+    output.innerHTML += `<span class="success">downloading update... ${latestPR.title}</span>\n`;
+    localStorage.setItem('last-seen-pr', latestPR.number.toString());
+    await sleep(300);
+    scrollToBottom();
+  }
+  output.innerHTML += '\n';
 
   output.innerHTML += `<span class="accent ascii-art">  ██████╗ ███████╗███╗   ██╗  ████████╗ ██████╗ ███████╗███████╗███████╗██╗     ██╗
   ██╔══██╗██╔════╝████╗  ██║  ╚══██╔══╝██╔═══██╗██╔════╝██╔════╝██╔════╝██║     ██║
