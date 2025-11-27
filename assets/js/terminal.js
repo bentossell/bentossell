@@ -173,6 +173,18 @@ const commands = {
       return `
   <span class="bold white">Investments</span>
 
+  <span class="bold white">Fund Performance</span>
+  ┌──────────────────────┬──────────┬─────────┐
+  │ Fund                 │ MOIC     │ IRR     │
+  ├──────────────────────┼──────────┼─────────┤
+  │ Fund I ['20/'21]     │ 4x       │ 39%     │
+  │ Fund II ['23/'25]    │ 2x       │ 36%     │
+  ├──────────────────────┼──────────┼─────────┤
+  │ Fund III             │ <span class="muted">first close complete - open to new LPs</span>
+  └──────────────────────┴──────────┴─────────┘
+
+  <span class="bold white">Notable Companies</span>
+
   • <a href="https://supabase.com" target="_blank" rel="noopener">supabase</a> <span class="muted">[seed]</span> → <span class="success">$5BN</span>
   • <a href="https://gamma.app" target="_blank" rel="noopener">gamma</a> <span class="muted">[seed+ - a16z scout]</span> → <span class="success">$2.3BN</span> <span class="muted">[a16z led]</span>
   • <a href="https://etched.com" target="_blank" rel="noopener">etched</a> <span class="muted">[seed+]</span> → <span class="success">$2.5BN</span>
