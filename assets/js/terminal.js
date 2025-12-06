@@ -141,6 +141,7 @@ const commands = {
   • <a href="https://x.com/bentossell" target="_blank" rel="noopener">twitter/x</a>
   • <a href="https://linkedin.com/in/ben-tossell-70453537" target="_blank" rel="noopener">linkedin</a>
   • <a href="https://github.com/bentossell" target="_blank" rel="noopener">github [personal]</a>
+  • <a href="https://github.com/factory-ben" target="_blank" rel="noopener">github [work]</a>
   • <a href="https://discord.gg/zuudFXxg69" target="_blank" rel="noopener">droid discord</a>
 `;
     },
