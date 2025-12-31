@@ -58,6 +58,7 @@ const commands = {
         '  <span class="cmd">investments</span>   my investments',
         '  <span class="cmd">tools</span>         tools i use daily',
         '  <span class="cmd">models</span>        ai models i use',
+        '  <span class="cmd">blog</span>          read the blog',
         '  <span class="cmd">search [term]</span> search site content',
         "",
         '  <span class="muted">--- contact ---</span>',
@@ -141,6 +142,7 @@ const commands = {
   • <a href="https://x.com/bentossell" target="_blank" rel="noopener">twitter/x</a>
   • <a href="https://linkedin.com/in/ben-tossell-70453537" target="_blank" rel="noopener">linkedin</a>
   • <a href="https://github.com/bentossell" target="_blank" rel="noopener">github [personal]</a>
+  • <a href="https://github.com/factory-ben" target="_blank" rel="noopener">github [work]</a>
   • <a href="https://discord.gg/zuudFXxg69" target="_blank" rel="noopener">droid discord</a>
 `;
     },
@@ -238,6 +240,13 @@ const commands = {
   • sonnet 4.5 <span class="muted">[usual daily driver]</span>
   • gpt 5.1-codex <span class="muted">[bug fixes/code review]</span>
 `;
+    },
+  },
+  blog: {
+    desc: "read the blog",
+    fn: () => {
+      window.location.href = "/blog/";
+      return '\n  <span class="muted">opening blog...</span>\n';
     },
   },
   music: {

@@ -1,0 +1,5 @@
+# This directory is a Syncthing folder marker.
+# Do not delete.
+
+folderID: bentossell-repo
+created: 2025-12-06T13:46:59Z
