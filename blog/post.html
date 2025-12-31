@@ -120,7 +120,7 @@
             } catch (err) {
                 document.getElementById('post-content').innerHTML = `
                     <h1>Error loading post</h1>
-                    <p>${err.message}</p>
+                    <p>${err.message.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>
                     <p><a href="./">Back to blog</a></p>
                 `;
             }
