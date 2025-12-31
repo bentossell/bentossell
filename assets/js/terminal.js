@@ -58,6 +58,7 @@ const commands = {
         '  <span class="cmd">investments</span>   my investments',
         '  <span class="cmd">tools</span>         tools i use daily',
         '  <span class="cmd">models</span>        ai models i use',
+        '  <span class="cmd">blog</span>          read the blog',
         '  <span class="cmd">search [term]</span> search site content',
         "",
         '  <span class="muted">--- contact ---</span>',
@@ -239,6 +240,13 @@ const commands = {
   • sonnet 4.5 <span class="muted">[usual daily driver]</span>
   • gpt 5.1-codex <span class="muted">[bug fixes/code review]</span>
 `;
+    },
+  },
+  blog: {
+    desc: "read the blog",
+    fn: () => {
+      window.location.href = "/blog/";
+      return '\n  <span class="muted">opening blog...</span>\n';
     },
   },
   music: {

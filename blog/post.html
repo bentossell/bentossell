@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>loading... | ben tossell</title>
+    <meta name="description" content="">
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+    <link rel="apple-touch-icon" href="../assets/images/apple-touch-icon.png">
+    <meta property="og:title" content="ben tossell">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="../assets/css/blog.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body class="theme-midnight">
+    <div class="blog-wrapper">
+        <header class="blog-header">
+            <a href="/" class="blog-home">~/bentossell</a>
+            <nav class="blog-nav">
+                <a href="./">blog</a>
+                <a href="/">terminal</a>
+            </nav>
+        </header>
+        
+        <main class="blog-main">
+            <article class="post-content" id="post-content">
+                <div class="loading">loading post...</div>
+            </article>
+        </main>
+        
+        <footer class="blog-footer">
+            <span>&copy; 2024 ben tossell</span>
+            <a href="https://x.com/bentossell" target="_blank" rel="noopener">@bentossell</a>
+        </footer>
+    </div>
+
+    <script>
+    (function() {
+        const posts = {
+            "how-i-code": {
+                title: "How I code with agents, without being 'technical'",
+                date: "2024-12-31",
+                author: "Ben Tossell",
+                file: "posts/2024-12-31-how-i-code.md"
+            }
+        };
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr + 'T00:00:00');
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+        }
+
+        function parseFrontmatter(content) {
+            const match = content.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
+            if (!match) return { meta: {}, body: content };
+            
+            const meta = {};
+            match[1].split('\n').forEach(line => {
+                const [key, ...rest] = line.split(':');
+                if (key && rest.length) {
+                    let value = rest.join(':').trim();
+                    if (value.startsWith('"') && value.endsWith('"')) {
+                        value = value.slice(1, -1);
+                    }
+                    meta[key.trim()] = value;
+                }
+            });
+            
+            return { meta, body: match[2] };
+        }
+
+        async function loadPost() {
+            const params = new URLSearchParams(window.location.search);
+            const slug = params.get('slug');
+            
+            if (!slug || !posts[slug]) {
+                document.getElementById('post-content').innerHTML = `
+                    <h1>Post not found</h1>
+                    <p><a href="./">Back to blog</a></p>
+                `;
+                return;
+            }
+
+            const post = posts[slug];
+            
+            try {
+                const response = await fetch(post.file);
+                if (!response.ok) throw new Error('Failed to load post');
+                
+                const content = await response.text();
+                const { meta, body } = parseFrontmatter(content);
+                
+                const title = meta.title || post.title;
+                const date = meta.date || post.date;
+                const author = meta.author || post.author;
+                
+                document.title = `${title} | ben tossell`;
+                document.querySelector('meta[name="description"]').content = meta.excerpt || '';
+                document.querySelector('meta[property="og:title"]').content = title;
+                
+                const html = marked.parse(body);
+                
+                document.getElementById('post-content').innerHTML = `
+                    <header class="post-header">
+                        <time class="post-date">${formatDate(date)}</time>
+                        <h1 class="post-title">${title}</h1>
+                        <span class="post-author">by ${author}</span>
+                    </header>
+                    <div class="prose">${html}</div>
+                    <footer class="post-footer">
+                        <a href="./" class="back-link">&larr; back to blog</a>
+                    </footer>
+                `;
+            } catch (err) {
+                document.getElementById('post-content').innerHTML = `
+                    <h1>Error loading post</h1>
+                    <p>${err.message}</p>
+                    <p><a href="./">Back to blog</a></p>
+                `;
+            }
+        }
+
+        loadPost();
+    })();
+    </script>
+</body>
+</html>

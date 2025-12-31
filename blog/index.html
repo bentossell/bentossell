@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>blog | ben tossell</title>
+    <meta name="description" content="Thoughts on building, investing, and the tools that shape our digital world.">
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+    <link rel="apple-touch-icon" href="../assets/images/apple-touch-icon.png">
+    <meta property="og:title" content="blog | ben tossell">
+    <meta property="og:description" content="Thoughts on building, investing, and the tools that shape our digital world.">
+    <meta property="og:image" content="../assets/images/card.jpg">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="../assets/css/blog.css">
+</head>
+<body class="theme-midnight">
+    <div class="blog-wrapper">
+        <header class="blog-header">
+            <a href="/" class="blog-home">~/bentossell</a>
+            <nav class="blog-nav">
+                <a href="/">terminal</a>
+            </nav>
+        </header>
+        
+        <main class="blog-main">
+            <h1 class="blog-title">blog</h1>
+            <p class="blog-subtitle">Thoughts on building, investing, and the tools that shape our digital world.</p>
+            
+            <div class="posts-list" id="posts-list">
+                <div class="loading">loading posts...</div>
+            </div>
+        </main>
+        
+        <footer class="blog-footer">
+            <span>&copy; 2024 ben tossell</span>
+            <a href="https://x.com/bentossell" target="_blank" rel="noopener">@bentossell</a>
+        </footer>
+    </div>
+
+    <script>
+    (function() {
+        const posts = [
+            {
+                title: "How I code with agents, without being 'technical'",
+                slug: "how-i-code",
+                date: "2024-12-31",
+                excerpt: "I've spent 3 billion tokens in four months. Every single one through a terminal, watching an agent write code I couldn't write myself.",
+                file: "2024-12-31-how-i-code.md"
+            }
+        ];
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr + 'T00:00:00');
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+        }
+
+        function renderPosts() {
+            const container = document.getElementById('posts-list');
+            if (posts.length === 0) {
+                container.innerHTML = '<p class="no-posts">No posts yet.</p>';
+                return;
+            }
+
+            const html = posts.map(post => `
+                <article class="post-card">
+                    <a href="post.html?slug=${post.slug}" class="post-link">
+                        <time class="post-date">${formatDate(post.date)}</time>
+                        <h2 class="post-title">${post.title}</h2>
+                        <p class="post-excerpt">${post.excerpt}</p>
+                    </a>
+                </article>
+            `).join('');
+
+            container.innerHTML = html;
+        }
+
+        renderPosts();
+    })();
+    </script>
+</body>
+</html>
