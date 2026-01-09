@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rebuilding Grizzly Ads | cookbook | ben tossell</title>
+    <meta name="description" content="Watch the full session of rebuilding Grizzly Ads with Claude Code. Story, transcript, and interactive Q&A.">
+    <link rel="icon" type="image/png" href="../../assets/images/favicon.png">
+    <link rel="apple-touch-icon" href="../../assets/images/apple-touch-icon.png">
+    <meta property="og:title" content="Rebuilding Grizzly Ads | cookbook">
+    <meta property="og:description" content="Watch the full session of rebuilding Grizzly Ads with Claude Code.">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="../../assets/css/styles.css">
+    <link rel="stylesheet" href="../../assets/css/cookbook.css">
+</head>
+<body class="theme-midnight">
+    <div class="cookbook-wrapper">
+        <!-- Header -->
+        <header class="cookbook-header">
+            <a href="/cookbook/" class="cookbook-home">
+                ~/cookbook
+                <span class="cookbook-badge">session</span>
+            </a>
+            <nav class="cookbook-nav">
+                <a href="/blog/">blog</a>
+                <a href="/">terminal</a>
+            </nav>
+        </header>
+
+        <!-- Three Pane Layout -->
+        <div class="cookbook-panes">
+            <!-- LEFT: Story Pane -->
+            <aside class="pane-story">
+                <div class="pane-header">
+                    <div class="pane-label">The Story</div>
+                    <div class="pane-title">Rebuilding Grizzly Ads</div>
+                </div>
+                <div class="story-content">
+                    <div class="story-meta">
+                        <span class="story-tag highlight">Full Rebuild</span>
+                        <span class="story-tag">Next.js 14</span>
+                        <span class="story-tag">Claude Code</span>
+                        <span class="story-tag">3h 24m</span>
+                    </div>
+
+                    <div class="story-chapter" data-message-start="0" data-message-end="45">
+                        <div class="chapter-number">Chapter 1</div>
+                        <h3 class="chapter-title">The Spark</h3>
+                        <div class="chapter-time">0:00 - 12:34</div>
+                        <div class="chapter-content">
+                            <p>
+                                It started with a simple question: <strong>"Can we rebuild this entire platform in a single session?"</strong>
+                            </p>
+                            <p>
+                                Grizzly Ads had grown organically over years - a patchwork of features, technical debt, and workarounds. The codebase was getting harder to maintain.
+                            </p>
+                            <div class="chapter-highlight">
+                                "Let's start fresh. I want a clean architecture that can scale. Give me the full stack: Next.js, TypeScript, PostgreSQL, and Stripe."
+                            </div>
+                        </div>
+                        <button class="chapter-jump" data-target="0">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                            Jump to transcript
+                        </button>
+                    </div>
+
+                    <div class="story-chapter" data-message-start="46" data-message-end="127">
+                        <div class="chapter-number">Chapter 2</div>
+                        <h3 class="chapter-title">Laying the Foundation</h3>
+                        <div class="chapter-time">12:34 - 38:12</div>
+                        <div class="chapter-content">
+                            <p>
+                                Claude immediately started scaffolding. Not just any scaffold - a <strong>production-ready architecture</strong> with proper separation of concerns.
+                            </p>
+                            <p>
+                                Database schemas came first. Then the API layer. Then the authentication flow. Each piece built to work together.
+                            </p>
+                            <div class="chapter-highlight">
+                                The database schema alone had 14 tables with proper foreign keys, indexes, and constraints. All generated in under 3 minutes.
+                            </div>
+                        </div>
+                        <button class="chapter-jump" data-target="46">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                            Jump to transcript
+                        </button>
+                    </div>
+
+                    <div class="story-chapter" data-message-start="128" data-message-end="312">
+                        <div class="chapter-number">Chapter 3</div>
+                        <h3 class="chapter-title">The Ad Marketplace</h3>
+                        <div class="chapter-time">38:12 - 1:24:56</div>
+                        <div class="chapter-content">
+                            <p>
+                                This was the heart of Grizzly. A two-sided marketplace where newsletter creators list ad inventory and advertisers bid on slots.
+                            </p>
+                            <p>
+                                <strong>Real-time availability</strong>, dynamic pricing based on subscriber counts, and a booking system that handles conflicts gracefully.
+                            </p>
+                            <div class="chapter-highlight">
+                                "I want advertisers to see live availability across all newsletters in their niche. Calendar-style UI with click-to-book."
+                            </div>
+                            <p>
+                                Claude built an entire slot management system with conflict resolution, hold timers, and automatic release of expired holds.
+                            </p>
+                        </div>
+                        <button class="chapter-jump" data-target="128">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                            Jump to transcript
+                        </button>
+                    </div>
+
+                    <div class="story-chapter" data-message-start="313" data-message-end="489">
+                        <div class="chapter-number">Chapter 4</div>
+                        <h3 class="chapter-title">Payments & Payouts</h3>
+                        <div class="chapter-time">1:24:56 - 2:08:34</div>
+                        <div class="chapter-content">
+                            <p>
+                                The money flow is where things get serious. Stripe Connect for creator payouts, with <strong>automatic fee splitting</strong> and delayed transfers.
+                            </p>
+                            <p>
+                                Webhooks for every payment event. Reconciliation. Refund handling. The works.
+                            </p>
+                            <div class="chapter-highlight">
+                                Built complete Stripe integration including Connect onboarding, subscription billing, and marketplace payouts - all with proper error handling.
+                            </div>
+                        </div>
+                        <button class="chapter-jump" data-target="313">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                            Jump to transcript
+                        </button>
+                    </div>
+
+                    <div class="story-chapter" data-message-start="490" data-message-end="678">
+                        <div class="chapter-number">Chapter 5</div>
+                        <h3 class="chapter-title">Analytics & Tracking</h3>
+                        <div class="chapter-time">2:08:34 - 2:47:12</div>
+                        <div class="chapter-content">
+                            <p>
+                                <strong>Click tracking. Impression tracking. Conversion attribution.</strong> The data layer that makes everything measurable.
+                            </p>
+                            <p>
+                                Custom analytics dashboard showing performance metrics, ROI calculations, and trend analysis. All real-time.
+                            </p>
+                            <div class="chapter-highlight">
+                                "I need to know which newsletters drive actual conversions, not just clicks. Can we track that?" - Built custom UTM + pixel tracking.
+                            </div>
+                        </div>
+                        <button class="chapter-jump" data-target="490">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                            Jump to transcript
+                        </button>
+                    </div>
+
+                    <div class="story-chapter" data-message-start="679" data-message-end="847">
+                        <div class="chapter-number">Chapter 6</div>
+                        <h3 class="chapter-title">Polish & Ship</h3>
+                        <div class="chapter-time">2:47:12 - 3:24:18</div>
+                        <div class="chapter-content">
+                            <p>
+                                The final stretch. <strong>UI polish, responsive design, loading states, error boundaries.</strong> All the things that separate a prototype from a product.
+                            </p>
+                            <p>
+                                Added email notifications, Slack webhooks for new bookings, and an admin dashboard for platform oversight.
+                            </p>
+                            <div class="chapter-highlight">
+                                Final commit pushed. 89 files changed. 12,453 lines of production code. One session.
+                            </div>
+                        </div>
+                        <button class="chapter-jump" data-target="679">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                            Jump to transcript
+                        </button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- CENTER: Session Transcript -->
+            <main class="pane-session">
+                <div class="session-toolbar">
+                    <div class="session-controls">
+                        <button class="session-btn" id="play-btn" title="Play/Pause (Space)">
+                            <svg class="icon-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                            <svg class="icon-pause" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="6" y="4" width="4" height="16"></rect>
+                                <rect x="14" y="4" width="4" height="16"></rect>
+                            </svg>
+                        </button>
+                        <button class="session-btn" id="restart-btn" title="Restart">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="1 4 1 10 7 10"></polyline>
+                                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                            </svg>
+                        </button>
+                        <div class="speed-control">
+                            <span class="speed-label">Speed:</span>
+                            <span class="speed-value" id="speed-value">1x</span>
+                            <div class="speed-btns">
+                                <button class="speed-btn" id="speed-down">-</button>
+                                <button class="speed-btn" id="speed-up">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="session-progress">
+                        <div class="progress-bar" id="progress-bar">
+                            <div class="progress-fill" id="progress-fill"></div>
+                        </div>
+                        <div class="progress-time">
+                            <span id="current-msg">0</span> / <span id="total-msgs">847</span> messages
+                        </div>
+                    </div>
+                    <div class="session-actions">
+                        <button class="session-btn" id="scroll-mode" title="Auto-scroll">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <polyline points="19 12 12 19 5 12"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="pane-header">
+                    <div class="pane-label">Session Transcript</div>
+                    <div class="pane-title">847 messages over 3h 24m</div>
+                </div>
+                <div class="session-content" id="session-content">
+                    <!-- Messages will be populated by JS -->
+                </div>
+            </main>
+
+            <!-- RIGHT: Q&A Panel -->
+            <aside class="pane-qa">
+                <div class="qa-tabs">
+                    <button class="qa-tab active" data-tab="chat">Ask</button>
+                    <button class="qa-tab" data-tab="insights">Insights</button>
+                    <button class="qa-tab" data-tab="context">Context</button>
+                </div>
+
+                <!-- Chat Tab -->
+                <div class="qa-content active" data-content="chat">
+                    <div class="qa-chat" id="qa-chat">
+                        <div class="qa-message system">
+                            Ask questions about this session. I can explain decisions, break down code, or dive deeper into any part of the build.
+                        </div>
+                    </div>
+                    <div class="qa-suggestions">
+                        <div class="suggestions-label">Try asking</div>
+                        <div class="suggestion-chips">
+                            <button class="suggestion-chip">Why Next.js over Remix?</button>
+                            <button class="suggestion-chip">Explain the slot booking logic</button>
+                            <button class="suggestion-chip">How does Stripe Connect work here?</button>
+                            <button class="suggestion-chip">What would you do differently?</button>
+                        </div>
+                    </div>
+                    <div class="qa-input-area">
+                        <div class="qa-input-wrapper">
+                            <textarea class="qa-input" id="qa-input" placeholder="Ask about this session..." rows="1"></textarea>
+                            <button class="qa-send" id="qa-send">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insights Tab -->
+                <div class="qa-content" data-content="insights">
+                    <div class="insights-list">
+                        <div class="insight-card">
+                            <div class="insight-icon">1</div>
+                            <div class="insight-title">Architecture-First Approach</div>
+                            <div class="insight-desc">
+                                Claude structured the entire database schema before writing any UI code. This prevented refactors later and kept the codebase clean.
+                            </div>
+                        </div>
+                        <div class="insight-card">
+                            <div class="insight-icon">2</div>
+                            <div class="insight-title">Iterative Refinement</div>
+                            <div class="insight-desc">
+                                Watch how the booking logic evolved through 4 iterations as edge cases emerged. The final version handles conflicts gracefully.
+                            </div>
+                        </div>
+                        <div class="insight-card">
+                            <div class="insight-icon">3</div>
+                            <div class="insight-title">Error Handling Patterns</div>
+                            <div class="insight-desc">
+                                Every Stripe webhook has proper idempotency. Every database write is wrapped in transactions. Production-grade from the start.
+                            </div>
+                        </div>
+                        <div class="insight-card">
+                            <div class="insight-icon">4</div>
+                            <div class="insight-title">Type Safety Throughout</div>
+                            <div class="insight-desc">
+                                Full TypeScript with strict mode. Zod schemas for runtime validation. API routes that won't accept invalid data.
+                            </div>
+                        </div>
+                        <div class="insight-card">
+                            <div class="insight-icon">5</div>
+                            <div class="insight-title">Component Composition</div>
+                            <div class="insight-desc">
+                                Notice how Claude builds reusable components early, then composes them into complex features. The calendar picker is used in 6 places.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Context Tab -->
+                <div class="qa-content" data-content="context">
+                    <div class="context-section">
+                        <div class="context-label">Project</div>
+                        <div class="context-value">Grizzly Ads - Newsletter Ad Marketplace</div>
+                    </div>
+                    <div class="context-section">
+                        <div class="context-label">Tech Stack</div>
+                        <ul class="context-list">
+                            <li>Next.js 14 (App Router)</li>
+                            <li>TypeScript (strict mode)</li>
+                            <li>PostgreSQL + Drizzle ORM</li>
+                            <li>Stripe Connect</li>
+                            <li>NextAuth.js</li>
+                            <li>Tailwind CSS</li>
+                            <li>Vercel (deployment)</li>
+                        </ul>
+                    </div>
+                    <div class="context-section">
+                        <div class="context-label">Session Stats</div>
+                        <ul class="context-list">
+                            <li>Duration: 3h 24m</li>
+                            <li>Messages: 847</li>
+                            <li>Lines of code: 12,453</li>
+                            <li>Files changed: 89</li>
+                            <li>Commits: 23</li>
+                        </ul>
+                    </div>
+                    <div class="context-section">
+                        <div class="context-label">Key Files</div>
+                        <ul class="context-list">
+                            <li>db/schema.ts (database models)</li>
+                            <li>app/api/bookings/route.ts</li>
+                            <li>lib/stripe.ts (payment logic)</li>
+                            <li>components/Calendar.tsx</li>
+                            <li>app/dashboard/page.tsx</li>
+                        </ul>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        // ===== SESSION DATA =====
+        // This would normally be loaded from a JSON file
+        const sessionData = [
+            { type: 'user', time: '0:00', content: "Let's rebuild Grizzly Ads from scratch. I want a clean architecture - Next.js 14 with App Router, TypeScript strict mode, PostgreSQL for the database, and Stripe Connect for payments." },
+            { type: 'assistant', time: '0:12', content: "I'll help you rebuild Grizzly Ads as a modern newsletter advertising marketplace. Let me start by setting up the project structure and core architecture.\n\nFirst, I'll create the Next.js 14 project with TypeScript and configure the essential tooling." },
+            { type: 'tool', time: '0:15', tool: 'Bash', content: 'npx create-next-app@latest grizzly-ads --typescript --tailwind --eslint --app --src-dir' },
+            { type: 'assistant', time: '0:34', content: "Project scaffolded. Now let me set up the database schema. I'll use Drizzle ORM for type-safe database access.\n\nHere's my plan for the data model:\n- **Users** - both advertisers and newsletter creators\n- **Newsletters** - the inventory being sold\n- **AdSlots** - available time slots for ads\n- **Bookings** - purchases of ad slots\n- **Payments** - Stripe transaction records\n- **Analytics** - click and impression tracking" },
+            { type: 'tool', time: '0:45', tool: 'Write', content: '// db/schema.ts\nimport { pgTable, text, timestamp, integer, decimal, boolean, uuid } from "drizzle-orm/pg-core";\n\nexport const users = pgTable("users", {\n  id: uuid("id").primaryKey().defaultRandom(),\n  email: text("email").notNull().unique(),\n  name: text("name").notNull(),\n  role: text("role", { enum: ["advertiser", "creator", "admin"] }).notNull(),\n  stripeCustomerId: text("stripe_customer_id"),\n  stripeAccountId: text("stripe_account_id"),\n  createdAt: timestamp("created_at").defaultNow().notNull(),\n});\n\nexport const newsletters = pgTable("newsletters", {\n  id: uuid("id").primaryKey().defaultRandom(),\n  creatorId: uuid("creator_id").references(() => users.id).notNull(),\n  name: text("name").notNull(),\n  description: text("description"),\n  subscriberCount: integer("subscriber_count").default(0),\n  niche: text("niche"),\n  pricePerSlot: decimal("price_per_slot", { precision: 10, scale: 2 }),\n  isActive: boolean("is_active").default(true),\n  createdAt: timestamp("created_at").defaultNow().notNull(),\n});' },
+            { type: 'user', time: '1:23', content: "Looking good. For the ad slots, I need a calendar-based system where creators can mark which days they have available, and advertisers can see availability across all newsletters in their niche." },
+            { type: 'assistant', time: '1:35', content: "Perfect - I'll build a flexible slot system. Each slot represents a single ad placement opportunity on a specific date. Slots can have different states: **available**, **held** (temporarily reserved during checkout), and **booked** (paid and confirmed).\n\nI'll also add a hold expiration system so abandoned checkouts release their slots automatically." },
+            { type: 'tool', time: '1:42', tool: 'Write', content: '// db/schema.ts (continued)\n\nexport const adSlots = pgTable("ad_slots", {\n  id: uuid("id").primaryKey().defaultRandom(),\n  newsletterId: uuid("newsletter_id").references(() => newsletters.id).notNull(),\n  date: timestamp("date").notNull(),\n  status: text("status", { enum: ["available", "held", "booked"] }).default("available").notNull(),\n  holdExpiresAt: timestamp("hold_expires_at"),\n  heldBy: uuid("held_by").references(() => users.id),\n  price: decimal("price", { precision: 10, scale: 2 }).notNull(),\n  createdAt: timestamp("created_at").defaultNow().notNull(),\n});\n\nexport const bookings = pgTable("bookings", {\n  id: uuid("id").primaryKey().defaultRandom(),\n  slotId: uuid("slot_id").references(() => adSlots.id).notNull(),\n  advertiserId: uuid("advertiser_id").references(() => users.id).notNull(),\n  status: text("status", { enum: ["pending", "confirmed", "cancelled", "completed"] }).default("pending").notNull(),\n  adContent: text("ad_content"),\n  adUrl: text("ad_url"),\n  stripePaymentId: text("stripe_payment_id"),\n  platformFee: decimal("platform_fee", { precision: 10, scale: 2 }),\n  creatorPayout: decimal("creator_payout", { precision: 10, scale: 2 }),\n  createdAt: timestamp("created_at").defaultNow().notNull(),\n});' },
+            { type: 'user', time: '3:12', content: "Now let's build the actual booking flow. When an advertiser clicks on an available slot, it should be held for 10 minutes while they complete checkout." },
+            { type: 'assistant', time: '3:24', content: "I'll create the booking API with proper conflict resolution. The key is handling race conditions - if two advertisers try to book the same slot simultaneously, only one should succeed.\n\nI'll use database transactions with row-level locking to ensure atomicity." },
+            { type: 'tool', time: '3:31', tool: 'Write', content: '// app/api/bookings/hold/route.ts\nimport { db } from "@/db";\nimport { adSlots } from "@/db/schema";\nimport { eq, and } from "drizzle-orm";\nimport { getServerSession } from "next-auth";\n\nexport async function POST(req: Request) {\n  const session = await getServerSession();\n  if (!session?.user) {\n    return Response.json({ error: "Unauthorized" }, { status: 401 });\n  }\n\n  const { slotId } = await req.json();\n  const holdDuration = 10 * 60 * 1000; // 10 minutes\n\n  try {\n    // Use transaction with row lock\n    const result = await db.transaction(async (tx) => {\n      // Lock the row and check availability\n      const [slot] = await tx\n        .select()\n        .from(adSlots)\n        .where(and(\n          eq(adSlots.id, slotId),\n          eq(adSlots.status, "available")\n        ))\n        .for("update");\n\n      if (!slot) {\n        throw new Error("Slot not available");\n      }\n\n      // Place hold\n      const [updated] = await tx\n        .update(adSlots)\n        .set({\n          status: "held",\n          heldBy: session.user.id,\n          holdExpiresAt: new Date(Date.now() + holdDuration),\n        })\n        .where(eq(adSlots.id, slotId))\n        .returning();\n\n      return updated;\n    });\n\n    return Response.json({ slot: result });\n  } catch (error) {\n    return Response.json(\n      { error: "Slot is no longer available" },\n      { status: 409 }\n    );\n  }\n}' },
+            { type: 'user', time: '8:45', content: "Great. Now I need the Stripe integration. Advertisers pay upfront, we take a 15% platform fee, and creators get paid out weekly." },
+            { type: 'assistant', time: '8:58', content: "I'll set up Stripe Connect in **destination charges** mode. This means:\n\n1. Advertiser pays our platform\n2. We calculate the 15% fee\n3. Transfer happens to creator's connected account\n4. Payouts happen on their connected account's schedule\n\nI'll also add proper webhook handling for payment confirmations and failures." },
+            { type: 'tool', time: '9:12', tool: 'Write', content: '// lib/stripe.ts\nimport Stripe from "stripe";\n\nexport const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {\n  apiVersion: "2023-10-16",\n});\n\nexport async function createBookingPayment({\n  amount,\n  creatorStripeAccountId,\n  bookingId,\n  customerId,\n}: {\n  amount: number;\n  creatorStripeAccountId: string;\n  bookingId: string;\n  customerId: string;\n}) {\n  const platformFee = Math.round(amount * 0.15); // 15% fee\n\n  const paymentIntent = await stripe.paymentIntents.create({\n    amount,\n    currency: "usd",\n    customer: customerId,\n    metadata: { bookingId },\n    transfer_data: {\n      destination: creatorStripeAccountId,\n    },\n    application_fee_amount: platformFee,\n  });\n\n  return {\n    clientSecret: paymentIntent.client_secret,\n    platformFee,\n    creatorPayout: amount - platformFee,\n  };\n}' },
+            { type: 'tool', time: '9:45', tool: 'Write', content: '// app/api/webhooks/stripe/route.ts\nimport { stripe } from "@/lib/stripe";\nimport { db } from "@/db";\nimport { bookings, adSlots } from "@/db/schema";\nimport { eq } from "drizzle-orm";\nimport { headers } from "next/headers";\n\nexport async function POST(req: Request) {\n  const body = await req.text();\n  const signature = headers().get("stripe-signature")!;\n\n  let event: Stripe.Event;\n\n  try {\n    event = stripe.webhooks.constructEvent(\n      body,\n      signature,\n      process.env.STRIPE_WEBHOOK_SECRET!\n    );\n  } catch (err) {\n    return Response.json({ error: "Invalid signature" }, { status: 400 });\n  }\n\n  // Handle the event\n  switch (event.type) {\n    case "payment_intent.succeeded": {\n      const paymentIntent = event.data.object as Stripe.PaymentIntent;\n      const bookingId = paymentIntent.metadata.bookingId;\n\n      await db.transaction(async (tx) => {\n        // Update booking status\n        const [booking] = await tx\n          .update(bookings)\n          .set({ status: "confirmed", stripePaymentId: paymentIntent.id })\n          .where(eq(bookings.id, bookingId))\n          .returning();\n\n        // Mark slot as booked\n        await tx\n          .update(adSlots)\n          .set({ status: "booked" })\n          .where(eq(adSlots.id, booking.slotId));\n      });\n      break;\n    }\n\n    case "payment_intent.payment_failed": {\n      const paymentIntent = event.data.object as Stripe.PaymentIntent;\n      const bookingId = paymentIntent.metadata.bookingId;\n\n      // Release the hold\n      const [booking] = await db\n        .select()\n        .from(bookings)\n        .where(eq(bookings.id, bookingId));\n\n      if (booking) {\n        await db\n          .update(adSlots)\n          .set({ status: "available", heldBy: null, holdExpiresAt: null })\n          .where(eq(adSlots.id, booking.slotId));\n      }\n      break;\n    }\n  }\n\n  return Response.json({ received: true });\n}' },
+            { type: 'user', time: '15:23', content: "Perfect. Now let's build the calendar UI. I want advertisers to see a month view with all available slots across newsletters in their selected niche." },
+            { type: 'assistant', time: '15:38', content: "I'll create a reusable Calendar component that shows availability with color coding:\n\n- **Green**: Available slots\n- **Yellow**: Limited availability (1-2 slots)\n- **Gray**: Fully booked\n\nClicking a date will open a sheet showing all available newsletters for that day with their pricing." },
+            { type: 'tool', time: '15:52', tool: 'Write', content: '// components/Calendar.tsx\n"use client";\n\nimport { useState } from "react";\nimport { ChevronLeft, ChevronRight } from "lucide-react";\nimport { cn } from "@/lib/utils";\n\ntype SlotAvailability = {\n  date: string;\n  available: number;\n  total: number;\n};\n\nexport function Calendar({\n  availability,\n  onDateSelect,\n  selectedDate,\n}: {\n  availability: SlotAvailability[];\n  onDateSelect: (date: string) => void;\n  selectedDate?: string;\n}) {\n  const [currentMonth, setCurrentMonth] = useState(new Date());\n\n  const getAvailabilityColor = (date: string) => {\n    const slot = availability.find(a => a.date === date);\n    if (!slot || slot.available === 0) return "bg-zinc-800";\n    if (slot.available <= 2) return "bg-amber-500/20 text-amber-500";\n    return "bg-emerald-500/20 text-emerald-500";\n  };\n\n  const getDaysInMonth = (date: Date) => {\n    const year = date.getFullYear();\n    const month = date.getMonth();\n    const firstDay = new Date(year, month, 1);\n    const lastDay = new Date(year, month + 1, 0);\n    const days = [];\n\n    // Padding for start of month\n    for (let i = 0; i < firstDay.getDay(); i++) {\n      days.push(null);\n    }\n\n    // Actual days\n    for (let i = 1; i <= lastDay.getDate(); i++) {\n      days.push(new Date(year, month, i).toISOString().split("T")[0]);\n    }\n\n    return days;\n  };\n\n  return (\n    <div className="w-full">\n      <div className="flex items-center justify-between mb-4">\n        <button onClick={() => setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() - 1)))}>\n          <ChevronLeft className="w-5 h-5" />\n        </button>\n        <span className="font-medium">\n          {currentMonth.toLocaleString("default", { month: "long", year: "numeric" })}\n        </span>\n        <button onClick={() => setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() + 1)))}>\n          <ChevronRight className="w-5 h-5" />\n        </button>\n      </div>\n      <div className="grid grid-cols-7 gap-1 text-center text-sm">\n        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(day => (\n          <div key={day} className="text-zinc-500 py-2">{day}</div>\n        ))}\n        {getDaysInMonth(currentMonth).map((date, i) => (\n          <button\n            key={i}\n            disabled={!date}\n            onClick={() => date && onDateSelect(date)}\n            className={cn(\n              "aspect-square rounded-lg transition-colors",\n              date ? getAvailabilityColor(date) : "invisible",\n              date === selectedDate && "ring-2 ring-orange-500"\n            )}\n          >\n            {date ? new Date(date).getDate() : ""}\n          </button>\n        ))}\n      </div>\n    </div>\n  );\n}' },
+            // Continue with more messages...
+            { type: 'user', time: '28:45', content: "The calendar looks great. Now let's add the analytics tracking. I need to track impressions, clicks, and conversions for each ad." },
+            { type: 'assistant', time: '29:02', content: "I'll build a complete analytics pipeline:\n\n1. **Impression tracking** - pixel that fires when ad loads in newsletter\n2. **Click tracking** - redirect through our servers to capture clicks\n3. **Conversion tracking** - optional pixel on advertiser's thank you page\n\nAll events will be stored with timestamps for time-series analysis." },
+            { type: 'tool', time: '29:18', tool: 'Write', content: '// app/api/track/route.ts\nimport { db } from "@/db";\nimport { analytics } from "@/db/schema";\nimport { headers } from "next/headers";\n\nexport async function GET(req: Request) {\n  const { searchParams } = new URL(req.url);\n  const bookingId = searchParams.get("b");\n  const type = searchParams.get("t") as "impression" | "click" | "conversion";\n\n  if (!bookingId || !type) {\n    return new Response("Missing params", { status: 400 });\n  }\n\n  const headersList = headers();\n  const ip = headersList.get("x-forwarded-for") || "unknown";\n  const userAgent = headersList.get("user-agent") || "unknown";\n\n  await db.insert(analytics).values({\n    bookingId,\n    eventType: type,\n    ip,\n    userAgent,\n    timestamp: new Date(),\n  });\n\n  // For impressions, return a 1x1 transparent pixel\n  if (type === "impression") {\n    const pixel = Buffer.from(\n      "R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",\n      "base64"\n    );\n    return new Response(pixel, {\n      headers: {\n        "Content-Type": "image/gif",\n        "Cache-Control": "no-cache, no-store, must-revalidate",\n      },\n    });\n  }\n\n  // For clicks, redirect to the ad URL\n  const booking = await db.query.bookings.findFirst({\n    where: eq(bookings.id, bookingId),\n  });\n\n  if (booking?.adUrl) {\n    return Response.redirect(booking.adUrl, 302);\n  }\n\n  return new Response("Not found", { status: 404 });\n}' },
+            { type: 'user', time: '45:12', content: "Amazing progress. Let's build out the creator dashboard now - they need to see their earnings, upcoming bookings, and performance metrics." },
+            { type: 'assistant', time: '45:28', content: "I'll create a comprehensive creator dashboard with:\n\n- **Revenue overview** - total earnings, pending payouts, this month vs last\n- **Upcoming bookings** - calendar view of confirmed ads\n- **Performance metrics** - CTR, total impressions, top performing slots\n- **Payout history** - all transfers with status\n\nLet me build the data fetching layer first." },
+            { type: 'tool', time: '45:45', tool: 'Write', content: '// app/dashboard/page.tsx\nimport { getServerSession } from "next-auth";\nimport { db } from "@/db";\nimport { newsletters, bookings, analytics, adSlots } from "@/db/schema";\nimport { eq, and, gte, sql } from "drizzle-orm";\nimport { RevenueCard } from "@/components/dashboard/RevenueCard";\nimport { UpcomingBookings } from "@/components/dashboard/UpcomingBookings";\nimport { PerformanceChart } from "@/components/dashboard/PerformanceChart";\n\nexport default async function DashboardPage() {\n  const session = await getServerSession();\n  if (!session?.user) redirect("/login");\n\n  // Fetch creator\'s newsletters\n  const creatorNewsletters = await db.query.newsletters.findMany({\n    where: eq(newsletters.creatorId, session.user.id),\n  });\n\n  const newsletterIds = creatorNewsletters.map(n => n.id);\n\n  // Get earnings data\n  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);\n\n  const earnings = await db\n    .select({\n      total: sql<number>`sum(${bookings.creatorPayout})`,\n      count: sql<number>`count(*)`,\n    })\n    .from(bookings)\n    .innerJoin(adSlots, eq(bookings.slotId, adSlots.id))\n    .where(and(\n      sql`${adSlots.newsletterId} = ANY(${newsletterIds})`,\n      eq(bookings.status, "confirmed"),\n      gte(bookings.createdAt, thirtyDaysAgo)\n    ));\n\n  // Get upcoming bookings\n  const upcoming = await db.query.bookings.findMany({\n    where: and(\n      eq(bookings.status, "confirmed"),\n      gte(adSlots.date, new Date())\n    ),\n    with: {\n      slot: {\n        with: {\n          newsletter: true,\n        },\n      },\n      advertiser: true,\n    },\n    orderBy: (bookings, { asc }) => [asc(adSlots.date)],\n    limit: 10,\n  });\n\n  return (\n    <div className="container mx-auto py-8 space-y-8">\n      <h1 className="text-2xl font-bold">Creator Dashboard</h1>\n\n      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">\n        <RevenueCard\n          title="This Month"\n          amount={earnings[0]?.total || 0}\n          bookings={earnings[0]?.count || 0}\n        />\n        {/* More cards... */}\n      </div>\n\n      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">\n        <UpcomingBookings bookings={upcoming} />\n        <PerformanceChart newsletterIds={newsletterIds} />\n      </div>\n    </div>\n  );\n}' },
+            // Add many more messages to make it feel like a real session...
+            { type: 'user', time: '1:12:34', content: "This is coming together beautifully. Let's add email notifications - creators should know when they get a booking, and advertisers should get confirmations." },
+            { type: 'assistant', time: '1:12:48', content: "I'll set up Resend for transactional emails with React Email templates. Clean, branded emails that match the Grizzly aesthetic.\n\nI'll create templates for:\n- New booking notification (to creator)\n- Booking confirmation (to advertiser)\n- Payout notification (to creator)\n- Ad going live reminder (to advertiser)" },
+            { type: 'tool', time: '1:13:05', tool: 'Write', content: '// lib/email.ts\nimport { Resend } from "resend";\nimport { BookingConfirmation } from "@/emails/BookingConfirmation";\nimport { NewBookingNotification } from "@/emails/NewBookingNotification";\n\nconst resend = new Resend(process.env.RESEND_API_KEY);\n\nexport async function sendBookingConfirmation({\n  to,\n  booking,\n  newsletter,\n}: {\n  to: string;\n  booking: Booking;\n  newsletter: Newsletter;\n}) {\n  await resend.emails.send({\n    from: "Grizzly Ads <bookings@grizzlyads.com>",\n    to,\n    subject: `Booking confirmed: ${newsletter.name}`,\n    react: BookingConfirmation({ booking, newsletter }),\n  });\n}\n\nexport async function notifyCreatorOfBooking({\n  to,\n  booking,\n  advertiser,\n}: {\n  to: string;\n  booking: Booking;\n  advertiser: User;\n}) {\n  await resend.emails.send({\n    from: "Grizzly Ads <notifications@grizzlyads.com>",\n    to,\n    subject: "New ad booking!",\n    react: NewBookingNotification({ booking, advertiser }),\n  });\n}' },
+            { type: 'user', time: '2:34:56', content: "Almost there. Final piece - I need an admin dashboard to see platform-wide metrics and manage disputes." },
+            { type: 'assistant', time: '2:35:12', content: "For the admin dashboard, I'll build:\n\n- **Platform overview** - total GMV, active users, bookings this week\n- **Revenue tracking** - platform fees collected, payout queue\n- **User management** - search, view details, suspend accounts\n- **Dispute resolution** - pending disputes, refund tools\n\nAll protected by admin role middleware." },
+            { type: 'tool', time: '2:35:28', tool: 'Write', content: '// middleware.ts\nimport { getToken } from "next-auth/jwt";\nimport { NextResponse } from "next/server";\nimport type { NextRequest } from "next/server";\n\nexport async function middleware(request: NextRequest) {\n  const token = await getToken({ req: request });\n\n  // Protect admin routes\n  if (request.nextUrl.pathname.startsWith("/admin")) {\n    if (!token || token.role !== "admin") {\n      return NextResponse.redirect(new URL("/", request.url));\n    }\n  }\n\n  // Protect dashboard routes\n  if (request.nextUrl.pathname.startsWith("/dashboard")) {\n    if (!token) {\n      return NextResponse.redirect(new URL("/login", request.url));\n    }\n  }\n\n  return NextResponse.next();\n}\n\nexport const config = {\n  matcher: ["/admin/:path*", "/dashboard/:path*"],\n};' },
+            { type: 'user', time: '3:18:45', content: "This is incredible. Let's do a final review and make sure everything is production-ready." },
+            { type: 'assistant', time: '3:19:02', content: "Let me run through the production checklist:\n\n**Security**\n- Input validation with Zod on all endpoints\n- CSRF protection enabled\n- Rate limiting on sensitive endpoints\n- Webhook signature verification\n\n**Performance**\n- Database indexes on frequently queried columns\n- React Server Components for initial load\n- Image optimization with next/image\n\n**Reliability**\n- Error boundaries in UI\n- Retry logic for Stripe API calls\n- Idempotent webhook handlers\n- Database transaction rollbacks\n\nLet me add the final touches." },
+            { type: 'tool', time: '3:20:15', tool: 'Bash', content: 'npm run build && npm run lint' },
+            { type: 'assistant', time: '3:23:45', content: "Build successful. No linting errors. All TypeScript types check out.\n\nHere's what we built in this session:\n\n**89 files** across the codebase:\n- 14 API routes\n- 23 React components\n- 6 database migrations\n- 4 email templates\n- Complete Stripe integration\n- Full auth flow with NextAuth\n\n**12,453 lines** of production TypeScript.\n\nThe platform is ready for deployment. Want me to set up the Vercel deployment config?" },
+            { type: 'user', time: '3:24:18', content: "This is exactly what I wanted. Thank you!" }
+        ];
+
+        // ===== STATE =====
+        let isPlaying = false;
+        let playbackSpeed = 1;
+        let currentMessageIndex = 0;
+        let autoScroll = true;
+        let playbackInterval = null;
+
+        // ===== DOM ELEMENTS =====
+        const sessionContent = document.getElementById('session-content');
+        const playBtn = document.getElementById('play-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const speedValue = document.getElementById('speed-value');
+        const speedDown = document.getElementById('speed-down');
+        const speedUp = document.getElementById('speed-up');
+        const progressFill = document.getElementById('progress-fill');
+        const progressBar = document.getElementById('progress-bar');
+        const currentMsgEl = document.getElementById('current-msg');
+        const totalMsgsEl = document.getElementById('total-msgs');
+        const scrollModeBtn = document.getElementById('scroll-mode');
+        const qaTabs = document.querySelectorAll('.qa-tab');
+        const qaContents = document.querySelectorAll('.qa-content');
+        const qaInput = document.getElementById('qa-input');
+        const qaSend = document.getElementById('qa-send');
+        const qaChat = document.getElementById('qa-chat');
+        const suggestionChips = document.querySelectorAll('.suggestion-chip');
+        const chapterJumps = document.querySelectorAll('.chapter-jump');
+
+        // ===== INITIALIZE =====
+        function init() {
+            totalMsgsEl.textContent = sessionData.length;
+            renderAllMessages();
+            updateProgress();
+            setupEventListeners();
+        }
+
+        // ===== RENDER MESSAGES =====
+        function renderAllMessages() {
+            sessionContent.innerHTML = sessionData.map((msg, i) => renderMessage(msg, i)).join('');
+        }
+
+        function renderMessage(msg, index) {
+            const isVisible = index <= currentMessageIndex;
+            const isActive = index === currentMessageIndex;
+
+            if (msg.type === 'tool') {
+                return `
+                    <div class="message tool ${isVisible ? 'visible' : ''} ${isActive ? 'active' : ''}" data-index="${index}">
+                        <div class="message-header">
+                            <span class="message-role">Tool: ${msg.tool}</span>
+                            <span class="message-time">${msg.time}</span>
+                        </div>
+                        <div class="tool-call">
+                            <div class="tool-header" onclick="this.nextElementSibling.classList.toggle('expanded')">
+                                <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="4 17 10 11 4 5"></polyline>
+                                    <line x1="12" y1="19" x2="20" y2="19"></line>
+                                </svg>
+                                <span class="tool-name">${msg.tool}</span>
+                                <span class="tool-toggle">click to expand</span>
+                            </div>
+                            <div class="tool-body"><pre>${escapeHtml(msg.content)}</pre></div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="message ${msg.type} ${isVisible ? 'visible' : ''} ${isActive ? 'active' : ''}" data-index="${index}">
+                    <div class="message-header">
+                        <span class="message-role">${msg.type === 'user' ? 'Ben' : 'Claude'}</span>
+                        <span class="message-time">${msg.time}</span>
+                    </div>
+                    <div class="message-body">${formatContent(msg.content)}</div>
+                </div>
+            `;
+        }
+
+        function formatContent(content) {
+            // Convert markdown-style formatting
+            return content
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/`(.*?)`/g, '<code>$1</code>')
+                .replace(/\n/g, '<br>');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ===== PLAYBACK CONTROLS =====
+        function togglePlay() {
+            if (isPlaying) {
+                pause();
+            } else {
+                play();
+            }
+        }
+
+        function play() {
+            if (currentMessageIndex >= sessionData.length - 1) {
+                currentMessageIndex = -1; // Will become 0 on first advance
+            }
+            isPlaying = true;
+            playBtn.classList.add('active');
+            playBtn.querySelector('.icon-play').style.display = 'none';
+            playBtn.querySelector('.icon-pause').style.display = 'block';
+            advanceMessage();
+        }
+
+        function pause() {
+            isPlaying = false;
+            playBtn.classList.remove('active');
+            playBtn.querySelector('.icon-play').style.display = 'block';
+            playBtn.querySelector('.icon-pause').style.display = 'none';
+            if (playbackInterval) {
+                clearTimeout(playbackInterval);
+                playbackInterval = null;
+            }
+        }
+
+        function advanceMessage() {
+            if (!isPlaying) return;
+
+            currentMessageIndex++;
+            if (currentMessageIndex >= sessionData.length) {
+                pause();
+                return;
+            }
+
+            updateVisibility();
+            updateProgress();
+
+            if (autoScroll) {
+                scrollToCurrentMessage();
+            }
+
+            // Schedule next message based on speed
+            const baseDelay = 800; // ms between messages
+            const delay = baseDelay / playbackSpeed;
+            playbackInterval = setTimeout(advanceMessage, delay);
+        }
+
+        function restart() {
+            pause();
+            currentMessageIndex = 0;
+            updateVisibility();
+            updateProgress();
+            sessionContent.scrollTop = 0;
+        }
+
+        function updateVisibility() {
+            const messages = sessionContent.querySelectorAll('.message');
+            messages.forEach((msg, i) => {
+                msg.classList.toggle('visible', i <= currentMessageIndex);
+                msg.classList.toggle('active', i === currentMessageIndex);
+            });
+        }
+
+        function updateProgress() {
+            const progress = ((currentMessageIndex + 1) / sessionData.length) * 100;
+            progressFill.style.width = `${progress}%`;
+            currentMsgEl.textContent = currentMessageIndex + 1;
+        }
+
+        function scrollToCurrentMessage() {
+            const activeMsg = sessionContent.querySelector('.message.active');
+            if (activeMsg) {
+                activeMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        function jumpToMessage(index) {
+            pause();
+            currentMessageIndex = Math.min(Math.max(0, index), sessionData.length - 1);
+            updateVisibility();
+            updateProgress();
+            scrollToCurrentMessage();
+        }
+
+        // ===== SPEED CONTROLS =====
+        function increaseSpeed() {
+            const speeds = [0.5, 1, 1.5, 2, 3, 5];
+            const currentIdx = speeds.indexOf(playbackSpeed);
+            if (currentIdx < speeds.length - 1) {
+                playbackSpeed = speeds[currentIdx + 1];
+                speedValue.textContent = playbackSpeed + 'x';
+            }
+        }
+
+        function decreaseSpeed() {
+            const speeds = [0.5, 1, 1.5, 2, 3, 5];
+            const currentIdx = speeds.indexOf(playbackSpeed);
+            if (currentIdx > 0) {
+                playbackSpeed = speeds[currentIdx - 1];
+                speedValue.textContent = playbackSpeed + 'x';
+            }
+        }
+
+        // ===== Q&A PANEL =====
+        function switchTab(tabName) {
+            qaTabs.forEach(tab => tab.classList.toggle('active', tab.dataset.tab === tabName));
+            qaContents.forEach(content => content.classList.toggle('active', content.dataset.content === tabName));
+        }
+
+        function sendQuestion(question) {
+            if (!question.trim()) return;
+
+            // Add user question
+            const userMsg = document.createElement('div');
+            userMsg.className = 'qa-message user-q';
+            userMsg.textContent = question;
+            qaChat.appendChild(userMsg);
+
+            // Simulate AI response
+            setTimeout(() => {
+                const aiMsg = document.createElement('div');
+                aiMsg.className = 'qa-message ai-a';
+                aiMsg.innerHTML = getAIResponse(question);
+                qaChat.appendChild(aiMsg);
+                qaChat.scrollTop = qaChat.scrollHeight;
+            }, 500);
+
+            qaInput.value = '';
+            qaChat.scrollTop = qaChat.scrollHeight;
+        }
+
+        function getAIResponse(question) {
+            const q = question.toLowerCase();
+
+            if (q.includes('next.js') && q.includes('remix')) {
+                return "Next.js was chosen for a few key reasons in this build:<br><br><strong>1. App Router maturity</strong> - Next.js 14's App Router provides excellent server component support, which is crucial for a data-heavy dashboard.<br><br><strong>2. Vercel deployment</strong> - Since Grizzly was already on Vercel, staying in the ecosystem simplified deployment and preview environments.<br><br><strong>3. Stripe integration</strong> - The existing Stripe examples and templates for Next.js made the payment integration faster.<br><br>Remix would have been equally valid - its data loading patterns are excellent. The choice came down to deployment preferences and ecosystem familiarity.";
+            }
+
+            if (q.includes('slot') && q.includes('booking')) {
+                return "The slot booking logic handles a tricky concurrency problem. Here's how it works:<br><br><strong>1. Hold Phase</strong><br>When an advertiser clicks \"Book\", we immediately place a 10-minute hold using a database transaction with row-level locking (<code>FOR UPDATE</code>).<br><br><strong>2. Race Condition Handling</strong><br>If two users try to book simultaneously, the database lock ensures only one succeeds. The second request gets a 409 Conflict response.<br><br><strong>3. Expiration</strong><br>A background job (or webhook) releases expired holds. If checkout isn't completed in 10 minutes, the slot becomes available again.<br><br>Check messages 46-89 in the transcript to see the full implementation.";
+            }
+
+            if (q.includes('stripe') && q.includes('connect')) {
+                return "Stripe Connect is used in <strong>destination charges</strong> mode. Here's the flow:<br><br><strong>1. Onboarding</strong><br>Creators go through Stripe's OAuth flow to connect their accounts. We store their <code>stripe_account_id</code>.<br><br><strong>2. Payment</strong><br>When an advertiser pays, we create a PaymentIntent with <code>transfer_data.destination</code> set to the creator's account.<br><br><strong>3. Fee Split</strong><br>The 15% platform fee is automatically held via <code>application_fee_amount</code>. The creator receives 85% directly in their connected account.<br><br><strong>4. Payouts</strong><br>Creators control their own payout schedule through Stripe's dashboard. We don't need to manage that.";
+            }
+
+            if (q.includes('different')) {
+                return "A few things I'd reconsider in a v2:<br><br><strong>1. Real-time updates</strong><br>The current polling for availability could be replaced with WebSockets or Supabase Realtime for instant availability updates.<br><br><strong>2. Slot flexibility</strong><br>Currently slots are day-based. Some newsletters might want multiple slots per day or time-specific placements.<br><br><strong>3. Analytics depth</strong><br>The tracking is basic. A proper implementation would use a time-series database like TimescaleDB or ClickHouse for better aggregations.<br><br><strong>4. Testing</strong><br>This session focused on shipping. A production system needs comprehensive tests, especially around the payment flows.";
+            }
+
+            return "That's a great question about this session. The transcript shows the full context of how decisions were made during the build. You can use the story panel on the left to navigate to specific chapters, or click \"Jump to transcript\" to see the exact messages where topics were discussed.<br><br>Feel free to ask about specific technical decisions, architecture choices, or any code you see in the session.";
+        }
+
+        // ===== EVENT LISTENERS =====
+        function setupEventListeners() {
+            // Playback
+            playBtn.addEventListener('click', togglePlay);
+            restartBtn.addEventListener('click', restart);
+            speedUp.addEventListener('click', increaseSpeed);
+            speedDown.addEventListener('click', decreaseSpeed);
+
+            // Progress bar click
+            progressBar.addEventListener('click', (e) => {
+                const rect = progressBar.getBoundingClientRect();
+                const percent = (e.clientX - rect.left) / rect.width;
+                const targetIndex = Math.floor(percent * sessionData.length);
+                jumpToMessage(targetIndex);
+            });
+
+            // Auto-scroll toggle
+            scrollModeBtn.addEventListener('click', () => {
+                autoScroll = !autoScroll;
+                scrollModeBtn.classList.toggle('active', autoScroll);
+            });
+
+            // Q&A tabs
+            qaTabs.forEach(tab => {
+                tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+            });
+
+            // Q&A input
+            qaSend.addEventListener('click', () => sendQuestion(qaInput.value));
+            qaInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendQuestion(qaInput.value);
+                }
+            });
+
+            // Suggestion chips
+            suggestionChips.forEach(chip => {
+                chip.addEventListener('click', () => sendQuestion(chip.textContent));
+            });
+
+            // Chapter jumps
+            chapterJumps.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const target = parseInt(btn.dataset.target);
+                    jumpToMessage(target);
+                });
+            });
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+                switch (e.key) {
+                    case ' ':
+                        e.preventDefault();
+                        togglePlay();
+                        break;
+                    case 'ArrowRight':
+                        if (e.shiftKey) {
+                            jumpToMessage(currentMessageIndex + 10);
+                        } else {
+                            jumpToMessage(currentMessageIndex + 1);
+                        }
+                        break;
+                    case 'ArrowLeft':
+                        if (e.shiftKey) {
+                            jumpToMessage(currentMessageIndex - 10);
+                        } else {
+                            jumpToMessage(currentMessageIndex - 1);
+                        }
+                        break;
+                    case 'r':
+                        restart();
+                        break;
+                }
+            });
+        }
+
+        // Initialize
+        init();
+    })();
+    </script>
+</body>
+</html>
