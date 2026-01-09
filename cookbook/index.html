@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cookbook | ben tossell</title>
+    <meta name="description" content="Real coding sessions with AI. Watch how things get built from start to finish.">
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+    <link rel="apple-touch-icon" href="../assets/images/apple-touch-icon.png">
+    <meta property="og:title" content="cookbook | ben tossell">
+    <meta property="og:description" content="Real coding sessions with AI. Watch how things get built from start to finish.">
+    <meta property="og:image" content="../assets/images/card.jpg">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="../assets/css/cookbook.css">
+</head>
+<body class="theme-midnight">
+    <div class="cookbook-index-wrapper">
+        <header class="blog-header">
+            <a href="/" class="blog-home">~/bentossell</a>
+            <nav class="blog-nav">
+                <a href="/blog/">blog</a>
+                <a href="/">terminal</a>
+            </nav>
+        </header>
+
+        <main class="blog-main">
+            <div class="cookbook-hero">
+                <h1 class="cookbook-hero-title">cookbook</h1>
+                <p class="cookbook-hero-subtitle">
+                    Real coding sessions with AI agents. Watch the process, read the story,
+                    explore the transcript, and ask questions to learn how things actually get built.
+                </p>
+            </div>
+
+            <div class="cookbook-list" id="cookbook-list">
+                <div class="loading">loading sessions...</div>
+            </div>
+        </main>
+
+        <footer class="cookbook-footer">
+            <span>&copy; 2025 ben tossell</span>
+            <a href="https://x.com/bentossell" target="_blank" rel="noopener">@bentossell</a>
+        </footer>
+    </div>
+
+    <script>
+    (function() {
+        const sessions = [
+            {
+                slug: "rebuilding-grizzly-ads",
+                title: "Rebuilding Grizzly Ads: From Idea to Production",
+                description: "A full rebuild of the Grizzly Ads platform using Claude Code. Watch how an ad marketplace gets rebuilt from scratch with AI assistance.",
+                date: "2025-01-08",
+                duration: "3h 24m",
+                stats: {
+                    messages: 847,
+                    linesOfCode: 12453,
+                    filesChanged: 89
+                },
+                tags: ["Next.js", "TypeScript", "Stripe", "PostgreSQL"]
+            }
+        ];
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr + 'T00:00:00');
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        function formatNumber(num) {
+            return num.toLocaleString();
+        }
+
+        function renderSessions() {
+            const container = document.getElementById('cookbook-list');
+            if (sessions.length === 0) {
+                container.innerHTML = '<p class="no-posts">No sessions yet.</p>';
+                return;
+            }
+
+            const html = sessions.map(session => `
+                <article class="cookbook-card">
+                    <a href="${session.slug}/" class="cookbook-card-link">
+                        <div class="cookbook-card-header">
+                            <div class="cookbook-card-meta">
+                                <span class="cookbook-card-date">${formatDate(session.date)}</span>
+                                <span class="cookbook-card-duration">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <polyline points="12 6 12 12 16 14"></polyline>
+                                    </svg>
+                                    ${session.duration}
+                                </span>
+                            </div>
+                            <h2 class="cookbook-card-title">${session.title}</h2>
+                            <p class="cookbook-card-desc">${session.description}</p>
+                        </div>
+                        <div class="cookbook-card-body">
+                            <div class="cookbook-card-stats">
+                                <div class="stat-item">
+                                    <span class="stat-value">${formatNumber(session.stats.messages)}</span>
+                                    <span class="stat-label">messages</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-value">${formatNumber(session.stats.linesOfCode)}</span>
+                                    <span class="stat-label">lines written</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-value">${session.stats.filesChanged}</span>
+                                    <span class="stat-label">files</span>
+                                </div>
+                            </div>
+                            <div class="cookbook-card-tags">
+                                ${session.tags.map(tag => `<span class="card-tag">${tag}</span>`).join('')}
+                            </div>
+                        </div>
+                    </a>
+                </article>
+            `).join('');
+
+            container.innerHTML = html;
+        }
+
+        renderSessions();
+    })();
+    </script>
+</body>
+</html>
