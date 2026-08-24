@@ -1,310 +1,1089 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
-    <title>ben tossell</title>
-    <meta name="description" content="ben tossell's personal terminal - type 'help' to get started">
-    <link rel="icon" type="image/png" href="assets/images/favicon.png">
-    <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
-    <meta property="og:title" content="ben tossell">
-    <meta property="og:description" content="Interactive CLI-style personal website">
-    <meta property="og:image" content="assets/images/card.jpg">
-    <meta property="og:type" content="website">
-    <meta name="twitter:card" content="summary_large_image">
-    <link rel="stylesheet" href="assets/css/styles.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Ben Tossell — builder, investor, and maker.">
+  <title>Ben Tossell</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #ffffff;
+      --surface: #ffffff;
+      --surface-2: #f5f5f3;
+      --surface-3: #ececea;
+      --ink: #181817;
+      --muted: #777773;
+      --faint: #a4a49e;
+      --line: #deded9;
+      --line-strong: #c8c8c1;
+      --accent: #1769d2;
+      --accent-soft: #e8f1fc;
+      --good: #087c52;
+      --bad: #b42336;
+      --shadow: 0 18px 70px rgba(20, 20, 15, .11);
+      --ease-out: cubic-bezier(.22, 1, .36, 1);
+      --ease-in-out: cubic-bezier(.65, 0, .35, 1);
+      --sans: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      --left: 252px;
+      --right: 300px;
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 14px;
+      -webkit-font-smoothing: antialiased;
+    }
+    button, input { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button { color: inherit; }
+    a { color: inherit; }
+    svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+    .icon-btn.mobile-only { display: none; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    .shell {
+      position: relative;
+      display: grid;
+      grid-template-columns: var(--left) minmax(420px, 1fr) var(--right);
+      width: calc(100vw - 32px);
+      height: calc(100vh - 32px);
+      margin: 16px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .rail, .detail, .chat { min-width: 0; min-height: 0; }
+    .rail, .detail { background: var(--surface-2); }
+    .rail { display: flex; flex-direction: column; border-right: 1px solid var(--line); }
+    .detail { display: flex; flex-direction: column; border-left: 1px solid var(--line); }
+    .chat { position: relative; display: grid; grid-template-rows: 48px minmax(0, 1fr) auto; background: var(--surface); }
+
+    .topbar {
+      height: 48px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 14px;
+      border-bottom: 1px solid var(--line);
+      flex: none;
+    }
+    .topbar-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
+    .topbar-title span { color: var(--muted); }
+    .topbar-spacer { flex: 1; }
+
+    .icon-btn {
+      display: inline-grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      border: 0;
+      border-radius: 7px;
+      background: transparent;
+      cursor: pointer;
+    }
+    .icon-btn, .thread, .folder, .new-thread, .composer-tool, .send, .detail-tab, .file-change-head, .model-option, .theme-option, .switch, .secondary-button {
+      transition: background-color .12s var(--ease-out), border-color .12s var(--ease-out), color .12s var(--ease-out), opacity .12s var(--ease-out), transform .12s var(--ease-out);
+    }
+    .icon-btn:hover { background: var(--surface-3); }
+    .icon-btn:active, .thread:active, .folder:active, .new-thread:active, .composer-tool:active, .send:active, .detail-tab:active, .file-change-head:active, .model-option:active, .theme-option:active, .switch:active, .secondary-button:active { transform: scale(.97); }
+    .icon-btn:focus-visible, .thread:focus-visible, .folder:focus-visible, .new-thread:focus-visible, .composer-tool:focus-visible, .send:focus-visible, .detail-tab:focus-visible, .file-change-head:focus-visible, .model-option:focus-visible, .theme-option:focus-visible, .switch:focus-visible, .secondary-button:focus-visible, .changes-filter:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 18px 16px 14px;
+    }
+    .mark {
+      display: grid;
+      place-items: center;
+      width: 26px;
+      height: 26px;
+      border: 1px solid var(--line-strong);
+      border-radius: 50%;
+      font: 600 12px/1 var(--mono);
+      letter-spacing: -.5px;
+      background: var(--surface);
+    }
+    .brand-copy { min-width: 0; }
+    .brand-name { font-size: 13px; font-weight: 600; line-height: 1.2; }
+
+    .new-thread {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin: 0 10px 10px;
+      padding: 8px 9px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: var(--surface);
+      cursor: pointer;
+      text-align: left;
+    }
+    .new-thread:hover { border-color: var(--line-strong); }
+    .shortcut { margin-left: auto; color: var(--faint); font: 10px/1 var(--mono); }
+
+    .rail-label {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px 7px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+    .rail-label span:last-child { margin-left: auto; font: 10px/1 var(--mono); color: var(--faint); }
+    .thread-list { min-height: 0; overflow-y: auto; padding: 0 8px; }
+    .folder {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 18px minmax(0, 1fr) auto auto;
+      align-items: center;
+      gap: 7px;
+      padding: 8px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      cursor: pointer;
+      text-align: left;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .folder:hover { background: var(--surface-3); color: var(--ink); }
+    .folder svg { width: 14px; height: 14px; }
+    .folder .chevron { width: 12px; height: 12px; transform: rotate(90deg); transition: transform .16s var(--ease-out); }
+    .folder.collapsed .chevron { transform: rotate(0deg); }
+    .folder-threads { display: grid; }
+    .folder-threads.collapsed { display: none; }
+    .thread {
+      width: 100%;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 8px 8px 33px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      cursor: pointer;
+      text-align: left;
+    }
+    .thread:hover { background: var(--surface-3); }
+    .thread.active { background: var(--surface-3); color: var(--ink); }
+    .thread .thread-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
+    .thread .key { color: var(--faint); font: 10px/1 var(--mono); opacity: 0; }
+    .thread:hover .key, .thread.active .key { opacity: 1; }
+    .unread-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+    .thread .unread-dot { justify-self: end; }
+
+    .rail-bottom { margin-top: auto; border-top: 1px solid var(--line); padding: 10px 10px 11px; display: flex; justify-content: flex-start; }
+    .messages { overflow: auto; }
+    .conversation { width: min(760px, calc(100% - 48px)); margin: 0 auto; padding: 42px 0 28px; }
+    .question-row { display: flex; justify-content: flex-end; margin-bottom: 28px; }
+    .question {
+      max-width: 78%;
+      padding: 10px 13px;
+      border: 1px solid var(--line);
+      border-radius: 13px 13px 3px 13px;
+      background: var(--surface-2);
+      line-height: 1.5;
+    }
+    .response { min-width: 0; }
+    .response-head { display: flex; align-items: center; gap: 9px; margin-bottom: 14px; }
+    .agent-mark { display: grid; place-items: center; width: 22px; height: 22px; border: 1px solid var(--line-strong); border-radius: 50%; font: 600 9px/1 var(--mono); }
+    .response-head strong { font-size: 12px; font-weight: 600; }
+    .response-head span { color: var(--muted); font: 10px/1 var(--mono); }
+    .response-body { font-size: 14px; line-height: 1.62; }
+    .response-body > p { margin: 0 0 14px; }
+    .response-body h2 { margin: 26px 0 10px; font-size: 13px; font-weight: 600; }
+    .response-body ul { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+    .response-body li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 18px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+    .response-body li span:last-child { color: var(--muted); text-align: right; }
+    .response-body a { color: var(--accent); text-decoration: none; }
+    .response-body a:hover { text-decoration: underline; }
+    .response-note { margin-top: 18px; padding-left: 11px; border-left: 2px solid var(--line-strong); color: var(--muted); }
+    .composer-wrap { padding: 0 16px 14px; background: linear-gradient(to bottom, transparent, var(--surface) 24%); }
+    .composer {
+      width: min(760px, 100%);
+      margin: auto;
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 6px 8px;
+      min-height: 64px;
+      padding: 8px 7px 6px 11px;
+      border: 1px solid var(--line-strong);
+      border-radius: 11px;
+      background: var(--surface);
+      box-shadow: 0 4px 18px rgba(20,20,15,.05);
+    }
+    .prompt-input { grid-column: 1 / -1; width: 100%; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--ink); caret-color: var(--ink); }
+    .prompt-input::placeholder { color: var(--faint); }
+    .prompt-input::selection { background: color-mix(in srgb, var(--surface-3) 82%, transparent); color: var(--ink); }
+    .composer-tools { display: flex; align-items: center; gap: 3px; min-width: 0; }
+    .composer-tool {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      height: 24px;
+      padding: 0 6px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 10px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .composer-tool:hover { background: var(--surface-3); color: var(--ink); }
+    .composer-tool svg { width: 12px; height: 12px; }
+    .provider-logo { display: inline-grid; place-items: center; width: 18px; height: 18px; flex: none; border: 1px solid var(--line-strong); border-radius: 5px; background: var(--surface); color: var(--ink); font: 700 8px/1 var(--sans); letter-spacing: -.02em; }
+    .model-picker {
+      position: absolute;
+      z-index: 12;
+      right: clamp(6px, 4vw, 38px);
+      bottom: 36px;
+      width: 276px;
+      max-width: calc(100vw - 24px);
+      padding: 6px;
+      border: 1px solid var(--line-strong);
+      border-radius: 10px;
+      background: var(--surface);
+      box-shadow: 0 12px 38px rgba(20,20,15,.16);
+      transform-origin: right bottom;
+      transition: opacity .15s var(--ease-out), transform .15s var(--ease-out);
+    }
+    @starting-style { .model-picker:not([hidden]) { opacity: 0; transform: scale(.97); } }
+    .model-picker[hidden] { display: none; }
+    .model-option {
+      width: 100%;
+      display: grid;
+      grid-template-columns: minmax(0,1fr) auto;
+      gap: 8px;
+      align-items: start;
+      padding: 8px 9px;
+      border: 0;
+      border-radius: 7px;
+      background: transparent;
+      text-align: left;
+      cursor: pointer;
+    }
+    .model-option:hover, .model-option.active { background: var(--surface-3); }
+    .model-choice { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .model-option strong { font-size: 12px; font-weight: 600; }
+    .model-option small { display: block; margin-top: 2px; color: var(--muted); font-size: 10px; line-height: 1.25; }
+    .model-option .check { color: var(--accent); }
+    .send { display: grid; place-items: center; width: 30px; height: 30px; flex: none; border: 0; border-radius: 7px; background: var(--ink); color: var(--surface); cursor: pointer; }
+    .send:hover { opacity: .82; }
+
+    .detail-tabs { display: flex; align-items: center; gap: 4px; }
+    .detail-tab {
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      padding: 0;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .detail-tab:hover, .detail-tab.active { background: var(--surface-3); color: var(--ink); }
+    .detail-tab svg { width: 14px; height: 14px; }
+    .context-panel, .changes-panel { min-height: 0; overflow-y: auto; padding: 13px 16px 24px; }
+    .context-panel[hidden], .changes-panel[hidden] { display: none; }
+    .env-row { display: grid; grid-template-columns: 16px 76px minmax(0, 1fr); align-items: start; gap: 6px; padding: 6px 0; font-size: 11px; line-height: 1.35; }
+    .env-row svg { width: 13px; height: 13px; color: var(--muted); }
+    .env-key { color: var(--muted); }
+    .env-value { overflow-wrap: anywhere; }
+    .env-link { min-width: 0; display: flex; align-items: center; gap: 5px; color: var(--ink); text-decoration: none; }
+    .env-link span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .env-link svg { width: 10px; height: 10px; color: var(--faint); }
+    .env-link:hover span { text-decoration: underline; }
+    .property-divider { height: 1px; margin: 12px 0 8px; background: var(--line); }
+    .dirty { color: var(--bad); font-weight: 600; }
+    .git-summary { display: flex; align-items: center; gap: 7px; padding: 18px 0 8px; color: var(--muted); font-size: 10px; }
+    .git-summary strong { color: var(--ink); font-weight: 500; }
+    .add { color: var(--good); }
+    .del { color: var(--bad); }
+    .mini-files { display: grid; gap: 1px; }
+    .mini-file { display: grid; grid-template-columns: 14px minmax(0,1fr) auto; gap: 6px; padding: 5px 0; font: 10px/1.3 var(--mono); }
+    .mini-file .state { color: var(--muted); }
+    .mini-file .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .mini-file .counts { white-space: nowrap; font: 10px/1.3 var(--mono); }
+    .changes-toolbar { display: flex; align-items: center; gap: 7px; padding: 2px 0 10px; }
+    .changes-filter { height: 27px; min-width: 0; flex: 1; padding: 0 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--ink); font-size: 10px; }
+    .changes-count { color: var(--muted); font: 10px/1 var(--mono); white-space: nowrap; }
+    .file-change { margin-bottom: 5px; overflow: hidden; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+    .file-change[hidden] { display: none; }
+    .file-change-head { width: 100%; min-height: 29px; display: grid; grid-template-columns: 14px 14px minmax(0,1fr) auto; gap: 6px; align-items: center; padding: 6px 8px; border: 0; background: transparent; color: inherit; cursor: pointer; text-align: left; }
+    .file-change-head:hover { background: var(--surface-2); }
+    .file-change-head svg { width: 11px; height: 11px; color: var(--muted); transition: transform .15s var(--ease-out); }
+    .file-change.open .file-change-head svg { transform: rotate(90deg); }
+    .file-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 10px/1 var(--mono); }
+    .file-status { color: var(--muted); font: 10px/1 var(--mono); }
+    .file-change-head .counts { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 10px/1 var(--mono); color: var(--muted); }
+    .diff { display: none; overflow-x: auto; padding: 7px 0 9px; border-top: 1px solid var(--line); background: var(--surface-2); font: 10px/1.5 var(--mono); }
+    .file-change.open .diff { display: block; }
+    .diff-line { display: grid; grid-template-columns: 22px 22px minmax(max-content,1fr); padding: 0 5px; }
+    .diff-line .ln { color: var(--faint); text-align: right; padding-right: 5px; }
+    .diff-line.plus { background: color-mix(in srgb, #27a269 14%, transparent); }
+    .diff-line.minus { background: color-mix(in srgb, #db4b58 13%, transparent); }
+
+    .modal-backdrop {
+      position: fixed;
+      z-index: 30;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(22,22,20,.24);
+      backdrop-filter: blur(2px);
+      transition: opacity .18s var(--ease-out);
+    }
+    .modal-backdrop[hidden] { display: none; }
+    .settings-modal { width: min(560px, 100%); max-height: min(620px, calc(100vh - 40px)); overflow: auto; border: 1px solid var(--line-strong); border-radius: 12px; background: var(--surface); box-shadow: 0 28px 90px rgba(20,20,15,.26); transform-origin: center; transition: opacity .18s var(--ease-out), transform .18s var(--ease-out); }
+    @starting-style {
+      .modal-backdrop:not([hidden]) { opacity: 0; }
+      .modal-backdrop:not([hidden]) .settings-modal { opacity: 0; transform: scale(.98); }
+    }
+    .settings-head { display: flex; align-items: center; padding: 15px 16px; border-bottom: 1px solid var(--line); }
+    .settings-head h2 { margin: 0; font-size: 13px; }
+    .settings-head button { margin-left: auto; }
+    .settings-body { padding: 4px 16px 18px; }
+    .settings-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 18px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+    .settings-row:last-child { border-bottom: 0; }
+    .settings-row h3 { margin: 0 0 4px; font-size: 12px; font-weight: 600; }
+    .settings-row p { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.4; }
+    .theme-options { display: flex; padding: 2px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface-2); }
+    .theme-option { padding: 6px 8px; border: 0; border-radius: 5px; background: transparent; color: var(--muted); font-size: 10px; cursor: pointer; }
+    .theme-option.active { background: var(--surface); color: var(--ink); box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+    .usage { width: 150px; }
+    .usage-top { display: flex; justify-content: space-between; margin-bottom: 6px; font: 9px/1 var(--mono); }
+    .usage-track { height: 5px; overflow: hidden; border-radius: 5px; background: var(--surface-3); }
+    .usage-fill { width: 72%; height: 100%; background: var(--accent); }
+    .switch { position: relative; width: 32px; height: 18px; border: 0; border-radius: 18px; background: var(--line-strong); cursor: pointer; }
+    .switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 12px; height: 12px; border-radius: 50%; background: white; transition: transform .15s var(--ease-out); }
+    .switch.on { background: var(--accent); }
+    .switch.on::after { transform: translateX(14px); }
+    .secondary-button { padding: 7px 10px; border: 1px solid var(--line-strong); border-radius: 7px; background: var(--surface); color: var(--ink); font-size: 10px; cursor: pointer; }
+    .secondary-button:hover { background: var(--surface-2); }
+    .show-more-files { margin: 6px 0 12px; padding: 3px 0; border: 0; background: transparent; color: var(--muted); font-size: 10px; cursor: pointer; text-align: left; }
+    .show-more-files:hover { color: var(--ink); text-decoration: underline; }
+    .show-more-files:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    body[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #0b0d0c;
+      --surface: #111311;
+      --surface-2: #161916;
+      --surface-3: #20241f;
+      --ink: #e2e6e2;
+      --muted: #929b92;
+      --faint: #626a63;
+      --line: #292e29;
+      --line-strong: #3c443d;
+      --accent: #7aa8f8;
+      --accent-soft: #17253d;
+      --good: #66c58c;
+      --bad: #ff8795;
+      --shadow: 0 20px 70px rgba(0,0,0,.46);
+    }
+
+    .toast {
+      position: fixed;
+      z-index: 20;
+      top: 28px;
+      left: 50%;
+      transform: translate(-50%, -8px);
+      padding: 8px 11px;
+      border: 1px solid var(--line-strong);
+      border-radius: 7px;
+      background: var(--ink);
+      color: var(--surface);
+      box-shadow: var(--shadow);
+      font-size: 11px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .18s var(--ease-out), transform .18s var(--ease-out);
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    .left-hidden { grid-template-columns: 0 minmax(420px, 1fr) var(--right); }
+    .left-hidden .rail { overflow: hidden; border: 0; }
+    .right-hidden { grid-template-columns: var(--left) minmax(420px, 1fr) 0; }
+    .right-hidden .detail { overflow: hidden; border: 0; }
+    .left-hidden.right-hidden { grid-template-columns: 0 minmax(420px, 1fr) 0; }
+    .detail-wide { --right: min(620px, 52vw); }
+    .drawer-scrim { display: none; }
+
+    @media (max-width: 980px) {
+      .shell { grid-template-columns: 224px minmax(0, 1fr); }
+      .detail { display: none; }
+      .right-toggle { display: none; }
+      .left-hidden, .left-hidden.right-hidden { grid-template-columns: 0 minmax(0, 1fr); }
+    }
+    @media (max-width: 680px) {
+      body { overflow: hidden; }
+      .shell { width: 100vw; height: 100dvh; margin: 0; border: 0; border-radius: 0; grid-template-columns: minmax(0, 1fr); }
+      .rail { position: absolute; z-index: 8; inset: 0 auto 0 0; width: min(84vw, 300px); box-shadow: 12px 0 40px rgba(0,0,0,.16); transform: translateX(-105%); transition: transform .2s var(--ease-out); }
+      .shell.mobile-menu .rail { transform: translateX(0); }
+      .drawer-scrim { position: absolute; z-index: 7; inset: 0; display: block; border: 0; background: rgba(20,20,18,.28); opacity: 0; pointer-events: none; transition: opacity .18s var(--ease-out); }
+      .shell.mobile-menu .drawer-scrim { opacity: 1; pointer-events: auto; }
+      .chat { grid-column: 1; }
+      .conversation { width: calc(100% - 30px); padding-top: 26px; }
+      .composer-wrap { padding: 0 8px 10px; }
+      .desktop-only { display: none; }
+      .icon-btn.mobile-only { display: inline-grid; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+  </style>
 </head>
-<body class="theme-midnight">
-    <div class="terminal-wrapper">
-        <div class="terminal" id="terminal">
-            <div class="terminal-title">
-                <div class="title-buttons">
-                    <span class="title-btn close"></span>
-                    <span class="title-btn minimize"></span>
-                    <span class="title-btn maximize"></span>
-                </div>
-                <span class="title-text">~/bentossell <a href="https://factory.ai" target="_blank" rel="noopener" class="title-link">droid</a></span>
-                <div class="title-actions">
-                    <button class="help-btn" id="help-btn" aria-label="Show help">?</button>
-                </div>
-            </div>
-            <div class="terminal-body" id="terminal-body">
-                <div id="output" role="log" aria-live="polite"></div>
-            </div>
-            <div class="terminal-input">
-                <span class="input-prompt">&gt;</span>
-                <form id="command-form" autocomplete="off">
-                    <input 
-                        type="text" 
-                        id="command-input" 
-                        placeholder="type a command..."
-                        aria-label="Command input"
-                        spellcheck="false"
-                        autocapitalize="none"
-                        autocorrect="off"
-                    >
-                </form>
-            </div>
-            <div class="terminal-status">
-                <div class="status-left">
-                    <span class="status-item" id="status-vibe">building things</span>
-                </div>
-                <div class="status-center">
-                    <span class="status-hint">shift+tab to cycle themes</span>
-                </div>
-                <div class="status-right">
-                    <span class="status-item" id="status-time">--:--</span>
-                    <span class="status-sep">|</span>
-                    <span class="status-item status-model" title="my default model atm">Opus 4.5</span>
-                </div>
-            </div>
+<body data-theme="light">
+  <main class="shell" id="shell">
+    <aside class="rail" aria-label="Threads">
+      <div class="brand">
+        <div class="mark">bt</div>
+        <div class="brand-copy">
+          <div class="brand-name">ben tossell</div>
         </div>
-        
-        <div class="command-shortcuts">
-            <button class="cmd-shortcut" data-cmd="whoami">whoami</button>
-            <button class="cmd-shortcut" data-cmd="now">now</button>
-            <button class="cmd-shortcut" data-cmd="investments">investments</button>
-            <button class="cmd-shortcut" data-cmd="tools">tools</button>
-        </div>
-    </div>
+        <button class="icon-btn mobile-only" id="closeMobile" aria-label="Close menu" style="margin-left:auto">
+          <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
 
-    <div id="music-player" class="music-player" aria-live="polite" aria-label="Retro soundtrack music player">
-        <div class="music-meta">
-            <span class="music-label">arcade radio</span>
-            <span id="music-title" class="music-title">select a track</span>
-        </div>
-        <div class="music-controls" role="group" aria-label="Music controls">
-            <button type="button" id="music-prev" class="music-btn" aria-label="Previous track">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polygon points="19 20 9 12 19 4 19 20"></polygon>
-                    <line x1="5" y1="19" x2="5" y2="5"></line>
-                </svg>
+      <button class="new-thread" id="newThread">
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        <span>New question</span>
+        <span class="shortcut">N</span>
+      </button>
+
+      <div class="rail-label"><span>Threads</span><span></span></div>
+      <nav class="thread-list" id="threadList"></nav>
+
+      <div class="rail-bottom">
+        <button class="icon-btn settings-gear" id="openSettings" aria-label="Open settings">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.6v-.2h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1z"/></svg>
+        </button>
+      </div>
+    </aside>
+    <button class="drawer-scrim" id="drawerScrim" type="button" aria-label="Close threads"></button>
+
+    <section class="chat">
+      <header class="topbar">
+        <button class="icon-btn" id="leftToggle" aria-label="Toggle threads">
+          <svg id="leftToggleIcon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg>
+        </button>
+        <div class="topbar-title"><span>~/bentossell/</span><strong id="topTitle">about-me</strong></div>
+        <div class="topbar-spacer"></div>
+        <button class="icon-btn right-toggle" id="rightToggle" aria-label="Toggle details">
+          <svg id="rightToggleIcon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg>
+        </button>
+      </header>
+
+      <div class="messages" id="messages">
+        <div class="conversation" id="conversation" aria-live="polite"></div>
+      </div>
+
+      <div class="composer-wrap">
+        <form class="composer" id="composer">
+          <input class="prompt-input" id="promptInput" autocomplete="off" placeholder="Ask bites a question…" aria-label="Ask a question">
+          <div class="composer-tools">
+            <button class="composer-tool" type="button" id="addContext" aria-label="Add context">
+              <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
             </button>
-            <button type="button" id="music-toggle" class="music-btn" aria-label="Play or pause">
-                <svg class="icon icon-play" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                </svg>
-                <svg class="icon icon-pause" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="6" y="4" width="4" height="16"></rect>
-                    <rect x="14" y="4" width="4" height="16"></rect>
-                </svg>
+            <button class="composer-tool" type="button" id="approvalMode">
+              <svg viewBox="0 0 24 24"><path d="M8 12l3 3 5-6"/><circle cx="12" cy="12" r="9"/></svg>
+              <span>Approve for me</span>
+              <svg viewBox="0 0 24 24"><path d="M8 10l4 4 4-4"/></svg>
             </button>
-            <button type="button" id="music-next" class="music-btn" aria-label="Next track">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polygon points="5 4 15 12 5 20 5 4"></polygon>
-                    <line x1="19" y1="5" x2="19" y2="19"></line>
-                </svg>
+          </div>
+          <div class="composer-tools" style="justify-content:flex-end">
+            <button class="composer-tool" type="button" id="modelButton" aria-haspopup="listbox" aria-expanded="false">
+              <span class="provider-logo" id="providerLogo">O</span><strong id="modelLabel">5.6 Sol</strong><span id="effortLabel">High</span>
+              <svg viewBox="0 0 24 24"><path d="M8 10l4 4 4-4"/></svg>
             </button>
+            <button class="composer-tool" type="button" id="voiceInput" aria-label="Voice input">
+              <svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+            </button>
+            <button class="send" aria-label="Send question">
+              <svg viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></svg>
+            </button>
+          </div>
+          <div class="model-picker" id="modelPicker" role="listbox" hidden></div>
+        </form>
+      </div>
+    </section>
+
+    <aside class="detail" aria-label="Context">
+      <div class="topbar">
+        <div class="detail-tabs" aria-label="Sidebar views">
+          <button class="detail-tab active" id="contextTab" aria-pressed="true" aria-label="Show environment">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+          </button>
+          <button class="detail-tab" id="changesTab" aria-pressed="false" aria-label="Show file changes">
+            <svg viewBox="0 0 24 24"><path d="M4 4h6v6H4zM14 14h6v6h-6zM7 10v4h10v-4"/></svg>
+          </button>
         </div>
-    </div>
+        <div class="topbar-spacer"></div>
+        <button class="icon-btn" id="detailExpand" aria-label="Expand sidebar">
+          <svg id="detailExpandIcon" viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/></svg>
+        </button>
+      </div>
+      <div class="context-panel" id="contextPanel"></div>
+      <div class="changes-panel" id="changesPanel" hidden></div>
+    </aside>
+  </main>
 
-    <script src="assets/js/terminal.js"></script>
-    <script>
-    (function() {
-        const playerContainer = document.getElementById('music-player');
-        const titleEl = document.getElementById('music-title');
-        const playToggle = document.getElementById('music-toggle');
-        const nextBtn = document.getElementById('music-next');
-        const prevBtn = document.getElementById('music-prev');
+  <div class="modal-backdrop" id="settingsBackdrop" hidden>
+    <section class="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <header class="settings-head">
+        <h2 id="settingsTitle">Settings</h2>
+        <button class="icon-btn" id="closeSettings" aria-label="Close settings">
+          <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </header>
+      <div class="settings-body">
+        <div class="settings-row">
+          <div><h3>Appearance</h3><p>Choose how the interface looks.</p></div>
+          <div class="theme-options" aria-label="Theme">
+            <button class="theme-option active" data-theme="light">Light</button>
+            <button class="theme-option" data-theme="dark">Dark</button>
+            <button class="theme-option" data-theme="system">System</button>
+          </div>
+        </div>
+        <div class="settings-row">
+          <div><h3>Usage remaining</h3><p>Prototype allowance · resets Friday</p></div>
+          <div class="usage"><div class="usage-top"><span>72% left</span><span>72 / 100</span></div><div class="usage-track"><div class="usage-fill"></div></div></div>
+        </div>
+        <div class="settings-row">
+          <div><h3>Show pet</h3><p>Add Ben’s dog to quiet screens. Photo coming soon.</p></div>
+          <button class="switch" id="petSwitch" role="switch" aria-checked="false" aria-label="Show pet"></button>
+        </div>
+        <div class="settings-row">
+          <div><h3>Invite a friend</h3><p>Copy a link to this site.</p></div>
+          <button class="secondary-button" id="inviteButton">Copy invite</button>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="toast" id="toast">Ready</div>
 
-        const noteFreq = {
-            'C2': 65.41, 'C#2': 69.30, 'D2': 73.42, 'D#2': 77.78, 'E2': 82.41, 'F2': 87.31, 'F#2': 92.50, 'G2': 98.00, 'G#2': 103.83, 'A2': 110.00, 'A#2': 116.54, 'B2': 123.47,
-            'C3': 130.81, 'C#3': 138.59, 'D3': 146.83, 'D#3': 155.56, 'E3': 164.81, 'F3': 174.61, 'F#3': 185.00, 'G3': 196.00, 'G#3': 207.65, 'A3': 220.00, 'A#3': 233.08, 'B3': 246.94,
-            'C4': 261.63, 'C#4': 277.18, 'D4': 293.66, 'D#4': 311.13, 'E4': 329.63, 'F4': 349.23, 'F#4': 369.99, 'G4': 392.00, 'G#4': 415.30, 'A4': 440.00, 'A#4': 466.16, 'B4': 493.88,
-            'C5': 523.25, 'C#5': 554.37, 'D5': 587.33, 'D#5': 622.25, 'E5': 659.25, 'F5': 698.46, 'F#5': 739.99, 'G5': 783.99, 'G#5': 830.61, 'A5': 880.00, 'A#5': 932.33, 'B5': 987.77,
-            'C6': 1046.50
-        };
+  <script>
+    const icon = (name) => {
+      const paths = {
+        user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+        chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+        box: '<path d="M21 8l-9 5-9-5 9-5 9 5z"/><path d="M3 8v8l9 5 9-5V8M12 13v8"/>',
+        pulse: '<path d="M3 12h4l2-7 4 14 2-7h6"/>',
+        history: '<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/>',
+        x: '<path d="M5 4l14 16M19 4L5 20"/>',
+        github: '<path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3.3-.4 6.8-1.6 6.8-7.4A5.8 5.8 0 0 0 19.3 3 5.4 5.4 0 0 0 19.1 0S17.9-.4 15 1.5a14 14 0 0 0-7 0C5.1-.4 3.9 0 3.9 0a5.4 5.4 0 0 0-.2 3A5.8 5.8 0 0 0 2.2 7c0 5.8 3.5 7 6.8 7.4A4.8 4.8 0 0 0 8 18v4"/><path d="M8 19c-3 .9-3-1.5-4-2"/>',
+        linkedin: '<rect x="3" y="9" width="4" height="12"/><path d="M5 3v.01M11 21v-7a4 4 0 0 1 8 0v7M11 9v12M19 21v-7"/>',
+        mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
+        folder: '<path d="M3 6a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+        chevron: '<path d="M9 18l6-6-6-6"/>',
+        laptop: '<rect x="4" y="4" width="16" height="12" rx="2"/><path d="M2 20h20"/>',
+        branch: '<circle cx="6" cy="5" r="2"/><circle cx="18" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><path d="M6 7v10M18 7v3a4 4 0 0 1-4 4H6"/>',
+        file: '<path d="M6 2h9l4 4v16H6z"/><path d="M14 2v5h5"/>',
+        activity: '<path d="M4 6h16M4 12h10M4 18h13"/>',
+        external: '<path d="M14 4h6v6M20 4l-9 9"/><path d="M18 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6"/>'
+      };
+      return `<svg viewBox="0 0 24 24" aria-hidden="true">${paths[name] || paths.user}</svg>`;
+    };
 
-        // Tracks with proper tempos and note patterns (using eighth notes as base unit)
-        const tracks = [
-            {
-                title: 'Tetris Theme',
-                bpm: 300, // Eighth notes at this speed = 150 BPM quarter notes
-                wave: 'square',
-                notes: [
-                    'E5', 'B4', 'C5', 'D5', 'C5', 'B4', 'A4', 'A4', 'A4', 'C5', 'E5', 'E5', 'D5', 'C5', 'B4', 'B4',
-                    'B4', 'C5', 'D5', 'D5', 'E5', 'E5', 'C5', 'C5', 'A4', 'A4', 'A4', 'A4', '-', '-', '-', '-',
-                    'D5', 'D5', 'F5', 'A5', 'A5', 'G5', 'F5', 'E5', 'E5', 'C5', 'E5', 'E5', 'D5', 'C5', 'B4', 'B4',
-                    'B4', 'C5', 'D5', 'D5', 'E5', 'E5', 'C5', 'C5', 'A4', 'A4', 'A4', 'A4', '-', '-', '-', '-'
-                ]
-            },
-            {
-                title: 'Mario Theme',
-                bpm: 400, // Fast sixteenth-note feel
-                wave: 'square',
-                notes: [
-                    'E5', 'E5', '-', 'E5', '-', '-', 'C5', 'E5', '-', '-', 'G5', '-', '-', '-', '-', '-',
-                    'G4', '-', '-', '-', '-', '-', '-', '-',
-                    'C5', '-', '-', 'G4', '-', '-', 'E4', '-', '-', '-', 'A4', '-', '-', 'B4', '-', '-',
-                    'A#4', 'A4', '-', '-', 'G4', 'E5', 'G5', 'A5', '-', '-', 'F5', 'G5', '-', '-', 'E5', '-',
-                    '-', 'C5', 'D5', 'B4', '-', '-', '-', '-'
-                ]
-            },
-            {
-                title: 'Zelda Lullaby',
-                bpm: 160, // Gentle tempo
-                wave: 'triangle',
-                notes: [
-                    'B4', '-', 'D5', 'D5', 'A4', 'A4', '-', '-', 'G4', '-', 'A4', '-', '-', '-',
-                    'B4', '-', 'D5', 'D5', 'A4', 'A4', '-', '-', '-', '-', '-', '-', '-', '-'
-                ]
-            },
-            {
-                title: 'Pac-Man',
-                bpm: 340, // Snappy arcade feel
-                wave: 'sine',
-                notes: [
-                    'B4', 'B5', 'F#5', 'D#5', 'B5', 'F#5', 'D#5', '-',
-                    'C5', 'C6', 'G5', 'E5', 'C6', 'G5', 'E5', '-',
-                    'B4', 'B5', 'F#5', 'D#5', 'B5', 'F#5', 'D#5', '-',
-                    'D#5', 'E5', 'F5', 'F5', 'F#5', 'G5', 'G#5', 'A5'
-                ]
-            },
-            {
-                title: 'Space Invaders',
-                bpm: 220, // Menacing march
-                wave: 'sawtooth',
-                notes: [
-                    'A2', '-', 'B2', '-', 'C3', '-', 'B2', '-',
-                    'A2', '-', 'B2', '-', 'C3', '-', 'B2', '-',
-                    'G#2', '-', 'A2', '-', 'A#2', '-', 'A2', '-',
-                    'G#2', '-', 'A2', '-', 'A#2', '-', 'B2', '-'
-                ]
-            }
-        ];
+    let threads = {};
 
-        let audioContext = null;
-        let currentIndex = 0;
-        let isPlaying = false;
-        let scheduledNotes = [];
-        let nextNoteTime = 0;
-        let currentNote = 0;
-        let timerID = null;
+    const socialLinks = [
+      { label: 'X', handle: '@bentossell', href: 'https://x.com/bentossell', icon: 'x' },
+      { label: 'GitHub', handle: 'bentossell', href: 'https://github.com/bentossell', icon: 'github' },
+      { label: 'Newsletter', handle: 'bensbites.com', href: 'https://www.bensbites.com', icon: 'mail' }
+    ];
 
-        function initAudio() {
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            return audioContext;
+    let gitFiles = [
+      { name: 'index.html', status: 'M', add: 324, del: 88 },
+      { name: 'README.md', status: 'M', add: 48, del: 18 },
+      { name: 'package.json', status: 'M', add: 7, del: 7 },
+      { name: 'AGENTS.md', status: 'A', add: 8, del: 0 },
+      { name: 'CLAUDE.md', status: 'A', add: 1, del: 0 },
+      { name: 'threads/index.json', status: 'A', add: 7, del: 0 },
+      { name: 'threads/about.md', status: 'A', add: 23, del: 0 },
+      { name: 'threads/investments.md', status: 'A', add: 27, del: 0 },
+      { name: 'threads/products-i-love.md', status: 'A', add: 25, del: 0 },
+      { name: 'threads/now.md', status: 'A', add: 23, del: 0 },
+      { name: 'threads/previously.md', status: 'A', add: 23, del: 0 }
+    ];
+
+    let gitStatus = {
+      environment: 'Local · MacBook Air',
+      directory: '/Users/bentossell/repos/bentossell',
+      branch: 'codex/agent-ui-markdown',
+      status: 'Dirty'
+    };
+
+    const modelOptions = [
+      { provider: 'OpenAI', mark: 'O', model: '5.6 Sol', effort: 'High', note: 'Best for complex work' },
+      { provider: 'Anthropic', mark: 'A', model: 'Claude Opus 4.6', effort: 'High', note: 'Long-form reasoning and writing' },
+      { provider: 'xAI', mark: 'x', model: 'Grok Code Fast 1', effort: 'Medium', note: 'Fast code and research' },
+      { provider: 'Google', mark: 'G', model: 'Gemini 3.1 Pro', effort: 'High', note: 'Large-context work' },
+      { provider: 'OpenAI', mark: 'O', model: 'GPT-5.5', effort: 'Medium', note: 'Balanced everyday model' }
+    ];
+
+    const shell = document.getElementById('shell');
+    const list = document.getElementById('threadList');
+    const conversation = document.getElementById('conversation');
+    const messages = document.getElementById('messages');
+    const contextPanel = document.getElementById('contextPanel');
+    const changesPanel = document.getElementById('changesPanel');
+    const topTitle = document.getElementById('topTitle');
+    const promptInput = document.getElementById('promptInput');
+    const toast = document.getElementById('toast');
+    const modelPicker = document.getElementById('modelPicker');
+    const modelButton = document.getElementById('modelButton');
+    const settingsBackdrop = document.getElementById('settingsBackdrop');
+    const settingsModal = settingsBackdrop.querySelector('.settings-modal');
+    const settingsTrigger = document.getElementById('openSettings');
+    const colorScheme = matchMedia('(prefers-color-scheme: dark)');
+    let current = 'about';
+    let folderOpen = true;
+    let selectedModel = 0;
+    let visited = new Set(JSON.parse(localStorage.getItem('ben-visited-threads') || '[]'));
+
+    const escapeHtml = (value) => value.replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+    const gitTotals = () => gitFiles.reduce((totals, file) => ({ add: totals.add + Number(file.add || 0), del: totals.del + Number(file.del || 0) }), { add: 0, del: 0 });
+
+    function inlineMarkdown(value) {
+      return escapeHtml(value)
+        .replace(/\[([^\]]+)\]\(((?:https?:\/\/|\/)[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer">$1</a>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/`(.+?)`/g, '<code>$1</code>');
+    }
+
+    function markdownHtml(markdown) {
+      const lines = markdown.replace(/\r\n?/g, '\n').split('\n');
+      const output = [];
+      const startsBlock = line => /^(#{2,3})\s+|^>\s?|^-\s+/.test(line.trim());
+      let index = 0;
+
+      while (index < lines.length) {
+        const line = lines[index].trim();
+        if (!line) { index += 1; continue; }
+
+        const heading = line.match(/^(#{2,3})\s+(.+)$/);
+        if (heading) {
+          output.push(`<h2>${inlineMarkdown(heading[2])}</h2>`);
+          index += 1;
+          continue;
         }
 
-        function playNote(freq, time, duration, waveType) {
-            const ctx = initAudio();
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            const filter = ctx.createBiquadFilter();
-
-            osc.type = waveType;
-            osc.frequency.setValueAtTime(freq, time);
-
-            filter.type = 'lowpass';
-            filter.frequency.setValueAtTime(2000, time);
-            filter.Q.setValueAtTime(1, time);
-
-            const volume = 0.08;
-            const attack = 0.01;
-            const decay = 0.05;
-            const sustain = 0.6;
-            const release = 0.1;
-
-            gain.gain.setValueAtTime(0, time);
-            gain.gain.linearRampToValueAtTime(volume, time + attack);
-            gain.gain.linearRampToValueAtTime(volume * sustain, time + attack + decay);
-            gain.gain.setValueAtTime(volume * sustain, time + duration - release);
-            gain.gain.linearRampToValueAtTime(0, time + duration);
-
-            osc.connect(filter);
-            filter.connect(gain);
-            gain.connect(ctx.destination);
-
-            osc.start(time);
-            osc.stop(time + duration + 0.1);
-
-            scheduledNotes.push({ osc, gain });
+        if (line.startsWith('>')) {
+          const quote = [];
+          while (index < lines.length && lines[index].trim().startsWith('>')) {
+            quote.push(lines[index].trim().replace(/^>\s?/, ''));
+            index += 1;
+          }
+          output.push(`<p class="response-note">${inlineMarkdown(quote.join(' '))}</p>`);
+          continue;
         }
 
-        function scheduleNote() {
-            const track = tracks[currentIndex];
-            const secondsPerBeat = 60.0 / track.bpm;
-            const noteDuration = secondsPerBeat * 0.8;
-
-            while (nextNoteTime < audioContext.currentTime + 0.1) {
-                const note = track.notes[currentNote];
-                if (note !== '-' && noteFreq[note]) {
-                    playNote(noteFreq[note], nextNoteTime, noteDuration, track.wave);
-                }
-                nextNoteTime += secondsPerBeat;
-                currentNote = (currentNote + 1) % track.notes.length;
-            }
+        if (line.startsWith('- ')) {
+          const items = [];
+          while (index < lines.length && lines[index].trim().startsWith('- ')) {
+            const item = lines[index].trim().slice(2);
+            const pair = item.match(/^\*\*(.+?):\*\*\s*(.+)$/);
+            items.push(pair
+              ? `<li><span>${inlineMarkdown(pair[1])}</span><span>${inlineMarkdown(pair[2])}</span></li>`
+              : `<li><span>${inlineMarkdown(item)}</span><span></span></li>`);
+            index += 1;
+          }
+          output.push(`<ul>${items.join('')}</ul>`);
+          continue;
         }
 
-        function scheduler() {
-            if (!isPlaying) return;
-            scheduleNote();
-            timerID = setTimeout(scheduler, 25);
+        const paragraph = [line];
+        index += 1;
+        while (index < lines.length && lines[index].trim() && !startsBlock(lines[index])) {
+          paragraph.push(lines[index].trim());
+          index += 1;
         }
+        output.push(`<p>${inlineMarkdown(paragraph.join(' '))}</p>`);
+      }
 
-        function startPlayback() {
-            if (isPlaying) return;
-            initAudio();
-            if (audioContext.state === 'suspended') {
-                audioContext.resume();
-            }
-            isPlaying = true;
-            currentNote = 0;
-            nextNoteTime = audioContext.currentTime;
-            scheduler();
-            updateUI();
-        }
+      return output.join('');
+    }
 
-        function stopPlayback() {
-            isPlaying = false;
-            if (timerID) {
-                clearTimeout(timerID);
-                timerID = null;
-            }
-            scheduledNotes.forEach(n => {
-                try {
-                    n.osc.stop();
-                    n.osc.disconnect();
-                    n.gain.disconnect();
-                } catch(e) {}
-            });
-            scheduledNotes = [];
-            updateUI();
-        }
+    function parseThreadMarkdown(file, raw) {
+      const frontmatter = raw.match(/^---\s*\n([\s\S]*?)\n---\s*\n?/);
+      if (!frontmatter) throw new Error(`${file} needs frontmatter`);
+      const data = {};
+      frontmatter[1].split('\n').forEach(line => {
+        const splitAt = line.indexOf(':');
+        if (splitAt < 0) return;
+        data[line.slice(0, splitAt).trim()] = line.slice(splitAt + 1).trim().replace(/^['"]|['"]$/g, '');
+      });
+      const id = data.id || file.replace(/\.md$/, '');
+      return {
+        id,
+        title: data.title || id,
+        slug: data.slug || id,
+        question: data.question || `Tell me about ${data.title || id}`,
+        html: markdownHtml(raw.slice(frontmatter[0].length).trim())
+      };
+    }
 
-        function updateUI() {
-            titleEl.textContent = tracks[currentIndex].title;
-            playToggle.classList.toggle('playing', isPlaying);
-        }
+    async function loadThreads() {
+      const manifestResponse = await fetch('threads/index.json', { cache: 'no-store' });
+      if (!manifestResponse.ok) throw new Error('Could not load threads/index.json');
+      const files = await manifestResponse.json();
+      const loaded = await Promise.all(files.map(async file => {
+        const response = await fetch(`threads/${file}`, { cache: 'no-store' });
+        if (!response.ok) throw new Error(`Could not load threads/${file}`);
+        return parseThreadMarkdown(file, await response.text());
+      }));
+      threads = Object.fromEntries(loaded.map(thread => [thread.id, thread]));
+    }
 
-        function nextTrack() {
-            const wasPlaying = isPlaying;
-            stopPlayback();
-            currentIndex = (currentIndex + 1) % tracks.length;
-            updateUI();
-            if (wasPlaying) startPlayback();
-        }
+    function renderList() {
+      const hasUnread = Object.keys(threads).some(id => !visited.has(id));
+      list.innerHTML = `
+        <button class="folder ${folderOpen ? '' : 'collapsed'}" id="benFolder" aria-expanded="${folderOpen}" aria-label="ben folder${hasUnread ? ', unread threads' : ''}">
+          ${icon('folder')}<span>ben</span>${hasUnread ? '<span class="unread-dot" aria-hidden="true"></span>' : '<span></span>'}${icon('chevron').replace('<svg', '<svg class="chevron"')}
+        </button>
+        <div class="folder-threads ${folderOpen ? '' : 'collapsed'}" id="folderThreads">
+          ${Object.entries(threads).map(([id, item], index) => `
+            <button class="thread ${id === current ? 'active' : ''}" data-thread="${id}" ${id === current ? 'aria-current="page"' : ''} aria-label="${item.title}${visited.has(id) ? '' : ', unread'}">
+              <span class="thread-title">${item.title}</span>${visited.has(id) ? `<span class="key">${index + 1}</span>` : '<span class="unread-dot" aria-hidden="true"></span>'}
+            </button>`).join('')}
+        </div>`;
+      document.getElementById('benFolder').addEventListener('click', () => {
+        folderOpen = !folderOpen;
+        renderList();
+      });
+      list.querySelectorAll('.thread').forEach(button => button.addEventListener('click', () => selectThread(button.dataset.thread)));
+    }
 
-        function prevTrack() {
-            const wasPlaying = isPlaying;
-            stopPlayback();
-            currentIndex = (currentIndex - 1 + tracks.length) % tracks.length;
-            updateUI();
-            if (wasPlaying) startPlayback();
-        }
+    function renderConversation(item, followUp = null) {
+      const question = followUp || item.question;
+      const body = followUp
+        ? '<p>This site uses prepared answers. Choose another thread to explore more about Ben.</p>'
+        : item.html;
+      conversation.innerHTML = `
+        <div class="question-row"><div class="question">${escapeHtml(question)}</div></div>
+        <article class="response">
+          <div class="response-head"><div class="agent-mark">bt</div><strong>bites</strong><span>prepared response</span></div>
+          <div class="response-body">${body}</div>
+        </article>`;
+      messages.scrollTo({ top: 0, behavior: 'instant' });
+    }
 
-        playToggle.addEventListener('click', () => {
-            if (isPlaying) stopPlayback();
-            else startPlayback();
+    function renderContext() {
+      const totals = gitTotals();
+      const links = socialLinks.map(link => `<div class="env-row">${icon(link.icon)}<span class="env-key">${link.label}</span><a class="env-link" href="${link.href}" target="_blank" rel="noreferrer"><span>${link.handle}</span>${icon('external')}</a></div>`).join('');
+      const previewFiles = gitFiles.slice(0, 5).map(file => `<div class="mini-file"><span class="state">${file.status}</span><span class="name">${file.name}</span><span class="counts"><span class="add">+${file.add}</span>${file.del ? ` <span class="del">-${file.del}</span>` : ''}</span></div>`).join('');
+      const remaining = Math.max(0, gitFiles.length - 5);
+      contextPanel.innerHTML = `
+        <div class="env-row">${icon('user')}<span class="env-key">Parent</span><span class="env-value">None</span></div>
+        <div class="env-row">${icon('laptop')}<span class="env-key">Environment</span><span class="env-value">${escapeHtml(gitStatus.environment)}</span></div>
+        <div class="env-row">${icon('folder')}<span class="env-key">Directory</span><span class="env-value">${escapeHtml(gitStatus.directory)}</span></div>
+        <div class="env-row">${icon('branch')}<span class="env-key">Branch</span><span class="env-value">${escapeHtml(gitStatus.branch)}</span></div>
+        <div class="env-row">${icon('activity')}<span class="env-key">Git status</span><span class="env-value dirty">${escapeHtml(gitStatus.status)}</span></div>
+        <div class="git-summary"><strong>Uncommitted</strong><span>${gitFiles.length} files, <span class="add">+${totals.add}</span> <span class="del">-${totals.del}</span></span></div>
+        <div class="mini-files">${previewFiles}</div>
+        ${remaining ? `<button class="show-more-files" type="button" id="showAllChanges">Show ${remaining} more</button>` : ''}
+        <div class="property-divider"></div>${links}`;
+      document.getElementById('showAllChanges')?.addEventListener('click', () => activateDetailTab('changes'));
+    }
+
+    function renderChanges() {
+      const totals = gitTotals();
+      const fileHtml = gitFiles.map((file, index) => {
+        const diff = file.diff || [['', '', '', 'No inline preview for this file.']];
+        return `<div class="file-change" data-file="${index}">
+          <button class="file-change-head">${icon('chevron')}<span class="file-status">${file.status}</span><span class="file-name">${file.name}</span><span class="counts"><span class="add">+${file.add}</span>${file.del ? ` <span class="del">-${file.del}</span>` : ''}</span></button>
+          <div class="diff">${diff.map(([type, oldLine, newLine, code]) => `<div class="diff-line ${type}"><span class="ln">${oldLine}</span><span class="ln">${newLine}</span><span>${escapeHtml(code)}</span></div>`).join('')}</div>
+        </div>`;
+      }).join('');
+      changesPanel.innerHTML = `<div class="changes-toolbar"><select class="changes-filter" aria-label="Change filter"><option value="all">All changes</option><option value="modified">Modified</option><option value="added">Added</option></select><span class="changes-count">${gitFiles.length} files, <span class="add">+${totals.add}</span> <span class="del">-${totals.del}</span></span></div>${fileHtml}`;
+      changesPanel.querySelectorAll('.file-change-head').forEach(button => button.addEventListener('click', () => button.parentElement.classList.toggle('open')));
+      changesPanel.querySelector('.changes-filter').addEventListener('change', event => {
+        const visibleFiles = [];
+        changesPanel.querySelectorAll('.file-change').forEach((row, index) => {
+          const file = gitFiles[index];
+          row.hidden = event.target.value === 'modified' ? file.status !== 'M' : event.target.value === 'added' ? file.status !== 'A' : false;
+          if (!row.hidden) visibleFiles.push(file);
         });
+        const filteredTotals = visibleFiles.reduce((sum, file) => ({ add: sum.add + file.add, del: sum.del + file.del }), { add: 0, del: 0 });
+        changesPanel.querySelector('.changes-count').innerHTML = `${visibleFiles.length} files, <span class="add">+${filteredTotals.add}</span> <span class="del">-${filteredTotals.del}</span>`;
+      });
+    }
 
-        nextBtn.addEventListener('click', nextTrack);
-        prevBtn.addEventListener('click', prevTrack);
+    function activateDetailTab(tab) {
+      const showContext = tab === 'context';
+      contextPanel.hidden = !showContext;
+      changesPanel.hidden = showContext;
+      document.getElementById('contextTab').classList.toggle('active', showContext);
+      document.getElementById('changesTab').classList.toggle('active', !showContext);
+      document.getElementById('contextTab').setAttribute('aria-pressed', String(showContext));
+      document.getElementById('changesTab').setAttribute('aria-pressed', String(!showContext));
+    }
 
-        updateUI();
-    })();
-    </script>
+    function selectThread(id) {
+      if (!threads[id]) return;
+      current = id;
+      const item = threads[id];
+      visited.add(id);
+      localStorage.setItem('ben-visited-threads', JSON.stringify([...visited]));
+      topTitle.textContent = item.slug;
+      renderList();
+      renderConversation(item);
+      renderContext();
+      history.replaceState(null, '', `#${id}`);
+      shell.classList.remove('mobile-menu');
+    }
+
+    function submitPrompt(value) {
+      const question = value.trim();
+      if (!question) return;
+      renderConversation(threads[current], question);
+      promptInput.value = '';
+    }
+
+    function showToast(text) {
+      toast.textContent = text;
+      toast.classList.add('show');
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove('show'), 1500);
+    }
+
+    function renderModels() {
+      modelPicker.innerHTML = modelOptions.map((option, index) => `<button class="model-option ${index === selectedModel ? 'active' : ''}" type="button" role="option" aria-selected="${index === selectedModel}" data-model="${index}"><span class="model-choice"><span class="provider-logo">${option.mark}</span><span><strong>${option.model} · ${option.effort}</strong><small>${option.provider} · ${option.note}</small></span></span><span class="check">${index === selectedModel ? '✓' : ''}</span></button>`).join('');
+      modelPicker.querySelectorAll('.model-option').forEach(button => button.addEventListener('click', () => selectModel(Number(button.dataset.model))));
+    }
+
+    function selectModel(index) {
+      selectedModel = index;
+      const selection = modelOptions[selectedModel];
+      document.getElementById('modelLabel').textContent = selection.model;
+      document.getElementById('effortLabel').textContent = selection.effort;
+      document.getElementById('providerLogo').textContent = selection.mark;
+      closeModelPicker();
+      renderModels();
+      modelButton.focus();
+    }
+
+    function openModelPicker() {
+      modelPicker.hidden = false;
+      modelButton.setAttribute('aria-expanded', 'true');
+      requestAnimationFrame(() => modelPicker.querySelector(`[data-model="${selectedModel}"]`)?.focus());
+    }
+
+    function closeModelPicker({ restoreFocus = false } = {}) {
+      if (modelPicker.hidden) return;
+      modelPicker.hidden = true;
+      modelButton.setAttribute('aria-expanded', 'false');
+      if (restoreFocus) modelButton.focus();
+    }
+
+    function setTheme(theme) {
+      const resolved = theme === 'system' && colorScheme.matches ? 'dark' : theme === 'system' ? 'light' : theme;
+      document.body.dataset.theme = resolved;
+      localStorage.setItem('ben-theme', theme);
+      document.querySelectorAll('.theme-option').forEach(button => {
+        const active = button.dataset.theme === theme;
+        button.classList.toggle('active', active);
+        button.setAttribute('aria-pressed', String(active));
+      });
+    }
+
+    function closeSettingsModal({ restoreFocus = true } = {}) {
+      if (settingsBackdrop.hidden) return;
+      settingsBackdrop.hidden = true;
+      if (restoreFocus) settingsTrigger.focus();
+    }
+
+    function trapSettingsFocus(event) {
+      const focusable = [...settingsModal.querySelectorAll('button:not([disabled]), input:not([disabled]), select:not([disabled]), [href], [tabindex]:not([tabindex="-1"])')];
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable.at(-1);
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    }
+
+    function setLeftHidden(hidden) {
+      shell.classList.toggle('left-hidden', hidden);
+      const button = document.getElementById('leftToggle');
+      button.setAttribute('aria-label', hidden ? 'Show threads' : 'Hide threads');
+      button.setAttribute('aria-pressed', String(hidden));
+      document.getElementById('leftToggleIcon').innerHTML = hidden
+        ? '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M5 4v16M9 9l3 3-3 3"/>'
+        : '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/>';
+    }
+
+    function setDetailWide(expanded) {
+      shell.classList.toggle('detail-wide', expanded);
+      const button = document.getElementById('detailExpand');
+      button.setAttribute('aria-label', expanded ? 'Restore sidebar width' : 'Expand sidebar');
+      button.setAttribute('aria-pressed', String(expanded));
+      document.getElementById('detailExpandIcon').innerHTML = expanded
+        ? '<path d="M8 3v5H3M16 3v5h5M8 21v-5H3M16 21v-5h5"/>'
+        : '<path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/>';
+    }
+
+    function setRightHidden(hidden) {
+      shell.classList.toggle('right-hidden', hidden);
+      const button = document.getElementById('rightToggle');
+      button.setAttribute('aria-label', hidden ? 'Show details' : 'Hide details');
+      button.setAttribute('aria-pressed', String(hidden));
+      document.getElementById('rightToggleIcon').innerHTML = hidden
+        ? '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M19 4v16M15 9l-3 3 3 3"/>'
+        : '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/>';
+    }
+
+    async function loadConnectedGitStatus() {
+      const endpoint = document.documentElement.dataset.gitStatusEndpoint;
+      if (!endpoint) return;
+      try {
+        const response = await fetch(endpoint);
+        if (!response.ok) return;
+        const data = await response.json();
+        if (Array.isArray(data.files)) {
+          gitFiles = data.files.map(file => ({
+            name: file.name,
+            status: /^(a|added|\?\?)/i.test(String(file.status || '')) ? 'A' : 'M',
+            add: file.additions || 0,
+            del: file.deletions || 0,
+            diff: file.diff
+          }));
+        }
+        gitStatus = { ...gitStatus, ...data.context };
+        renderChanges();
+        renderContext();
+      } catch { /* Keep the prototype data when no connector is available. */ }
+    }
+
+    document.getElementById('composer').addEventListener('submit', event => {
+      event.preventDefault();
+      submitPrompt(promptInput.value);
+    });
+    document.getElementById('newThread').addEventListener('click', () => {
+      promptInput.focus();
+      shell.classList.remove('mobile-menu');
+      showToast('Start a new question');
+    });
+    document.getElementById('leftToggle').addEventListener('click', () => {
+      if (matchMedia('(max-width: 680px)').matches) shell.classList.toggle('mobile-menu');
+      else setLeftHidden(!shell.classList.contains('left-hidden'));
+    });
+    document.getElementById('closeMobile').addEventListener('click', () => shell.classList.remove('mobile-menu'));
+    document.getElementById('drawerScrim').addEventListener('click', () => shell.classList.remove('mobile-menu'));
+    document.getElementById('rightToggle').addEventListener('click', () => setRightHidden(!shell.classList.contains('right-hidden')));
+    document.getElementById('detailExpand').addEventListener('click', () => setDetailWide(!shell.classList.contains('detail-wide')));
+    document.getElementById('contextTab').addEventListener('click', () => activateDetailTab('context'));
+    document.getElementById('changesTab').addEventListener('click', () => activateDetailTab('changes'));
+
+    modelButton.addEventListener('click', () => {
+      if (modelPicker.hidden) openModelPicker();
+      else closeModelPicker({ restoreFocus: true });
+    });
+    document.addEventListener('click', event => {
+      if (!modelPicker.hidden && !modelPicker.contains(event.target) && !modelButton.contains(event.target)) closeModelPicker();
+    });
+
+    settingsTrigger.addEventListener('click', () => {
+      closeModelPicker();
+      settingsBackdrop.hidden = false;
+      document.getElementById('closeSettings').focus();
+    });
+    document.getElementById('closeSettings').addEventListener('click', () => closeSettingsModal());
+    settingsBackdrop.addEventListener('click', event => { if (event.target === settingsBackdrop) closeSettingsModal(); });
+    document.querySelectorAll('.theme-option').forEach(button => button.addEventListener('click', () => setTheme(button.dataset.theme)));
+    document.getElementById('petSwitch').addEventListener('click', event => {
+      const enabled = !event.currentTarget.classList.contains('on');
+      event.currentTarget.classList.toggle('on', enabled);
+      event.currentTarget.setAttribute('aria-checked', String(enabled));
+      showToast(enabled ? 'Pet enabled · photo needed' : 'Pet hidden');
+    });
+    document.getElementById('inviteButton').addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(location.href); showToast('Invite link copied'); }
+      catch { showToast('Copy is unavailable in this preview'); }
+    });
+    document.getElementById('addContext').addEventListener('click', () => showToast('Context picker is not in this prototype'));
+    document.getElementById('approvalMode').addEventListener('click', () => showToast('Approval modes are not in this prototype'));
+    document.getElementById('voiceInput').addEventListener('click', () => showToast('Voice input is not in this prototype'));
+
+    colorScheme.addEventListener('change', () => {
+      if ((localStorage.getItem('ben-theme') || 'light') === 'system') setTheme('system');
+    });
+
+    window.addEventListener('hashchange', () => {
+      const id = location.hash.slice(1);
+      if (threads[id] && id !== current) selectThread(id);
+    });
+
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        if (!settingsBackdrop.hidden) closeSettingsModal();
+        closeModelPicker({ restoreFocus: true });
+        shell.classList.remove('mobile-menu');
+        return;
+      }
+      if (!settingsBackdrop.hidden && event.key === 'Tab') { trapSettingsFocus(event); return; }
+      if (!modelPicker.hidden && ['ArrowDown', 'ArrowUp', 'Home', 'End', 'Enter'].includes(event.key)) {
+        const options = [...modelPicker.querySelectorAll('.model-option')];
+        const focusedIndex = Math.max(0, options.indexOf(document.activeElement));
+        if (event.key === 'Enter') { event.preventDefault(); selectModel(Number(options[focusedIndex].dataset.model)); return; }
+        event.preventDefault();
+        const nextIndex = event.key === 'Home' ? 0 : event.key === 'End' ? options.length - 1 : event.key === 'ArrowDown' ? (focusedIndex + 1) % options.length : (focusedIndex - 1 + options.length) % options.length;
+        options[nextIndex].focus();
+        return;
+      }
+      if (event.target.matches('input, textarea, select, [contenteditable="true"]')) return;
+      if (event.metaKey || event.ctrlKey || event.altKey) return;
+      const ids = Object.keys(threads);
+      if (/^[1-9]$/.test(event.key) && ids[Number(event.key) - 1]) { event.preventDefault(); selectThread(ids[Number(event.key) - 1]); }
+      if (event.key.toLowerCase() === 'n') { event.preventDefault(); promptInput.focus(); }
+    });
+
+    async function start() {
+      renderModels();
+      renderChanges();
+      setTheme(localStorage.getItem('ben-theme') || 'light');
+      setLeftHidden(shell.classList.contains('left-hidden'));
+      setRightHidden(shell.classList.contains('right-hidden'));
+      setDetailWide(shell.classList.contains('detail-wide'));
+
+      try {
+        await loadThreads();
+        const initial = location.hash.slice(1);
+        const defaultThread = threads.about ? 'about' : Object.keys(threads)[0];
+        selectThread(threads[initial] ? initial : defaultThread);
+        loadConnectedGitStatus();
+      } catch (error) {
+        conversation.innerHTML = `<article class="response"><div class="response-body"><h2>Threads could not load</h2><p>${escapeHtml(error.message)}</p><p class="response-note">Run this site through <code>npm run dev</code>. Markdown files cannot load when index.html is opened directly.</p></div></article>`;
+        console.error(error);
+      }
+    }
+
+    start();
+  </script>
 </body>
 </html>

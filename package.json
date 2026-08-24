@@ -1,20 +1,12 @@
 {
-  "name": "ben-tossell-website",
+  "name": "bentossell",
   "version": "1.0.0",
-  "description": "Ben Tossell's personal website with blog functionality",
-  "main": "index.html",
+  "description": "Ben Tossell's personal website as an agent app",
+  "private": true,
   "scripts": {
-    "new-post": "node create-post.js",
-    "serve": "python3 -m http.server 8000"
+    "dev": "python3 -m http.server 4173",
+    "serve": "python3 -m http.server 4173"
   },
-  "keywords": [
-    "blog",
-    "personal-website",
-    "markdown",
-    "static-site"
-  ],
   "author": "Ben Tossell",
-  "license": "MIT",
-  "devDependencies": {},
-  "dependencies": {}
+  "license": "MIT"
 }
