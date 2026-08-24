@@ -5,19 +5,17 @@ slug: investments
 question: What has Ben invested in?
 ---
 
-Ben backs product-minded founders building tools that change how people create, work, and use AI. These are selected investments, not a complete portfolio.
+Ben backs tools for builders, like:
 
-## Selected companies
+- **Supabase** seed
+- **Etched** seed
+- **Factory** seed
+- **Opencode** seed [exited]
+- **Earendil** seed
+- **Anthropic** series B [SPV 🤞]
+- **SF Compute** seed
 
-- **Supabase:** Developer platform
-- **Gamma:** AI-native presentations
-- **Etched:** AI chips
-- **Factory:** Software development agents
-- **Pika:** AI video
-- **Scribe:** Workflow documentation
-- **FlutterFlow:** App development
-- **Wordware:** AI development
+## His thesis
 
-## What he looks for
-
-> Products that give a much larger group of people new leverage. A clear shift in behaviour matters more than a crowded category.
+> Builders rule the world. From developers to non-technical people (like Ben) have the ability to build anything. More people are going to become builders. Builders and their agents need tools and infrastructure. Ben invests in those tools.
+> Opinionated technical founders building for builders.

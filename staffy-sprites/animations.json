@@ -1,0 +1,44 @@
+{
+  "animations": [
+    {
+      "name": "walk",
+      "frames": 8,
+      "fps": 10,
+      "playback": "loop",
+      "frameWidth": 246,
+      "frameHeight": 179,
+      "strip": "staffy-walk-8f.png",
+      "framePattern": "walk/frame-%02d.png"
+    },
+    {
+      "name": "bark",
+      "frames": 6,
+      "fps": 12,
+      "playback": "once",
+      "frameWidth": 319,
+      "frameHeight": 516,
+      "strip": "staffy-bark-6f.png",
+      "framePattern": "bark/frame-%02d.png"
+    },
+    {
+      "name": "pant",
+      "frames": 7,
+      "fps": 6,
+      "playback": "entry 0-3; loop 3-5; exit 6,2,1,0",
+      "frameWidth": 291,
+      "frameHeight": 504,
+      "strip": "staffy-pant-7f.png",
+      "framePattern": "pant/frame-%02d.png"
+    },
+    {
+      "name": "sitting-pant",
+      "frames": 7,
+      "fps": 6,
+      "playback": "entry 0-3; loop 3-5; exit 6,2,1,0",
+      "frameWidth": 289,
+      "frameHeight": 475,
+      "strip": "staffy-sitting-pant-7f.png",
+      "framePattern": "sitting-pant/frame-%02d.png"
+    }
+  ]
+}

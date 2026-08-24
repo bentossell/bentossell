@@ -97,7 +97,6 @@
     .icon-btn, .thread, .folder, .new-thread, .composer-tool, .send, .detail-tab, .file-change-head, .model-option, .theme-option, .switch, .secondary-button {
       transition: background-color .12s var(--ease-out), border-color .12s var(--ease-out), color .12s var(--ease-out), opacity .12s var(--ease-out), transform .12s var(--ease-out);
     }
-    .icon-btn:hover { background: var(--surface-3); }
     .icon-btn:active, .thread:active, .folder:active, .new-thread:active, .composer-tool:active, .send:active, .detail-tab:active, .file-change-head:active, .model-option:active, .theme-option:active, .switch:active, .secondary-button:active { transform: scale(.97); }
     .icon-btn:focus-visible, .thread:focus-visible, .folder:focus-visible, .new-thread:focus-visible, .composer-tool:focus-visible, .send:focus-visible, .detail-tab:focus-visible, .file-change-head:focus-visible, .model-option:focus-visible, .theme-option:focus-visible, .switch:focus-visible, .secondary-button:focus-visible, .changes-filter:focus-visible {
       outline: 2px solid var(--accent);
@@ -136,7 +135,6 @@
       cursor: pointer;
       text-align: left;
     }
-    .new-thread:hover { border-color: var(--line-strong); }
     .shortcut { margin-left: auto; color: var(--faint); font: 10px/1 var(--mono); }
 
     .rail-label {
@@ -163,9 +161,13 @@
       font-size: 12px;
       color: var(--muted);
     }
-    .folder:hover { background: var(--surface-3); color: var(--ink); }
     .folder svg { width: 14px; height: 14px; }
-    .folder .chevron { width: 12px; height: 12px; transform: rotate(90deg); transition: transform .16s var(--ease-out); }
+    .folder-state-icon { position: relative; width: 14px; height: 14px; flex: none; }
+    .folder-state-icon svg { position: absolute; inset: 0; transition: opacity .12s var(--ease-out), transform .12s var(--ease-out); }
+    .folder-state-icon .folder-open { opacity: 0; transform: scale(.88); }
+    .folder-state-icon.open .folder-closed { opacity: 0; transform: scale(.88); }
+    .folder-state-icon.open .folder-open { opacity: 1; transform: scale(1); }
+    .folder .chevron { width: 12px; height: 12px; transform: rotate(90deg); }
     .folder.collapsed .chevron { transform: rotate(0deg); }
     .folder-threads { display: grid; }
     .folder-threads.collapsed { display: none; }
@@ -182,15 +184,14 @@
       cursor: pointer;
       text-align: left;
     }
-    .thread:hover { background: var(--surface-3); }
     .thread.active { background: var(--surface-3); color: var(--ink); }
     .thread .thread-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
     .thread .key { color: var(--faint); font: 10px/1 var(--mono); opacity: 0; }
-    .thread:hover .key, .thread.active .key { opacity: 1; }
+    .thread.active .key { opacity: 1; }
     .unread-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
     .thread .unread-dot { justify-self: end; }
 
-    .rail-bottom { margin-top: auto; border-top: 1px solid var(--line); padding: 10px 10px 11px; display: flex; justify-content: flex-start; }
+    .rail-bottom { position: relative; margin-top: auto; border-top: 1px solid var(--line); padding: 10px 10px 11px; display: flex; justify-content: flex-start; }
     .messages { overflow: auto; }
     .conversation { width: min(760px, calc(100% - 48px)); margin: 0 auto; padding: 42px 0 28px; }
     .question-row { display: flex; justify-content: flex-end; margin-bottom: 28px; }
@@ -204,17 +205,18 @@
     }
     .response { min-width: 0; }
     .response-head { display: flex; align-items: center; gap: 9px; margin-bottom: 14px; }
-    .agent-mark { display: grid; place-items: center; width: 22px; height: 22px; border: 1px solid var(--line-strong); border-radius: 50%; font: 600 9px/1 var(--mono); }
+    .agent-mark { width: 24px; flex: none; }
+    .agent-mark img { display: block; width: 24px; height: auto; object-fit: contain; }
     .response-head strong { font-size: 12px; font-weight: 600; }
     .response-head span { color: var(--muted); font: 10px/1 var(--mono); }
     .response-body { font-size: 14px; line-height: 1.62; }
     .response-body > p { margin: 0 0 14px; }
     .response-body h2 { margin: 26px 0 10px; font-size: 13px; font-weight: 600; }
-    .response-body ul { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
-    .response-body li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 18px; padding: 10px 0; border-bottom: 1px solid var(--line); }
-    .response-body li span:last-child { color: var(--muted); text-align: right; }
-    .response-body a { color: var(--accent); text-decoration: none; }
-    .response-body a:hover { text-decoration: underline; }
+    .response-body ul { margin: 0 0 14px; padding-left: 20px; list-style: disc; }
+    .response-body li { margin: 5px 0; padding-left: 2px; }
+    .response-body li::marker { color: var(--muted); }
+    .response-body a { display: inline-flex; align-items: center; gap: 3px; color: var(--accent); font-weight: 650; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+    .external-link-icon { width: 11px; height: 11px; flex: none; }
     .response-note { margin-top: 18px; padding-left: 11px; border-left: 2px solid var(--line-strong); color: var(--muted); }
     .composer-wrap { padding: 0 16px 14px; background: linear-gradient(to bottom, transparent, var(--surface) 24%); }
     .composer {
@@ -249,7 +251,6 @@
       cursor: pointer;
       white-space: nowrap;
     }
-    .composer-tool:hover { background: var(--surface-3); color: var(--ink); }
     .composer-tool svg { width: 12px; height: 12px; }
     .provider-logo { display: inline-grid; place-items: center; width: 18px; height: 18px; flex: none; border: 1px solid var(--line-strong); border-radius: 5px; background: var(--surface); color: var(--ink); font: 700 8px/1 var(--sans); letter-spacing: -.02em; }
     .model-picker {
@@ -257,9 +258,9 @@
       z-index: 12;
       right: clamp(6px, 4vw, 38px);
       bottom: 36px;
-      width: 276px;
+      width: 228px;
       max-width: calc(100vw - 24px);
-      padding: 6px;
+      padding: 4px;
       border: 1px solid var(--line-strong);
       border-radius: 10px;
       background: var(--surface);
@@ -267,29 +268,27 @@
       transform-origin: right bottom;
       transition: opacity .15s var(--ease-out), transform .15s var(--ease-out);
     }
+    .model-picker.closing { opacity: 0; transform: scale(.97); pointer-events: none; }
     @starting-style { .model-picker:not([hidden]) { opacity: 0; transform: scale(.97); } }
     .model-picker[hidden] { display: none; }
     .model-option {
       width: 100%;
       display: grid;
-      grid-template-columns: minmax(0,1fr) auto;
+      grid-template-columns: 18px minmax(0,1fr) 12px;
       gap: 8px;
-      align-items: start;
-      padding: 8px 9px;
+      align-items: center;
+      padding: 6px 7px;
       border: 0;
       border-radius: 7px;
       background: transparent;
       text-align: left;
       cursor: pointer;
     }
-    .model-option:hover, .model-option.active { background: var(--surface-3); }
-    .model-choice { display: flex; align-items: center; gap: 8px; min-width: 0; }
-    .model-option strong { font-size: 12px; font-weight: 600; }
-    .model-option small { display: block; margin-top: 2px; color: var(--muted); font-size: 10px; line-height: 1.25; }
-    .model-option .check { color: var(--accent); }
+    .model-option.active { background: var(--surface-3); }
+    .model-option strong { display: block; font-size: 12px; font-weight: 600; line-height: 1.2; }
+    .model-option small { display: block; margin-top: 2px; color: var(--muted); font-size: 10px; line-height: 1.2; }
+    .model-option .check { width: 12px; color: var(--accent); font-size: 11px; line-height: 1; }
     .send { display: grid; place-items: center; width: 30px; height: 30px; flex: none; border: 0; border-radius: 7px; background: var(--ink); color: var(--surface); cursor: pointer; }
-    .send:hover { opacity: .82; }
-
     .detail-tabs { display: flex; align-items: center; gap: 4px; }
     .detail-tab {
       display: grid;
@@ -303,7 +302,7 @@
       color: var(--muted);
       cursor: pointer;
     }
-    .detail-tab:hover, .detail-tab.active { background: var(--surface-3); color: var(--ink); }
+    .detail-tab.active { background: var(--surface-3); color: var(--ink); }
     .detail-tab svg { width: 14px; height: 14px; }
     .context-panel, .changes-panel { min-height: 0; overflow-y: auto; padding: 13px 16px 24px; }
     .context-panel[hidden], .changes-panel[hidden] { display: none; }
@@ -311,10 +310,9 @@
     .env-row svg { width: 13px; height: 13px; color: var(--muted); }
     .env-key { color: var(--muted); }
     .env-value { overflow-wrap: anywhere; }
-    .env-link { min-width: 0; display: flex; align-items: center; gap: 5px; color: var(--ink); text-decoration: none; }
+    .env-link { min-width: 0; display: flex; align-items: center; gap: 5px; color: var(--ink); font-weight: 650; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
     .env-link span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .env-link svg { width: 10px; height: 10px; color: var(--faint); }
-    .env-link:hover span { text-decoration: underline; }
     .property-divider { height: 1px; margin: 12px 0 8px; background: var(--line); }
     .dirty { color: var(--bad); font-weight: 600; }
     .git-summary { display: flex; align-items: center; gap: 7px; padding: 18px 0 8px; color: var(--muted); font-size: 10px; }
@@ -326,66 +324,113 @@
     .mini-file .state { color: var(--muted); }
     .mini-file .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .mini-file .counts { white-space: nowrap; font: 10px/1.3 var(--mono); }
-    .changes-toolbar { display: flex; align-items: center; gap: 7px; padding: 2px 0 10px; }
-    .changes-filter { height: 27px; min-width: 0; flex: 1; padding: 0 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--ink); font-size: 10px; }
+    .changes-toolbar { display: flex; align-items: center; gap: 8px; padding: 2px 0 10px; }
+    .changes-filter-wrap { position: relative; flex: 0 1 auto; min-width: 0; }
+    .changes-filter {
+      appearance: none;
+      -webkit-appearance: none;
+      display: block;
+      height: 26px;
+      width: auto;
+      max-width: 100%;
+      margin: 0;
+      padding: 0 22px 0 8px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--ink);
+      font-size: 10px;
+      line-height: 24px;
+      cursor: pointer;
+    }
+    .changes-filter-wrap::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: 8px;
+      width: 5px;
+      height: 5px;
+      border-right: 1.4px solid var(--muted);
+      border-bottom: 1.4px solid var(--muted);
+      transform: translateY(-70%) rotate(45deg);
+      pointer-events: none;
+    }
     .changes-count { color: var(--muted); font: 10px/1 var(--mono); white-space: nowrap; }
-    .file-change { margin-bottom: 5px; overflow: hidden; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+    .file-change { margin-bottom: 5px; overflow: hidden; border: 1px solid var(--line); border-radius: 6px; background: var(--surface-2); }
     .file-change[hidden] { display: none; }
-    .file-change-head { width: 100%; min-height: 29px; display: grid; grid-template-columns: 14px 14px minmax(0,1fr) auto; gap: 6px; align-items: center; padding: 6px 8px; border: 0; background: transparent; color: inherit; cursor: pointer; text-align: left; }
-    .file-change-head:hover { background: var(--surface-2); }
-    .file-change-head svg { width: 11px; height: 11px; color: var(--muted); transition: transform .15s var(--ease-out); }
+    .file-change-head { width: 100%; min-height: 29px; display: grid; grid-template-columns: 14px 14px minmax(0,1fr) auto; gap: 6px; align-items: center; padding: 6px 8px; border: 0; background: var(--surface); color: inherit; cursor: pointer; text-align: left; }
+    .file-change-head svg { width: 11px; height: 11px; color: var(--muted); }
     .file-change.open .file-change-head svg { transform: rotate(90deg); }
     .file-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 10px/1 var(--mono); }
     .file-status { color: var(--muted); font: 10px/1 var(--mono); }
     .file-change-head .counts { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 10px/1 var(--mono); color: var(--muted); }
-    .diff { display: none; overflow-x: auto; padding: 7px 0 9px; border-top: 1px solid var(--line); background: var(--surface-2); font: 10px/1.5 var(--mono); }
+    .diff { display: none; overflow-x: auto; border-top: 1px solid var(--line); background: var(--surface-2); font: 10px/1.5 var(--mono); }
     .file-change.open .diff { display: block; }
-    .diff-line { display: grid; grid-template-columns: 22px 22px minmax(max-content,1fr); padding: 0 5px; }
-    .diff-line .ln { color: var(--faint); text-align: right; padding-right: 5px; }
+    .diff-line { display: grid; grid-template-columns: 22px 22px minmax(max-content, 1fr); min-width: 100%; padding: 1px 8px; }
+    .diff-line .ln { color: var(--faint); text-align: right; padding-right: 6px; }
     .diff-line.plus { background: color-mix(in srgb, #27a269 14%, transparent); }
     .diff-line.minus { background: color-mix(in srgb, #db4b58 13%, transparent); }
 
-    .modal-backdrop {
-      position: fixed;
-      z-index: 30;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      padding: 20px;
-      background: rgba(22,22,20,.24);
-      backdrop-filter: blur(2px);
-      transition: opacity .18s var(--ease-out);
+
+    .settings-popover {
+      position: absolute;
+      z-index: 20;
+      left: 10px;
+      right: 10px;
+      bottom: calc(100% + 8px);
+      max-height: min(420px, calc(100dvh - 88px));
+      overflow: auto;
+      border: 1px solid var(--line-strong);
+      border-radius: 10px;
+      background: var(--surface);
+      box-shadow: 0 12px 38px rgba(20,20,15,.16);
+      transform-origin: left bottom;
+      transition: opacity .15s var(--ease-out), transform .15s var(--ease-out);
     }
-    .modal-backdrop[hidden] { display: none; }
-    .settings-modal { width: min(560px, 100%); max-height: min(620px, calc(100vh - 40px)); overflow: auto; border: 1px solid var(--line-strong); border-radius: 12px; background: var(--surface); box-shadow: 0 28px 90px rgba(20,20,15,.26); transform-origin: center; transition: opacity .18s var(--ease-out), transform .18s var(--ease-out); }
-    @starting-style {
-      .modal-backdrop:not([hidden]) { opacity: 0; }
-      .modal-backdrop:not([hidden]) .settings-modal { opacity: 0; transform: scale(.98); }
-    }
-    .settings-head { display: flex; align-items: center; padding: 15px 16px; border-bottom: 1px solid var(--line); }
-    .settings-head h2 { margin: 0; font-size: 13px; }
+    .settings-popover.closing { opacity: 0; transform: scale(.97); pointer-events: none; }
+    @starting-style { .settings-popover:not([hidden]) { opacity: 0; transform: scale(.97); } }
+    .settings-popover[hidden] { display: none; }
+    .settings-head { display: flex; align-items: center; padding: 9px 10px 8px; border-bottom: 1px solid var(--line); }
+    .settings-head h2 { margin: 0; font-size: 12px; }
     .settings-head button { margin-left: auto; }
-    .settings-body { padding: 4px 16px 18px; }
-    .settings-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 18px; padding: 16px 0; border-bottom: 1px solid var(--line); }
-    .settings-row:last-child { border-bottom: 0; }
-    .settings-row h3 { margin: 0 0 4px; font-size: 12px; font-weight: 600; }
-    .settings-row p { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.4; }
-    .theme-options { display: flex; padding: 2px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface-2); }
-    .theme-option { padding: 6px 8px; border: 0; border-radius: 5px; background: transparent; color: var(--muted); font-size: 10px; cursor: pointer; }
+    .settings-body { padding: 0 10px 10px; }
+    .settings-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+    .settings-row.stack { grid-template-columns: minmax(0, 1fr); gap: 7px; }
+    .settings-row:last-child { border-bottom: 0; padding-bottom: 2px; }
+    .settings-row h3 { margin: 0 0 2px; font-size: 12px; font-weight: 600; }
+    .settings-row p { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.35; }
+    .theme-options { display: flex; width: 100%; padding: 2px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface-2); }
+    .theme-option { flex: 1; padding: 5px 6px; border: 0; border-radius: 5px; background: transparent; color: var(--muted); font-size: 10px; cursor: pointer; }
     .theme-option.active { background: var(--surface); color: var(--ink); box-shadow: 0 1px 4px rgba(0,0,0,.08); }
-    .usage { width: 150px; }
+    .usage { width: 100%; }
     .usage-top { display: flex; justify-content: space-between; margin-bottom: 6px; font: 9px/1 var(--mono); }
     .usage-track { height: 5px; overflow: hidden; border-radius: 5px; background: var(--surface-3); }
     .usage-fill { width: 72%; height: 100%; background: var(--accent); }
-    .switch { position: relative; width: 32px; height: 18px; border: 0; border-radius: 18px; background: var(--line-strong); cursor: pointer; }
+    .switch { position: relative; width: 32px; height: 18px; border: 0; border-radius: 18px; background: var(--line-strong); cursor: pointer; transition: background-color .15s var(--ease-out), transform .12s var(--ease-out); }
     .switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 12px; height: 12px; border-radius: 50%; background: white; transition: transform .15s var(--ease-out); }
     .switch.on { background: var(--accent); }
     .switch.on::after { transform: translateX(14px); }
     .secondary-button { padding: 7px 10px; border: 1px solid var(--line-strong); border-radius: 7px; background: var(--surface); color: var(--ink); font-size: 10px; cursor: pointer; }
-    .secondary-button:hover { background: var(--surface-2); }
     .show-more-files { margin: 6px 0 12px; padding: 3px 0; border: 0; background: transparent; color: var(--muted); font-size: 10px; cursor: pointer; text-align: left; }
-    .show-more-files:hover { color: var(--ink); text-decoration: underline; }
     .show-more-files:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    @media (hover: hover) and (pointer: fine) {
+      .icon-btn:hover { background: var(--surface-3); }
+      .new-thread:hover { border-color: var(--line-strong); }
+      .folder:hover { background: var(--surface-3); color: var(--ink); }
+      .thread:hover { background: var(--surface-3); }
+      .thread:hover .key { opacity: 1; }
+      .response-body a:hover { opacity: .78; }
+      .composer-tool:hover { background: var(--surface-3); color: var(--ink); }
+      .model-option:hover { background: var(--surface-3); }
+      .send:hover { opacity: .82; }
+      .detail-tab:hover { background: var(--surface-3); color: var(--ink); }
+      .env-link:hover { opacity: .72; }
+      .file-change-head:hover { background: var(--surface-2); }
+      .changes-filter:hover { border-color: var(--line-strong); }
+      .secondary-button:hover { background: var(--surface-2); }
+      .show-more-files:hover { color: var(--ink); text-decoration: underline; }
+    }
 
     body[data-theme="dark"] {
       color-scheme: dark;
@@ -434,8 +479,12 @@
 
     @media (max-width: 980px) {
       .shell { grid-template-columns: 224px minmax(0, 1fr); }
-      .detail { display: none; }
-      .right-toggle { display: none; }
+      .detail { position: absolute; z-index: 8; inset: 0 0 0 auto; display: flex; width: min(42vw, 360px); border-left: 1px solid var(--line); box-shadow: -12px 0 40px rgba(0,0,0,.16); transform: translateX(105%); transition: transform .2s var(--ease-out); }
+      .shell.mobile-detail .detail { overflow: hidden; transform: translateX(0); }
+      .right-toggle, #closeDetailMobile { display: inline-grid; }
+      #detailExpand { display: none; }
+      .drawer-scrim { position: absolute; z-index: 7; inset: 0; display: block; border: 0; background: rgba(20,20,18,.28); opacity: 0; pointer-events: none; transition: opacity .18s var(--ease-out); }
+      .shell.mobile-detail .drawer-scrim { opacity: 1; pointer-events: auto; }
       .left-hidden, .left-hidden.right-hidden { grid-template-columns: 0 minmax(0, 1fr); }
     }
     @media (max-width: 680px) {
@@ -443,8 +492,11 @@
       .shell { width: 100vw; height: 100dvh; margin: 0; border: 0; border-radius: 0; grid-template-columns: minmax(0, 1fr); }
       .rail { position: absolute; z-index: 8; inset: 0 auto 0 0; width: min(84vw, 300px); box-shadow: 12px 0 40px rgba(0,0,0,.16); transform: translateX(-105%); transition: transform .2s var(--ease-out); }
       .shell.mobile-menu .rail { transform: translateX(0); }
+      .detail { width: min(88vw, 360px); }
+      .right-toggle { display: inline-grid; }
+      #detailExpand { display: none; }
       .drawer-scrim { position: absolute; z-index: 7; inset: 0; display: block; border: 0; background: rgba(20,20,18,.28); opacity: 0; pointer-events: none; transition: opacity .18s var(--ease-out); }
-      .shell.mobile-menu .drawer-scrim { opacity: 1; pointer-events: auto; }
+      .shell.mobile-menu .drawer-scrim, .shell.mobile-detail .drawer-scrim { opacity: 1; pointer-events: auto; }
       .chat { grid-column: 1; }
       .conversation { width: calc(100% - 30px); padding-top: 26px; }
       .composer-wrap { padding: 0 8px 10px; }
@@ -453,7 +505,12 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation-duration: .01ms !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
+      html { scroll-behavior: auto; }
+      .rail, .detail, .switch::after, .folder-state-icon svg { transition-duration: .01ms !important; }
+      .model-picker, .settings-popover { transform: scale(1) !important; transition: opacity .12s var(--ease-out) !important; }
+      .toast, .toast.show { transform: translate(-50%, 0) !important; transition: opacity .12s var(--ease-out) !important; }
+      .drawer-scrim { transition: opacity .12s var(--ease-out) !important; }
+      .icon-btn:active, .thread:active, .folder:active, .new-thread:active, .composer-tool:active, .send:active, .detail-tab:active, .file-change-head:active, .model-option:active, .theme-option:active, .switch:active, .secondary-button:active { transform: none; }
     }
   </style>
 </head>
@@ -480,19 +537,49 @@
       <nav class="thread-list" id="threadList"></nav>
 
       <div class="rail-bottom">
-        <button class="icon-btn settings-gear" id="openSettings" aria-label="Open settings">
+        <section class="settings-popover" id="settingsPopover" role="dialog" aria-labelledby="settingsTitle" hidden>
+          <header class="settings-head">
+            <h2 id="settingsTitle">Settings</h2>
+            <button class="icon-btn" id="closeSettings" aria-label="Close settings">
+              <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+            </button>
+          </header>
+          <div class="settings-body">
+            <div class="settings-row stack">
+              <div><h3>Appearance</h3><p>Choose how the interface looks.</p></div>
+              <div class="theme-options" aria-label="Theme">
+                <button class="theme-option active" data-theme="light">Light</button>
+                <button class="theme-option" data-theme="dark">Dark</button>
+                <button class="theme-option" data-theme="system">System</button>
+              </div>
+            </div>
+            <div class="settings-row stack">
+              <div><h3>Usage remaining</h3><p>Prototype allowance · resets Friday</p></div>
+              <div class="usage"><div class="usage-top"><span>72% left</span><span>72 / 100</span></div><div class="usage-track"><div class="usage-fill"></div></div></div>
+            </div>
+            <div class="settings-row">
+              <div><h3>Show pet</h3><p>Add Ben’s dog to quiet screens. Photo coming soon.</p></div>
+              <button class="switch" id="petSwitch" role="switch" aria-checked="false" aria-label="Show pet"></button>
+            </div>
+            <div class="settings-row">
+              <div><h3>Invite a friend</h3><p>Copy a link to this site.</p></div>
+              <button class="secondary-button" id="inviteButton">Copy invite</button>
+            </div>
+          </div>
+        </section>
+        <button class="icon-btn settings-gear" id="openSettings" aria-label="Open settings" aria-haspopup="dialog" aria-expanded="false">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.6v-.2h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1z"/></svg>
         </button>
       </div>
     </aside>
-    <button class="drawer-scrim" id="drawerScrim" type="button" aria-label="Close threads"></button>
+    <button class="drawer-scrim" id="drawerScrim" type="button" aria-label="Close sidebar"></button>
 
     <section class="chat">
       <header class="topbar">
         <button class="icon-btn" id="leftToggle" aria-label="Toggle threads">
           <svg id="leftToggleIcon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg>
         </button>
-        <div class="topbar-title"><span>~/bentossell/</span><strong id="topTitle">about-me</strong></div>
+        <div class="topbar-title"><span>~/</span><strong id="topTitle">about-me</strong></div>
         <div class="topbar-spacer"></div>
         <button class="icon-btn right-toggle" id="rightToggle" aria-label="Toggle details">
           <svg id="rightToggleIcon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg>
@@ -544,6 +631,9 @@
           </button>
         </div>
         <div class="topbar-spacer"></div>
+        <button class="icon-btn mobile-only" id="closeDetailMobile" aria-label="Close details">
+          <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
         <button class="icon-btn" id="detailExpand" aria-label="Expand sidebar">
           <svg id="detailExpandIcon" viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/></svg>
         </button>
@@ -552,39 +642,6 @@
       <div class="changes-panel" id="changesPanel" hidden></div>
     </aside>
   </main>
-
-  <div class="modal-backdrop" id="settingsBackdrop" hidden>
-    <section class="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-      <header class="settings-head">
-        <h2 id="settingsTitle">Settings</h2>
-        <button class="icon-btn" id="closeSettings" aria-label="Close settings">
-          <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
-        </button>
-      </header>
-      <div class="settings-body">
-        <div class="settings-row">
-          <div><h3>Appearance</h3><p>Choose how the interface looks.</p></div>
-          <div class="theme-options" aria-label="Theme">
-            <button class="theme-option active" data-theme="light">Light</button>
-            <button class="theme-option" data-theme="dark">Dark</button>
-            <button class="theme-option" data-theme="system">System</button>
-          </div>
-        </div>
-        <div class="settings-row">
-          <div><h3>Usage remaining</h3><p>Prototype allowance · resets Friday</p></div>
-          <div class="usage"><div class="usage-top"><span>72% left</span><span>72 / 100</span></div><div class="usage-track"><div class="usage-fill"></div></div></div>
-        </div>
-        <div class="settings-row">
-          <div><h3>Show pet</h3><p>Add Ben’s dog to quiet screens. Photo coming soon.</p></div>
-          <button class="switch" id="petSwitch" role="switch" aria-checked="false" aria-label="Show pet"></button>
-        </div>
-        <div class="settings-row">
-          <div><h3>Invite a friend</h3><p>Copy a link to this site.</p></div>
-          <button class="secondary-button" id="inviteButton">Copy invite</button>
-        </div>
-      </div>
-    </section>
-  </div>
   <div class="toast" id="toast">Ready</div>
 
   <script>
@@ -595,11 +652,12 @@
         box: '<path d="M21 8l-9 5-9-5 9-5 9 5z"/><path d="M3 8v8l9 5 9-5V8M12 13v8"/>',
         pulse: '<path d="M3 12h4l2-7 4 14 2-7h6"/>',
         history: '<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/>',
-        x: '<path d="M5 4l14 16M19 4L5 20"/>',
+        x: '<path d="M23 3a10.9 10.9 0 0 1-3.14 1.53A4.48 4.48 0 0 0 12 8.5v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/>',
         github: '<path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3.3-.4 6.8-1.6 6.8-7.4A5.8 5.8 0 0 0 19.3 3 5.4 5.4 0 0 0 19.1 0S17.9-.4 15 1.5a14 14 0 0 0-7 0C5.1-.4 3.9 0 3.9 0a5.4 5.4 0 0 0-.2 3A5.8 5.8 0 0 0 2.2 7c0 5.8 3.5 7 6.8 7.4A4.8 4.8 0 0 0 8 18v4"/><path d="M8 19c-3 .9-3-1.5-4-2"/>',
         linkedin: '<rect x="3" y="9" width="4" height="12"/><path d="M5 3v.01M11 21v-7a4 4 0 0 1 8 0v7M11 9v12M19 21v-7"/>',
         mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
         folder: '<path d="M3 6a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+        'folder-open': '<path d="M3 8V6a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2"/><path d="M3 9h18l-2 10H5z"/>',
         chevron: '<path d="M9 18l6-6-6-6"/>',
         laptop: '<rect x="4" y="4" width="16" height="12" rx="2"/><path d="M2 20h20"/>',
         branch: '<circle cx="6" cy="5" r="2"/><circle cx="18" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><path d="M6 7v10M18 7v3a4 4 0 0 1-4 4H6"/>',
@@ -613,7 +671,7 @@
     let threads = {};
 
     const socialLinks = [
-      { label: 'X', handle: '@bentossell', href: 'https://x.com/bentossell', icon: 'x' },
+      { label: 'Twitter', handle: '@bentossell', href: 'https://x.com/bentossell', icon: 'x' },
       { label: 'GitHub', handle: 'bentossell', href: 'https://github.com/bentossell', icon: 'github' },
       { label: 'Newsletter', handle: 'bensbites.com', href: 'https://www.bensbites.com', icon: 'mail' }
     ];
@@ -633,18 +691,16 @@
     ];
 
     let gitStatus = {
-      environment: 'Local · MacBook Air',
-      directory: '/Users/bentossell/repos/bentossell',
-      branch: 'codex/agent-ui-markdown',
+      environment: 'Local · MacBook Air M5',
+      directory: '~/bentossell',
+      branch: 'main',
       status: 'Dirty'
     };
 
     const modelOptions = [
-      { provider: 'OpenAI', mark: 'O', model: '5.6 Sol', effort: 'High', note: 'Best for complex work' },
-      { provider: 'Anthropic', mark: 'A', model: 'Claude Opus 4.6', effort: 'High', note: 'Long-form reasoning and writing' },
-      { provider: 'xAI', mark: 'x', model: 'Grok Code Fast 1', effort: 'Medium', note: 'Fast code and research' },
-      { provider: 'Google', mark: 'G', model: 'Gemini 3.1 Pro', effort: 'High', note: 'Large-context work' },
-      { provider: 'OpenAI', mark: 'O', model: 'GPT-5.5', effort: 'Medium', note: 'Balanced everyday model' }
+      { provider: 'OpenAI', mark: 'O', model: '5.6 Sol', effort: 'High' },
+      { provider: 'Anthropic', mark: 'A', model: 'Fable', effort: 'High' },
+      { provider: 'xAI', mark: 'x', model: 'Grok 4.6', effort: 'High' },
     ];
 
     const shell = document.getElementById('shell');
@@ -658,21 +714,53 @@
     const toast = document.getElementById('toast');
     const modelPicker = document.getElementById('modelPicker');
     const modelButton = document.getElementById('modelButton');
-    const settingsBackdrop = document.getElementById('settingsBackdrop');
-    const settingsModal = settingsBackdrop.querySelector('.settings-modal');
+    const settingsPopover = document.getElementById('settingsPopover');
     const settingsTrigger = document.getElementById('openSettings');
     const colorScheme = matchMedia('(prefers-color-scheme: dark)');
     let current = 'about';
     let folderOpen = true;
     let selectedModel = 0;
+    let cancelModelPickerClose = null;
+    let cancelSettingsClose = null;
     let visited = new Set(JSON.parse(localStorage.getItem('ben-visited-threads') || '[]'));
 
     const escapeHtml = (value) => value.replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
     const gitTotals = () => gitFiles.reduce((totals, file) => ({ add: totals.add + Number(file.add || 0), del: totals.del + Number(file.del || 0) }), { add: 0, del: 0 });
+    const configureLinks = root => root.querySelectorAll('a').forEach(link => {
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+    });
+
+    function hideAfterTransition(element, fallbackMs, onHidden) {
+      let finished = false;
+      let timer;
+      const finish = event => {
+        if (event && event.target !== element) return;
+        if (finished) return;
+        finished = true;
+        element.removeEventListener('transitionend', finish);
+        clearTimeout(timer);
+        element.hidden = true;
+        element.classList.remove('closing');
+        onHidden();
+      };
+      element.addEventListener('transitionend', finish);
+      timer = setTimeout(finish, fallbackMs);
+      return () => {
+        if (finished) return;
+        finished = true;
+        element.removeEventListener('transitionend', finish);
+        clearTimeout(timer);
+        element.classList.remove('closing');
+      };
+    }
 
     function inlineMarkdown(value) {
       return escapeHtml(value)
-        .replace(/\[([^\]]+)\]\(((?:https?:\/\/|\/)[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer">$1</a>')
+        .replace(/\[([^\]]+)\]\(((?:https?:\/\/|\/)[^)\s]+)\)/g, (_, label, href) => {
+          const external = icon('external').replace('<svg', '<svg class="external-link-icon"');
+          return `<a href="${href}">${label}${external}</a>`;
+        })
         .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
         .replace(/`(.+?)`/g, '<code>$1</code>');
     }
@@ -708,10 +796,7 @@
           const items = [];
           while (index < lines.length && lines[index].trim().startsWith('- ')) {
             const item = lines[index].trim().slice(2);
-            const pair = item.match(/^\*\*(.+?):\*\*\s*(.+)$/);
-            items.push(pair
-              ? `<li><span>${inlineMarkdown(pair[1])}</span><span>${inlineMarkdown(pair[2])}</span></li>`
-              : `<li><span>${inlineMarkdown(item)}</span><span></span></li>`);
+            items.push(`<li>${inlineMarkdown(item)}</li>`);
             index += 1;
           }
           output.push(`<ul>${items.join('')}</ul>`);
@@ -749,6 +834,12 @@
       };
     }
 
+    function unwrapMarkdownViewer(raw, contentType) {
+      if (!contentType.includes('text/html')) return raw;
+      const documentCopy = new DOMParser().parseFromString(raw, 'text/html');
+      return documentCopy.querySelector('#raw')?.textContent || raw;
+    }
+
     async function loadThreads() {
       const manifestResponse = await fetch('threads/index.json', { cache: 'no-store' });
       if (!manifestResponse.ok) throw new Error('Could not load threads/index.json');
@@ -756,7 +847,8 @@
       const loaded = await Promise.all(files.map(async file => {
         const response = await fetch(`threads/${file}`, { cache: 'no-store' });
         if (!response.ok) throw new Error(`Could not load threads/${file}`);
-        return parseThreadMarkdown(file, await response.text());
+        const raw = await response.text();
+        return parseThreadMarkdown(file, unwrapMarkdownViewer(raw, response.headers.get('content-type') || ''));
       }));
       threads = Object.fromEntries(loaded.map(thread => [thread.id, thread]));
     }
@@ -765,7 +857,7 @@
       const hasUnread = Object.keys(threads).some(id => !visited.has(id));
       list.innerHTML = `
         <button class="folder ${folderOpen ? '' : 'collapsed'}" id="benFolder" aria-expanded="${folderOpen}" aria-label="ben folder${hasUnread ? ', unread threads' : ''}">
-          ${icon('folder')}<span>ben</span>${hasUnread ? '<span class="unread-dot" aria-hidden="true"></span>' : '<span></span>'}${icon('chevron').replace('<svg', '<svg class="chevron"')}
+          <span class="folder-state-icon ${folderOpen ? 'open' : ''}" aria-hidden="true">${icon('folder').replace('<svg', '<svg class="folder-closed"')}${icon('folder-open').replace('<svg', '<svg class="folder-open"')}</span><span>ben</span>${hasUnread ? '<span class="unread-dot" aria-hidden="true"></span>' : '<span></span>'}${icon('chevron').replace('<svg', '<svg class="chevron"')}
         </button>
         <div class="folder-threads ${folderOpen ? '' : 'collapsed'}" id="folderThreads">
           ${Object.entries(threads).map(([id, item], index) => `
@@ -775,7 +867,11 @@
         </div>`;
       document.getElementById('benFolder').addEventListener('click', () => {
         folderOpen = !folderOpen;
-        renderList();
+        const folder = document.getElementById('benFolder');
+        folder.classList.toggle('collapsed', !folderOpen);
+        folder.setAttribute('aria-expanded', String(folderOpen));
+        folder.querySelector('.folder-state-icon').classList.toggle('open', folderOpen);
+        document.getElementById('folderThreads').classList.toggle('collapsed', !folderOpen);
       });
       list.querySelectorAll('.thread').forEach(button => button.addEventListener('click', () => selectThread(button.dataset.thread)));
     }
@@ -788,9 +884,10 @@
       conversation.innerHTML = `
         <div class="question-row"><div class="question">${escapeHtml(question)}</div></div>
         <article class="response">
-          <div class="response-head"><div class="agent-mark">bt</div><strong>bites</strong><span>prepared response</span></div>
+          <div class="response-head"><div class="agent-mark"><img src="assets/bites-logo.png" alt=""></div><strong>bites</strong></div>
           <div class="response-body">${body}</div>
         </article>`;
+      configureLinks(conversation);
       messages.scrollTo({ top: 0, behavior: 'instant' });
     }
 
@@ -809,6 +906,7 @@
         <div class="mini-files">${previewFiles}</div>
         ${remaining ? `<button class="show-more-files" type="button" id="showAllChanges">Show ${remaining} more</button>` : ''}
         <div class="property-divider"></div>${links}`;
+      configureLinks(contextPanel);
       document.getElementById('showAllChanges')?.addEventListener('click', () => activateDetailTab('changes'));
     }
 
@@ -821,7 +919,7 @@
           <div class="diff">${diff.map(([type, oldLine, newLine, code]) => `<div class="diff-line ${type}"><span class="ln">${oldLine}</span><span class="ln">${newLine}</span><span>${escapeHtml(code)}</span></div>`).join('')}</div>
         </div>`;
       }).join('');
-      changesPanel.innerHTML = `<div class="changes-toolbar"><select class="changes-filter" aria-label="Change filter"><option value="all">All changes</option><option value="modified">Modified</option><option value="added">Added</option></select><span class="changes-count">${gitFiles.length} files, <span class="add">+${totals.add}</span> <span class="del">-${totals.del}</span></span></div>${fileHtml}`;
+      changesPanel.innerHTML = `<div class="changes-toolbar"><label class="changes-filter-wrap"><select class="changes-filter" aria-label="Change filter"><option value="all">All changes</option><option value="modified">Modified</option><option value="added">Added</option></select></label><span class="changes-count">${gitFiles.length} files, <span class="add">+${totals.add}</span> <span class="del">-${totals.del}</span></span></div>${fileHtml}`;
       changesPanel.querySelectorAll('.file-change-head').forEach(button => button.addEventListener('click', () => button.parentElement.classList.toggle('open')));
       changesPanel.querySelector('.changes-filter').addEventListener('change', event => {
         const visibleFiles = [];
@@ -856,7 +954,7 @@
       renderConversation(item);
       renderContext();
       history.replaceState(null, '', `#${id}`);
-      shell.classList.remove('mobile-menu');
+      closeMobilePanels();
     }
 
     function submitPrompt(value) {
@@ -874,7 +972,7 @@
     }
 
     function renderModels() {
-      modelPicker.innerHTML = modelOptions.map((option, index) => `<button class="model-option ${index === selectedModel ? 'active' : ''}" type="button" role="option" aria-selected="${index === selectedModel}" data-model="${index}"><span class="model-choice"><span class="provider-logo">${option.mark}</span><span><strong>${option.model} · ${option.effort}</strong><small>${option.provider} · ${option.note}</small></span></span><span class="check">${index === selectedModel ? '✓' : ''}</span></button>`).join('');
+      modelPicker.innerHTML = modelOptions.map((option, index) => `<button class="model-option ${index === selectedModel ? 'active' : ''}" type="button" role="option" aria-selected="${index === selectedModel}" data-model="${index}"><span class="provider-logo">${option.mark}</span><span><strong>${option.model}</strong><small>${option.provider} · ${option.effort}</small></span><span class="check" aria-hidden="true">${index === selectedModel ? '✓' : ''}</span></button>`).join('');
       modelPicker.querySelectorAll('.model-option').forEach(button => button.addEventListener('click', () => selectModel(Number(button.dataset.model))));
     }
 
@@ -890,16 +988,21 @@
     }
 
     function openModelPicker() {
+      cancelModelPickerClose?.();
+      cancelModelPickerClose = null;
       modelPicker.hidden = false;
       modelButton.setAttribute('aria-expanded', 'true');
       requestAnimationFrame(() => modelPicker.querySelector(`[data-model="${selectedModel}"]`)?.focus());
     }
 
     function closeModelPicker({ restoreFocus = false } = {}) {
-      if (modelPicker.hidden) return;
-      modelPicker.hidden = true;
+      if (modelPicker.hidden || modelPicker.classList.contains('closing')) return;
       modelButton.setAttribute('aria-expanded', 'false');
-      if (restoreFocus) modelButton.focus();
+      modelPicker.classList.add('closing');
+      cancelModelPickerClose = hideAfterTransition(modelPicker, 200, () => {
+        cancelModelPickerClose = null;
+        if (restoreFocus) modelButton.focus();
+      });
     }
 
     function setTheme(theme) {
@@ -913,14 +1016,26 @@
       });
     }
 
-    function closeSettingsModal({ restoreFocus = true } = {}) {
-      if (settingsBackdrop.hidden) return;
-      settingsBackdrop.hidden = true;
-      if (restoreFocus) settingsTrigger.focus();
+    function closeSettingsPopover({ restoreFocus = true } = {}) {
+      if (settingsPopover.hidden || settingsPopover.classList.contains('closing')) return;
+      settingsTrigger.setAttribute('aria-expanded', 'false');
+      settingsPopover.classList.add('closing');
+      cancelSettingsClose = hideAfterTransition(settingsPopover, 200, () => {
+        cancelSettingsClose = null;
+        if (restoreFocus) settingsTrigger.focus();
+      });
+    }
+
+    function openSettingsPopover() {
+      cancelSettingsClose?.();
+      cancelSettingsClose = null;
+      settingsPopover.hidden = false;
+      settingsTrigger.setAttribute('aria-expanded', 'true');
+      requestAnimationFrame(() => document.getElementById('closeSettings').focus());
     }
 
     function trapSettingsFocus(event) {
-      const focusable = [...settingsModal.querySelectorAll('button:not([disabled]), input:not([disabled]), select:not([disabled]), [href], [tabindex]:not([tabindex="-1"])')];
+      const focusable = [...settingsPopover.querySelectorAll('button:not([disabled]), input:not([disabled]), select:not([disabled]), [href], [tabindex]:not([tabindex="-1"])')];
       if (!focusable.length) return;
       const first = focusable[0];
       const last = focusable.at(-1);
@@ -930,6 +1045,7 @@
 
     function setLeftHidden(hidden) {
       shell.classList.toggle('left-hidden', hidden);
+      if (hidden) closeSettingsPopover({ restoreFocus: false });
       const button = document.getElementById('leftToggle');
       button.setAttribute('aria-label', hidden ? 'Show threads' : 'Hide threads');
       button.setAttribute('aria-pressed', String(hidden));
@@ -986,35 +1102,45 @@
     });
     document.getElementById('newThread').addEventListener('click', () => {
       promptInput.focus();
-      shell.classList.remove('mobile-menu');
+      closeMobilePanels();
       showToast('Start a new question');
     });
     document.getElementById('leftToggle').addEventListener('click', () => {
-      if (matchMedia('(max-width: 680px)').matches) shell.classList.toggle('mobile-menu');
-      else setLeftHidden(!shell.classList.contains('left-hidden'));
+      if (matchMedia('(max-width: 680px)').matches) {
+        const opening = !shell.classList.contains('mobile-menu');
+        closeMobilePanels();
+        shell.classList.toggle('mobile-menu', opening);
+      } else setLeftHidden(!shell.classList.contains('left-hidden'));
     });
-    document.getElementById('closeMobile').addEventListener('click', () => shell.classList.remove('mobile-menu'));
-    document.getElementById('drawerScrim').addEventListener('click', () => shell.classList.remove('mobile-menu'));
-    document.getElementById('rightToggle').addEventListener('click', () => setRightHidden(!shell.classList.contains('right-hidden')));
+    document.getElementById('closeMobile').addEventListener('click', closeMobilePanels);
+    document.getElementById('closeDetailMobile').addEventListener('click', closeMobilePanels);
+    document.getElementById('drawerScrim').addEventListener('click', closeMobilePanels);
+    document.getElementById('rightToggle').addEventListener('click', () => {
+      if (matchMedia('(max-width: 980px)').matches) {
+        const opening = !shell.classList.contains('mobile-detail');
+        closeMobilePanels();
+        shell.classList.toggle('mobile-detail', opening);
+      } else setRightHidden(!shell.classList.contains('right-hidden'));
+    });
     document.getElementById('detailExpand').addEventListener('click', () => setDetailWide(!shell.classList.contains('detail-wide')));
     document.getElementById('contextTab').addEventListener('click', () => activateDetailTab('context'));
     document.getElementById('changesTab').addEventListener('click', () => activateDetailTab('changes'));
 
     modelButton.addEventListener('click', () => {
-      if (modelPicker.hidden) openModelPicker();
+      if (modelPicker.hidden || modelPicker.classList.contains('closing')) openModelPicker();
       else closeModelPicker({ restoreFocus: true });
     });
     document.addEventListener('click', event => {
       if (!modelPicker.hidden && !modelPicker.contains(event.target) && !modelButton.contains(event.target)) closeModelPicker();
+      if (!settingsPopover.hidden && !settingsPopover.contains(event.target) && !settingsTrigger.contains(event.target)) closeSettingsPopover({ restoreFocus: false });
     });
 
     settingsTrigger.addEventListener('click', () => {
       closeModelPicker();
-      settingsBackdrop.hidden = false;
-      document.getElementById('closeSettings').focus();
+      if (settingsPopover.hidden || settingsPopover.classList.contains('closing')) openSettingsPopover();
+      else closeSettingsPopover({ restoreFocus: true });
     });
-    document.getElementById('closeSettings').addEventListener('click', () => closeSettingsModal());
-    settingsBackdrop.addEventListener('click', event => { if (event.target === settingsBackdrop) closeSettingsModal(); });
+    document.getElementById('closeSettings').addEventListener('click', () => closeSettingsPopover());
     document.querySelectorAll('.theme-option').forEach(button => button.addEventListener('click', () => setTheme(button.dataset.theme)));
     document.getElementById('petSwitch').addEventListener('click', event => {
       const enabled = !event.currentTarget.classList.contains('on');
@@ -1030,6 +1156,11 @@
     document.getElementById('approvalMode').addEventListener('click', () => showToast('Approval modes are not in this prototype'));
     document.getElementById('voiceInput').addEventListener('click', () => showToast('Voice input is not in this prototype'));
 
+    function closeMobilePanels() {
+      shell.classList.remove('mobile-menu', 'mobile-detail');
+      closeSettingsPopover({ restoreFocus: false });
+    }
+
     colorScheme.addEventListener('change', () => {
       if ((localStorage.getItem('ben-theme') || 'light') === 'system') setTheme('system');
     });
@@ -1041,12 +1172,12 @@
 
     document.addEventListener('keydown', event => {
       if (event.key === 'Escape') {
-        if (!settingsBackdrop.hidden) closeSettingsModal();
+        if (!settingsPopover.hidden) closeSettingsPopover();
         closeModelPicker({ restoreFocus: true });
-        shell.classList.remove('mobile-menu');
+        closeMobilePanels();
         return;
       }
-      if (!settingsBackdrop.hidden && event.key === 'Tab') { trapSettingsFocus(event); return; }
+      if (!settingsPopover.hidden && event.key === 'Tab') { trapSettingsFocus(event); return; }
       if (!modelPicker.hidden && ['ArrowDown', 'ArrowUp', 'Home', 'End', 'Enter'].includes(event.key)) {
         const options = [...modelPicker.querySelectorAll('.model-option')];
         const focusedIndex = Math.max(0, options.indexOf(document.activeElement));

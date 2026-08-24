@@ -9,11 +9,7 @@ Before Ben’s Bites, Ben built Makerpad, a learning platform for making softwar
 
 ## A short timeline
 
-- **Product Hunt:** Community and early-stage tech
-- **Makerpad:** Founded a no-code education company
-- **Zapier:** Makerpad acquired in 2021
-- **Ben’s Bites:** Started an AI newsletter and fund
-
-## Same direction, different tools
-
-> The work has always been about helping more people build. Drag-and-drop tools did that first. Agents now take the idea much further.
+- **Product Hunt:** Community and early-stage tech - 2015-2017
+- **Makerpad:** Founded a no-code education company - 2019-2021 [acuired by Zapier]
+- **Ben’s Bites:** AI newsletter and fund in 2022
+- **Scout:** a16z [2022], Sequoia [2025] (in-between funds)

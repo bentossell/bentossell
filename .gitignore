@@ -4,6 +4,7 @@ Thumbs.db
 .env.*
 !.env.example
 node_modules/
+.herenow/
 *.log
 *.tmp
 *.swp
