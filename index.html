@@ -4,6 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Ben Tossell — builder + investor.">
+  <meta name="theme-color" content="#fbfdfd" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#151719" media="(prefers-color-scheme: dark)">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" sizes="any">
   <title>Ben Tossell</title>
   <style>
@@ -16,17 +18,38 @@
     }
 
     :root {
+      color-scheme: light dark;
       --paper: #fbfdfd;
       --ink: #202126;
       --muted: #9ba4b1;
       --line: #aab3be;
       --link: #3389e8;
+      --rule: #e5e9eb;
+      --tooltip: rgb(32 33 38 / 58%);
+      --divider-bump: #cfd6db;
+      --post-bg: #fff;
+      --post-shadow: 0 1px 0 rgb(30 35 40 / 4%);
       --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
       --hand: "Shantell Sans", "Comic Sans MS", cursive;
       --content-width: 720px;
       --annotation-gutter: clamp(0px, calc(100vw - 480px), 150px);
       --mascot-width: 104px;
       --mascot-height: 68px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --paper: #151719;
+        --ink: #f1f3f5;
+        --muted: #8f99a7;
+        --line: #68727d;
+        --link: #62a8f5;
+        --rule: #30353a;
+        --tooltip: rgb(241 243 245 / 62%);
+        --divider-bump: #59616a;
+        --post-bg: #202327;
+        --post-shadow: 0 1px 0 rgb(0 0 0 / 28%);
+      }
     }
 
     * { box-sizing: border-box; }
@@ -74,7 +97,7 @@
       height: 2px;
       margin: 0;
       border: 0;
-      background: #e5e9eb;
+      background: var(--rule);
     }
 
     .mascot-lane {
@@ -119,7 +142,7 @@
       left: 50%;
       z-index: 2;
       padding: 2px 0;
-      color: rgb(32 33 38 / 58%);
+      color: var(--tooltip);
       font-family: var(--mono);
       font-size: 10px;
       font-weight: 500;
@@ -144,7 +167,7 @@
       left: var(--bump-x);
       width: 28px;
       height: 2px;
-      background: #cfd6db;
+      background: var(--divider-bump);
       opacity: 0;
       pointer-events: none;
       transform: scaleX(.25);
@@ -462,8 +485,8 @@
     .post-link {
       display: block;
       overflow: hidden;
-      background: #fff;
-      box-shadow: 0 1px 0 rgba(30, 35, 40, .04);
+      background: var(--post-bg);
+      box-shadow: var(--post-shadow);
     }
 
     .post-link img {

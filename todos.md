@@ -12,3 +12,4 @@
 - [x] Animate the tldraw mascot across the top rule.
 - [x] Add a richer mascot gait, face movement, hover label, and keyboard controls.
 - [x] Add Rough Notation annotations for Markdown formatting and expandable sections.
+- [x] Follow the device light or dark color scheme automatically.
