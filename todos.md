@@ -10,3 +10,4 @@
 - [x] Show the two Ben's Bites images side by side in the expanded branch.
 - [x] Link both images to their real posts in new tabs.
 - [x] Animate the tldraw mascot across the top rule.
+- [x] Add a richer mascot gait, face movement, hover label, and keyboard controls.

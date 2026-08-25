@@ -24,7 +24,6 @@
       --hand: "Shantell Sans", "Comic Sans MS", cursive;
       --mascot-width: 104px;
       --mascot-height: 68px;
-      --mascot-run-duration: 11s;
     }
 
     * { box-sizing: border-box; }
@@ -85,14 +84,71 @@
     }
 
     .mascot-runner {
+      --mascot-x: 0px;
+      --mascot-jump: 0px;
       position: absolute;
       bottom: 0;
       left: 0;
       width: var(--mascot-width);
       height: var(--mascot-height);
+      margin: 0;
+      padding: 0;
+      border: 0;
+      appearance: none;
+      background: transparent;
+      color: inherit;
+      cursor: pointer;
+      pointer-events: auto;
       transform-origin: 50% 100%;
-      animation: mascot-run var(--mascot-run-duration) linear infinite;
-      will-change: left, transform;
+      transform: translate3d(var(--mascot-x), var(--mascot-jump), 0);
+      will-change: transform;
+    }
+
+    .mascot-runner:focus-visible { outline: none; }
+
+    .mascot-runner:focus-visible .mascot-sprite {
+      filter: drop-shadow(0 0 3px rgb(51 137 232 / 35%));
+    }
+
+    .mascot-tooltip {
+      position: absolute;
+      bottom: calc(100% + 7px);
+      left: 50%;
+      z-index: 2;
+      padding: 2px 0;
+      color: rgb(32 33 38 / 58%);
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      line-height: 1;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, 4px);
+      transition: opacity 180ms ease, transform 180ms ease;
+    }
+
+    .mascot-runner:hover .mascot-tooltip,
+    .mascot-runner:focus-visible .mascot-tooltip {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    .divider-bump {
+      --bump-x: 0px;
+      position: absolute;
+      top: 0;
+      left: var(--bump-x);
+      width: 28px;
+      height: 2px;
+      background: #cfd6db;
+      opacity: 0;
+      pointer-events: none;
+      transform: scaleX(.25);
+    }
+
+    .divider-bump.is-active {
+      animation: divider-step 180ms ease-out;
     }
 
     .mascot-sprite {
@@ -104,35 +160,115 @@
 
     .mascot-character {
       transform-origin: 50% 78%;
-      animation: mascot-bob 400ms steps(2, end) infinite;
+      animation: mascot-gait-body 520ms linear infinite;
     }
 
-    .mascot-limb-a {
-      animation: mascot-limb-a 400ms steps(2, end) infinite;
+    .mascot-arm-left,
+    .mascot-leg-right {
+      animation: mascot-gait-a 520ms linear infinite;
     }
 
-    .mascot-limb-b {
-      animation: mascot-limb-b 400ms steps(2, end) infinite;
+    .mascot-arm-right,
+    .mascot-leg-left {
+      animation: mascot-gait-b 520ms linear infinite;
     }
 
-    @keyframes mascot-bob {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-4px); }
+    .mascot-eye {
+      transform-box: fill-box;
+      transform-origin: 50% 65%;
+      transition: transform 70ms ease;
     }
 
-    @keyframes mascot-limb-a {
-      0%, 100% { transform: rotate(-13deg); }
+    .mascot-pupil {
+      transform: translate(var(--pupil-x, 0px), var(--pupil-y, 0px));
+      transition: transform 90ms ease-out;
+    }
+
+    .mascot-runner.is-blinking .mascot-eye { transform: scaleY(.08); }
+
+    .mascot-tongue {
+      transform-box: fill-box;
+      transform-origin: 50% 0;
+      animation: mascot-tongue 1.4s ease-in-out infinite;
+    }
+
+    .mascot-runner.is-boosting .mascot-character,
+    .mascot-runner.is-boosting .mascot-arm-left,
+    .mascot-runner.is-boosting .mascot-arm-right,
+    .mascot-runner.is-boosting .mascot-leg-left,
+    .mascot-runner.is-boosting .mascot-leg-right {
+      animation-duration: 290ms;
+    }
+
+    .mascot-runner.is-turning .mascot-character {
+      animation: mascot-turn 300ms ease-out;
+    }
+
+    .mascot-runner.is-airborne .mascot-character {
+      animation: mascot-airborne 420ms ease-in-out infinite alternate;
+    }
+
+    .mascot-runner.is-landing .mascot-character {
+      animation: mascot-land 170ms ease-out;
+    }
+
+    .mascot-runner.is-waving .mascot-arm-right {
+      animation: mascot-wave 210ms ease-in-out 5 alternate;
+    }
+
+    @keyframes mascot-gait-body {
+      0%, 50%, 100% { transform: translateY(0) rotate(0); }
+      25% { transform: translateY(-2px) rotate(-1.2deg); }
+      75% { transform: translateY(-2px) rotate(1.2deg); }
+    }
+
+    @keyframes mascot-gait-a {
+      0%, 100% { transform: rotate(-12deg); }
+      25% { transform: rotate(7deg); }
       50% { transform: rotate(13deg); }
+      75% { transform: rotate(-5deg); }
     }
 
-    @keyframes mascot-limb-b {
-      0%, 100% { transform: rotate(13deg); }
+    @keyframes mascot-gait-b {
+      0%, 100% { transform: rotate(12deg); }
+      25% { transform: rotate(-7deg); }
       50% { transform: rotate(-13deg); }
+      75% { transform: rotate(5deg); }
     }
 
-    @keyframes mascot-run {
-      0%, 100% { left: 0; }
-      50% { left: calc(100% - var(--mascot-width)); }
+    @keyframes mascot-turn {
+      0% { transform: translateX(0) scale(1); }
+      35% { transform: translateX(4px) scaleX(1.08) scaleY(.9); }
+      65% { transform: translateX(-2px) scaleX(.96) scaleY(1.05); }
+      100% { transform: translateX(0) scale(1); }
+    }
+
+    @keyframes mascot-airborne {
+      from { transform: rotate(-2deg) scaleX(.96) scaleY(1.04); }
+      to { transform: rotate(2deg) scaleX(1.02) scaleY(.98); }
+    }
+
+    @keyframes mascot-land {
+      0% { transform: scaleX(.94) scaleY(1.08); }
+      45% { transform: scaleX(1.1) scaleY(.86); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes mascot-wave {
+      from { transform: rotate(8deg); }
+      to { transform: rotate(-38deg); }
+    }
+
+    @keyframes mascot-tongue {
+      0%, 72%, 100% { transform: translateY(0) rotate(0); }
+      82% { transform: translateY(1px) rotate(-4deg); }
+      92% { transform: translateY(0) rotate(3deg); }
+    }
+
+    @keyframes divider-step {
+      0% { opacity: 0; transform: scaleX(.25); }
+      45% { opacity: .9; transform: scaleX(1); }
+      100% { opacity: 0; transform: scaleX(1.35); }
     }
 
     .intro { margin-bottom: 50px; }
@@ -290,7 +426,6 @@
       :root {
         --mascot-width: 80px;
         --mascot-height: 52px;
-        --mascot-run-duration: 7.5s;
       }
 
       .runner-track { margin-bottom: 45px; }
@@ -308,13 +443,18 @@
     @media (prefers-reduced-motion: reduce) {
       .post-link img { transition: none; }
       .mascot-runner {
-        left: 0;
         transform: none;
-        animation: none;
       }
       .mascot-character,
-      .mascot-limb-a,
-      .mascot-limb-b { animation: none; }
+      .mascot-arm-left,
+      .mascot-arm-right,
+      .mascot-leg-left,
+      .mascot-leg-right,
+      .mascot-tongue,
+      .divider-bump { animation: none; }
+      .mascot-eye,
+      .mascot-pupil,
+      .mascot-tooltip { transition: none; }
     }
   </style>
 </head>
@@ -436,6 +576,246 @@
       }).join("");
     }
 
+    let stopMascot = () => {};
+
+    function setupMascot() {
+      stopMascot();
+
+      const track = contentRoot.querySelector(".runner-track");
+      const lane = track.querySelector(".mascot-lane");
+      const runner = track.querySelector(".mascot-runner");
+      const svg = runner.querySelector("svg");
+      const character = runner.querySelector(".mascot-character");
+      const limbs = [...character.querySelectorAll("g[class^='mascot-limb']")];
+      const eyeParts = [...character.querySelectorAll("ellipse")];
+      const tongue = character.querySelector("path");
+      const bump = document.createElement("span");
+      const tooltip = document.createElement("span");
+      const svgNamespace = "http://www.w3.org/2000/svg";
+      const cleanups = [];
+      const timeouts = new Set();
+      const pressedDirections = new Set();
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+      lane.removeAttribute("aria-hidden");
+      runner.setAttribute("role", "button");
+      runner.setAttribute("tabindex", "0");
+      runner.setAttribute("aria-label", "Bites mascot. Use the left and right arrow keys to run, and the up arrow to jump.");
+
+      tooltip.className = "mascot-tooltip";
+      tooltip.setAttribute("role", "tooltip");
+      tooltip.textContent = "hi i'm bites";
+      runner.append(tooltip);
+
+      bump.className = "divider-bump";
+      bump.setAttribute("aria-hidden", "true");
+      track.insertBefore(bump, lane);
+
+      const limbClasses = ["mascot-arm-left", "mascot-arm-right", "mascot-leg-left", "mascot-leg-right"];
+      limbs.forEach((limb, index) => limb.classList.add(limbClasses[index]));
+      tongue?.classList.add("mascot-tongue");
+
+      if (eyeParts.length === 4) {
+        const leftEye = document.createElementNS(svgNamespace, "g");
+        const rightEye = document.createElementNS(svgNamespace, "g");
+        leftEye.classList.add("mascot-eye");
+        rightEye.classList.add("mascot-eye");
+        character.insertBefore(leftEye, eyeParts[0]);
+        character.insertBefore(rightEye, eyeParts[1]);
+        leftEye.append(eyeParts[0], eyeParts[2]);
+        rightEye.append(eyeParts[1], eyeParts[3]);
+        eyeParts[2].classList.add("mascot-pupil");
+        eyeParts[3].classList.add("mascot-pupil");
+      }
+
+      let x = 0;
+      let direction = 1;
+      let maximumX = 0;
+      let lastFrame = performance.now();
+      let pauseUntil = 0;
+      let jumpHeight = 0;
+      let jumpVelocity = 0;
+      let stepElapsed = 0;
+      let animationFrame = 0;
+      let blinkTimeout = 0;
+      let waveTimeout = 0;
+
+      function rememberTimeout(callback, delay) {
+        const id = window.setTimeout(() => {
+          timeouts.delete(id);
+          callback();
+        }, delay);
+        timeouts.add(id);
+        return id;
+      }
+
+      function updateBounds() {
+        maximumX = Math.max(0, lane.clientWidth - runner.offsetWidth);
+        x = Math.min(x, maximumX);
+      }
+
+      function pulseDivider() {
+        bump.classList.remove("is-active");
+        void bump.offsetWidth;
+        bump.classList.add("is-active");
+      }
+
+      function jump() {
+        if (reducedMotion.matches || jumpHeight > .5) return;
+        jumpVelocity = 240;
+        runner.classList.remove("is-landing");
+        runner.classList.add("is-airborne");
+      }
+
+      function turn(now) {
+        direction *= -1;
+        pauseUntil = now + 220;
+        runner.classList.remove("is-turning");
+        void runner.offsetWidth;
+        runner.classList.add("is-turning");
+        rememberTimeout(() => runner.classList.remove("is-turning"), 310);
+      }
+
+      function scheduleBlink() {
+        window.clearTimeout(blinkTimeout);
+        blinkTimeout = rememberTimeout(() => {
+          if (!reducedMotion.matches) {
+            runner.classList.add("is-blinking");
+            rememberTimeout(() => runner.classList.remove("is-blinking"), 125);
+          }
+          scheduleBlink();
+        }, 2200 + Math.random() * 3900);
+      }
+
+      function scheduleWave() {
+        window.clearTimeout(waveTimeout);
+        waveTimeout = rememberTimeout(() => {
+          if (!reducedMotion.matches && !pressedDirections.size && jumpHeight === 0) {
+            pauseUntil = performance.now() + 1150;
+            runner.classList.add("is-waving");
+            rememberTimeout(() => runner.classList.remove("is-waving"), 1100);
+          }
+          scheduleWave();
+        }, 14000 + Math.random() * 10000);
+      }
+
+      function animate(now) {
+        const elapsed = Math.min((now - lastFrame) / 1000, .05);
+        lastFrame = now;
+
+        if (!reducedMotion.matches) {
+          if (jumpHeight > 0 || jumpVelocity > 0) {
+            jumpHeight += jumpVelocity * elapsed;
+            jumpVelocity -= 850 * elapsed;
+
+            if (jumpHeight <= 0) {
+              jumpHeight = 0;
+              jumpVelocity = 0;
+              runner.classList.remove("is-airborne");
+              runner.classList.add("is-landing");
+              pulseDivider();
+              rememberTimeout(() => runner.classList.remove("is-landing"), 180);
+            }
+          }
+
+          if (now >= pauseUntil) {
+            const distanceToEdge = direction > 0 ? maximumX - x : x;
+            const edgeEase = distanceToEdge < 52 ? .45 + .55 * Math.max(0, distanceToEdge / 52) : 1;
+            const crossingSpeed = maximumX ? maximumX / 5.4 : 0;
+            const speedBoost = pressedDirections.size ? 2.15 : 1;
+            const distance = crossingSpeed * speedBoost * edgeEase * elapsed;
+            x += direction * distance;
+
+            stepElapsed += elapsed * speedBoost;
+            if (stepElapsed >= .26) {
+              stepElapsed = 0;
+              if (jumpHeight === 0) pulseDivider();
+            }
+
+            if (x >= maximumX) {
+              x = maximumX;
+              turn(now);
+            } else if (x <= 0) {
+              x = 0;
+              turn(now);
+            }
+          }
+        } else {
+          x = 0;
+          jumpHeight = 0;
+        }
+
+        runner.style.setProperty("--mascot-x", `${x}px`);
+        runner.style.setProperty("--mascot-jump", `${-jumpHeight}px`);
+        bump.style.setProperty("--bump-x", `${x + runner.offsetWidth / 2 - 14}px`);
+        animationFrame = requestAnimationFrame(animate);
+      }
+
+      function onKeyDown(event) {
+        if (event.target.closest("input, textarea, select, a, summary") && event.target !== runner) return;
+        if (reducedMotion.matches) return;
+
+        if (event.key === "ArrowUp") {
+          event.preventDefault();
+          if (!event.repeat) jump();
+          return;
+        }
+
+        if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+        event.preventDefault();
+        direction = event.key === "ArrowLeft" ? -1 : 1;
+        pressedDirections.add(event.key);
+        runner.classList.add("is-boosting");
+      }
+
+      function onKeyUp(event) {
+        if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+        pressedDirections.delete(event.key);
+        if (!pressedDirections.size) runner.classList.remove("is-boosting");
+      }
+
+      function onPointerMove(event) {
+        const bounds = runner.getBoundingClientRect();
+        const horizontal = Math.max(-3, Math.min(3, (event.clientX - bounds.left - bounds.width / 2) / 24));
+        const vertical = Math.max(-2, Math.min(2, (event.clientY - bounds.top - bounds.height / 2) / 28));
+        svg.style.setProperty("--pupil-x", `${horizontal}px`);
+        svg.style.setProperty("--pupil-y", `${vertical}px`);
+      }
+
+      function onRunnerKeyDown(event) {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        event.preventDefault();
+        jump();
+      }
+
+      const resizeObserver = new ResizeObserver(updateBounds);
+      resizeObserver.observe(lane);
+      updateBounds();
+      document.addEventListener("keydown", onKeyDown);
+      document.addEventListener("keyup", onKeyUp);
+      document.addEventListener("pointermove", onPointerMove, { passive: true });
+      runner.addEventListener("click", jump);
+      runner.addEventListener("keydown", onRunnerKeyDown);
+      scheduleBlink();
+      scheduleWave();
+      animationFrame = requestAnimationFrame(animate);
+
+      cleanups.push(
+        () => resizeObserver.disconnect(),
+        () => document.removeEventListener("keydown", onKeyDown),
+        () => document.removeEventListener("keyup", onKeyUp),
+        () => document.removeEventListener("pointermove", onPointerMove),
+        () => runner.removeEventListener("click", jump),
+        () => runner.removeEventListener("keydown", onRunnerKeyDown)
+      );
+
+      stopMascot = () => {
+        cancelAnimationFrame(animationFrame);
+        timeouts.forEach(window.clearTimeout);
+        cleanups.forEach((cleanup) => cleanup());
+      };
+    }
+
     function renderPage(model) {
       const intro = model.intro.map((paragraph) => `<p>${renderInline(paragraph)}</p>`).join("");
       const sections = model.sections.map((section) => {
@@ -448,6 +828,8 @@
       contentRoot.querySelectorAll("summary a").forEach((link) => {
         link.addEventListener("click", (event) => event.stopPropagation());
       });
+
+      setupMascot();
     }
 
     fetch("content.md?raw=1", { cache: "no-store" })
