@@ -1,7 +1,7 @@
 {
   "name": "bentossell",
   "version": "1.0.0",
-  "description": "Ben Tossell's personal website as an agent app",
+  "description": "Ben Tossell's expandable personal website",
   "private": true,
   "scripts": {
     "dev": "python3 -m http.server 4173",

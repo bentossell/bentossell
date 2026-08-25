@@ -1,40 +1,10 @@
 # bentossell
 
-Ben Tossell's personal website, presented as an agent app.
+Ben Tossell's personal site, based on the `v2` frame in `~/tldraw/site.tldraw`.
 
-## Edit a thread
+## Edit the site
 
-Each sidebar thread is a Markdown file in `threads/`.
-
-```text
-threads/
-  about.md
-  investments.md
-  products-i-love.md
-  now.md
-  previously.md
-```
-
-The frontmatter controls the sidebar and simulated question:
-
-```md
----
-id: about
-title: About me
-slug: about-me
-question: Who is Ben?
----
-
-Write the answer here.
-```
-
-Use normal paragraphs, `##` headings, blockquotes, links, and list rows in this form:
-
-```md
-- **Label:** Value
-```
-
-Change the order in `threads/index.json`. Add a new filename there to add a thread.
+Edit `content.md`. It uses standard Markdown headings, nested lists, links, bold text, and linked images. Refresh the page to see changes.
 
 ## Run locally
 
@@ -42,10 +12,12 @@ Change the order in `threads/index.json`. Add a new filename there to add a thre
 npm run dev
 ```
 
-Open [http://127.0.0.1:4173](http://127.0.0.1:4173). The Markdown files must be served over HTTP, so opening `index.html` directly will not load them.
+Open [http://127.0.0.1:4173](http://127.0.0.1:4173).
 
 ## Main files
 
-- `index.html` — interface, Markdown loader, and interactions
-- `threads/*.md` — editable thread content
-- `threads/index.json` — thread order
+- `index.html` — layout, tree interactions, and links
+- `content.md` — all visible site copy, links, and tree content
+- `assets/shantell-sans-700.ttf` — self-hosted Shantell Sans heading font
+- `assets/how-i-built-this.png` — Ben's Bites post image
+- `assets/bens-session.png` — Ben's Bites post image

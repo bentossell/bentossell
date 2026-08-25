@@ -3,1218 +3,462 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Ben Tossell — builder, investor, and maker.">
+  <meta name="description" content="Ben Tossell — builder + investor.">
   <title>Ben Tossell</title>
   <style>
+    @font-face {
+      font-family: "Shantell Sans";
+      src: url("assets/shantell-sans-700.ttf") format("truetype");
+      font-style: normal;
+      font-weight: 700;
+      font-display: swap;
+    }
+
     :root {
-      color-scheme: light;
-      --bg: #ffffff;
-      --surface: #ffffff;
-      --surface-2: #f5f5f3;
-      --surface-3: #ececea;
-      --ink: #181817;
-      --muted: #777773;
-      --faint: #a4a49e;
-      --line: #deded9;
-      --line-strong: #c8c8c1;
-      --accent: #1769d2;
-      --accent-soft: #e8f1fc;
-      --good: #087c52;
-      --bad: #b42336;
-      --shadow: 0 18px 70px rgba(20, 20, 15, .11);
-      --ease-out: cubic-bezier(.22, 1, .36, 1);
-      --ease-in-out: cubic-bezier(.65, 0, .35, 1);
-      --sans: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --paper: #fbfdfd;
+      --ink: #202126;
+      --muted: #9ba4b1;
+      --line: #aab3be;
+      --link: #3389e8;
       --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-      --left: 252px;
-      --right: 300px;
-      --radius: 12px;
+      --hand: "Shantell Sans", "Comic Sans MS", cursive;
+      --mascot-width: 104px;
+      --mascot-height: 68px;
+      --mascot-run-duration: 11s;
     }
 
     * { box-sizing: border-box; }
-    html, body { height: 100%; }
+    html { background: var(--paper); }
+
     body {
       margin: 0;
-      overflow: hidden;
-      background: var(--bg);
+      min-height: 100vh;
+      background: var(--paper);
       color: var(--ink);
-      font-family: var(--sans);
-      font-size: 14px;
+      font-family: var(--mono);
+      font-size: 17px;
+      line-height: 1.5;
       -webkit-font-smoothing: antialiased;
     }
-    button, input { font: inherit; }
-    button, a { -webkit-tap-highlight-color: transparent; }
-    button { color: inherit; }
-    a { color: inherit; }
-    svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-    .icon-btn.mobile-only { display: none; }
-    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 
-    .shell {
+    a {
+      color: var(--link);
+      font-weight: 700;
+      text-decoration: underline;
+      text-decoration-thickness: 1.5px;
+      text-underline-offset: 3px;
+    }
+
+    a:focus-visible,
+    summary:focus-visible {
+      outline: 2px solid var(--link);
+      outline-offset: 4px;
+      border-radius: 2px;
+    }
+
+    .page {
+      width: min(960px, calc(100% - 48px));
+      margin: 0 auto;
+      padding: 118px 0 150px;
+    }
+
+    .runner-track {
       position: relative;
-      display: grid;
-      grid-template-columns: var(--left) minmax(420px, 1fr) var(--right);
-      width: calc(100vw - 32px);
-      height: calc(100vh - 32px);
-      margin: 16px;
-      overflow: hidden;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: var(--surface);
-      box-shadow: var(--shadow);
+      height: 2px;
+      margin: 0 0 72px;
     }
 
-    .rail, .detail, .chat { min-width: 0; min-height: 0; }
-    .rail, .detail { background: var(--surface-2); }
-    .rail { display: flex; flex-direction: column; border-right: 1px solid var(--line); }
-    .detail { display: flex; flex-direction: column; border-left: 1px solid var(--line); }
-    .chat { position: relative; display: grid; grid-template-rows: 48px minmax(0, 1fr) auto; background: var(--surface); }
-
-    .topbar {
-      height: 48px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 0 14px;
-      border-bottom: 1px solid var(--line);
-      flex: none;
-    }
-    .topbar-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
-    .topbar-title span { color: var(--muted); }
-    .topbar-spacer { flex: 1; }
-
-    .icon-btn {
-      display: inline-grid;
-      place-items: center;
-      width: 30px;
-      height: 30px;
-      padding: 0;
-      border: 0;
-      border-radius: 7px;
-      background: transparent;
-      cursor: pointer;
-    }
-    .icon-btn, .thread, .folder, .new-thread, .composer-tool, .send, .detail-tab, .file-change-head, .model-option, .theme-option, .switch, .secondary-button {
-      transition: background-color .12s var(--ease-out), border-color .12s var(--ease-out), color .12s var(--ease-out), opacity .12s var(--ease-out), transform .12s var(--ease-out);
-    }
-    .icon-btn:active, .thread:active, .folder:active, .new-thread:active, .composer-tool:active, .send:active, .detail-tab:active, .file-change-head:active, .model-option:active, .theme-option:active, .switch:active, .secondary-button:active { transform: scale(.97); }
-    .icon-btn:focus-visible, .thread:focus-visible, .folder:focus-visible, .new-thread:focus-visible, .composer-tool:focus-visible, .send:focus-visible, .detail-tab:focus-visible, .file-change-head:focus-visible, .model-option:focus-visible, .theme-option:focus-visible, .switch:focus-visible, .secondary-button:focus-visible, .changes-filter:focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: 1px;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 18px 16px 14px;
-    }
-    .mark {
-      display: grid;
-      place-items: center;
-      width: 26px;
-      height: 26px;
-      border: 1px solid var(--line-strong);
-      border-radius: 50%;
-      font: 600 12px/1 var(--mono);
-      letter-spacing: -.5px;
-      background: var(--surface);
-    }
-    .brand-copy { min-width: 0; }
-    .brand-name { font-size: 13px; font-weight: 600; line-height: 1.2; }
-
-    .new-thread {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      margin: 0 10px 10px;
-      padding: 8px 9px;
-      border: 1px solid var(--line);
-      border-radius: 7px;
-      background: var(--surface);
-      cursor: pointer;
-      text-align: left;
-    }
-    .shortcut { margin-left: auto; color: var(--faint); font: 10px/1 var(--mono); }
-
-    .rail-label {
-      display: flex;
-      align-items: center;
-      padding: 12px 16px 7px;
-      color: var(--muted);
-      font-size: 11px;
-    }
-    .rail-label span:last-child { margin-left: auto; font: 10px/1 var(--mono); color: var(--faint); }
-    .thread-list { min-height: 0; overflow-y: auto; padding: 0 8px; }
-    .folder {
-      width: 100%;
-      display: grid;
-      grid-template-columns: 18px minmax(0, 1fr) auto auto;
-      align-items: center;
-      gap: 7px;
-      padding: 8px;
-      border: 0;
-      border-radius: 6px;
-      background: transparent;
-      cursor: pointer;
-      text-align: left;
-      font-size: 12px;
-      color: var(--muted);
-    }
-    .folder svg { width: 14px; height: 14px; }
-    .folder-state-icon { position: relative; width: 14px; height: 14px; flex: none; }
-    .folder-state-icon svg { position: absolute; inset: 0; transition: opacity .12s var(--ease-out), transform .12s var(--ease-out); }
-    .folder-state-icon .folder-open { opacity: 0; transform: scale(.88); }
-    .folder-state-icon.open .folder-closed { opacity: 0; transform: scale(.88); }
-    .folder-state-icon.open .folder-open { opacity: 1; transform: scale(1); }
-    .folder .chevron { width: 12px; height: 12px; transform: rotate(90deg); }
-    .folder.collapsed .chevron { transform: rotate(0deg); }
-    .folder-threads { display: grid; }
-    .folder-threads.collapsed { display: none; }
-    .thread {
-      width: 100%;
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 8px 8px 33px;
-      border: 0;
-      border-radius: 6px;
-      background: transparent;
-      cursor: pointer;
-      text-align: left;
-    }
-    .thread.active { background: var(--surface-3); color: var(--ink); }
-    .thread .thread-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
-    .thread .key { color: var(--faint); font: 10px/1 var(--mono); opacity: 0; }
-    .thread.active .key { opacity: 1; }
-    .unread-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
-    .thread .unread-dot { justify-self: end; }
-
-    .rail-bottom { position: relative; margin-top: auto; border-top: 1px solid var(--line); padding: 10px 10px 11px; display: flex; justify-content: flex-start; }
-    .messages { overflow: auto; }
-    .conversation { width: min(760px, calc(100% - 48px)); margin: 0 auto; padding: 42px 0 28px; }
-    .question-row { display: flex; justify-content: flex-end; margin-bottom: 28px; }
-    .question {
-      max-width: 78%;
-      padding: 10px 13px;
-      border: 1px solid var(--line);
-      border-radius: 13px 13px 3px 13px;
-      background: var(--surface-2);
-      line-height: 1.5;
-    }
-    .response { min-width: 0; }
-    .response-head { display: flex; align-items: center; gap: 9px; margin-bottom: 14px; }
-    .agent-mark { width: 24px; flex: none; }
-    .agent-mark img { display: block; width: 24px; height: auto; object-fit: contain; }
-    .response-head strong { font-size: 12px; font-weight: 600; }
-    .response-head span { color: var(--muted); font: 10px/1 var(--mono); }
-    .response-body { font-size: 14px; line-height: 1.62; }
-    .response-body > p { margin: 0 0 14px; }
-    .response-body h2 { margin: 26px 0 10px; font-size: 13px; font-weight: 600; }
-    .response-body ul { margin: 0 0 14px; padding-left: 20px; list-style: disc; }
-    .response-body li { margin: 5px 0; padding-left: 2px; }
-    .response-body li::marker { color: var(--muted); }
-    .response-body a { display: inline-flex; align-items: center; gap: 3px; color: var(--accent); font-weight: 650; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
-    .external-link-icon { width: 11px; height: 11px; flex: none; }
-    .response-note { margin-top: 18px; padding-left: 11px; border-left: 2px solid var(--line-strong); color: var(--muted); }
-    .composer-wrap { padding: 0 16px 14px; background: linear-gradient(to bottom, transparent, var(--surface) 24%); }
-    .composer {
-      width: min(760px, 100%);
-      margin: auto;
-      position: relative;
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 6px 8px;
-      min-height: 64px;
-      padding: 8px 7px 6px 11px;
-      border: 1px solid var(--line-strong);
-      border-radius: 11px;
-      background: var(--surface);
-      box-shadow: 0 4px 18px rgba(20,20,15,.05);
-    }
-    .prompt-input { grid-column: 1 / -1; width: 100%; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--ink); caret-color: var(--ink); }
-    .prompt-input::placeholder { color: var(--faint); }
-    .prompt-input::selection { background: color-mix(in srgb, var(--surface-3) 82%, transparent); color: var(--ink); }
-    .composer-tools { display: flex; align-items: center; gap: 3px; min-width: 0; }
-    .composer-tool {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      height: 24px;
-      padding: 0 6px;
-      border: 0;
-      border-radius: 6px;
-      background: transparent;
-      color: var(--muted);
-      font-size: 10px;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    .composer-tool svg { width: 12px; height: 12px; }
-    .provider-logo { display: inline-grid; place-items: center; width: 18px; height: 18px; flex: none; border: 1px solid var(--line-strong); border-radius: 5px; background: var(--surface); color: var(--ink); font: 700 8px/1 var(--sans); letter-spacing: -.02em; }
-    .model-picker {
-      position: absolute;
-      z-index: 12;
-      right: clamp(6px, 4vw, 38px);
-      bottom: 36px;
-      width: 228px;
-      max-width: calc(100vw - 24px);
-      padding: 4px;
-      border: 1px solid var(--line-strong);
-      border-radius: 10px;
-      background: var(--surface);
-      box-shadow: 0 12px 38px rgba(20,20,15,.16);
-      transform-origin: right bottom;
-      transition: opacity .15s var(--ease-out), transform .15s var(--ease-out);
-    }
-    .model-picker.closing { opacity: 0; transform: scale(.97); pointer-events: none; }
-    @starting-style { .model-picker:not([hidden]) { opacity: 0; transform: scale(.97); } }
-    .model-picker[hidden] { display: none; }
-    .model-option {
-      width: 100%;
-      display: grid;
-      grid-template-columns: 18px minmax(0,1fr) 12px;
-      gap: 8px;
-      align-items: center;
-      padding: 6px 7px;
-      border: 0;
-      border-radius: 7px;
-      background: transparent;
-      text-align: left;
-      cursor: pointer;
-    }
-    .model-option.active { background: var(--surface-3); }
-    .model-option strong { display: block; font-size: 12px; font-weight: 600; line-height: 1.2; }
-    .model-option small { display: block; margin-top: 2px; color: var(--muted); font-size: 10px; line-height: 1.2; }
-    .model-option .check { width: 12px; color: var(--accent); font-size: 11px; line-height: 1; }
-    .send { display: grid; place-items: center; width: 30px; height: 30px; flex: none; border: 0; border-radius: 7px; background: var(--ink); color: var(--surface); cursor: pointer; }
-    .detail-tabs { display: flex; align-items: center; gap: 4px; }
-    .detail-tab {
-      display: grid;
-      place-items: center;
-      width: 28px;
-      height: 28px;
-      padding: 0;
-      border: 0;
-      border-radius: 6px;
-      background: transparent;
-      color: var(--muted);
-      cursor: pointer;
-    }
-    .detail-tab.active { background: var(--surface-3); color: var(--ink); }
-    .detail-tab svg { width: 14px; height: 14px; }
-    .context-panel, .changes-panel { min-height: 0; overflow-y: auto; padding: 13px 16px 24px; }
-    .context-panel[hidden], .changes-panel[hidden] { display: none; }
-    .env-row { display: grid; grid-template-columns: 16px 76px minmax(0, 1fr); align-items: start; gap: 6px; padding: 6px 0; font-size: 11px; line-height: 1.35; }
-    .env-row svg { width: 13px; height: 13px; color: var(--muted); }
-    .env-key { color: var(--muted); }
-    .env-value { overflow-wrap: anywhere; }
-    .env-link { min-width: 0; display: flex; align-items: center; gap: 5px; color: var(--ink); font-weight: 650; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
-    .env-link span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .env-link svg { width: 10px; height: 10px; color: var(--faint); }
-    .property-divider { height: 1px; margin: 12px 0 8px; background: var(--line); }
-    .dirty { color: var(--bad); font-weight: 600; }
-    .git-summary { display: flex; align-items: center; gap: 7px; padding: 18px 0 8px; color: var(--muted); font-size: 10px; }
-    .git-summary strong { color: var(--ink); font-weight: 500; }
-    .add { color: var(--good); }
-    .del { color: var(--bad); }
-    .mini-files { display: grid; gap: 1px; }
-    .mini-file { display: grid; grid-template-columns: 14px minmax(0,1fr) auto; gap: 6px; padding: 5px 0; font: 10px/1.3 var(--mono); }
-    .mini-file .state { color: var(--muted); }
-    .mini-file .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .mini-file .counts { white-space: nowrap; font: 10px/1.3 var(--mono); }
-    .changes-toolbar { display: flex; align-items: center; gap: 8px; padding: 2px 0 10px; }
-    .changes-filter-wrap { position: relative; flex: 0 1 auto; min-width: 0; }
-    .changes-filter {
-      appearance: none;
-      -webkit-appearance: none;
-      display: block;
-      height: 26px;
-      width: auto;
-      max-width: 100%;
+    .rule {
+      height: 2px;
       margin: 0;
-      padding: 0 22px 0 8px;
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      background: var(--surface);
-      color: var(--ink);
-      font-size: 10px;
-      line-height: 24px;
-      cursor: pointer;
+      border: 0;
+      background: #e5e9eb;
     }
-    .changes-filter-wrap::after {
+
+    .mascot-lane {
+      position: absolute;
+      right: 0;
+      bottom: 2px;
+      left: 0;
+      height: var(--mascot-height);
+      pointer-events: none;
+    }
+
+    .mascot-runner {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: var(--mascot-width);
+      height: var(--mascot-height);
+      transform-origin: 50% 100%;
+      animation: mascot-run var(--mascot-run-duration) linear infinite;
+      will-change: left, transform;
+    }
+
+    .mascot-sprite {
+      display: block;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .mascot-character {
+      transform-origin: 50% 78%;
+      animation: mascot-bob 400ms steps(2, end) infinite;
+    }
+
+    .mascot-limb-a {
+      animation: mascot-limb-a 400ms steps(2, end) infinite;
+    }
+
+    .mascot-limb-b {
+      animation: mascot-limb-b 400ms steps(2, end) infinite;
+    }
+
+    @keyframes mascot-bob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    @keyframes mascot-limb-a {
+      0%, 100% { transform: rotate(-13deg); }
+      50% { transform: rotate(13deg); }
+    }
+
+    @keyframes mascot-limb-b {
+      0%, 100% { transform: rotate(13deg); }
+      50% { transform: rotate(-13deg); }
+    }
+
+    @keyframes mascot-run {
+      0%, 100% { left: 0; }
+      50% { left: calc(100% - var(--mascot-width)); }
+    }
+
+    .intro { margin-bottom: 50px; }
+
+    h1,
+    .section-title {
+      margin: 0;
+      font-family: var(--hand);
+      font-weight: 700;
+      letter-spacing: .01em;
+    }
+
+    h1 {
+      font-size: clamp(27px, 4vw, 34px);
+      line-height: 1.25;
+    }
+
+    h1 a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .intro p {
+      max-width: 920px;
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-weight: 600;
+      line-height: 1.48;
+    }
+
+    details > summary {
+      list-style: none;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    details > summary::-webkit-details-marker { display: none; }
+    .section { margin-top: 52px; }
+
+    .section-title {
+      display: flex;
+      width: fit-content;
+      align-items: center;
+      gap: 11px;
+      font-size: 26px;
+      line-height: 1.3;
+    }
+
+    .branch-title::after {
+      content: "+";
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: .65em;
+      font-weight: 700;
+    }
+
+    details[open] > .branch-title::after { content: "−"; }
+
+    .tree {
+      position: relative;
+      margin: 18px 0 0 12px;
+      padding: 0 0 0 27px;
+      list-style: none;
+    }
+
+    .tree > li {
+      position: relative;
+      min-height: 34px;
+      margin: 0;
+      padding: 4px 0;
+    }
+
+    .tree > li::before {
       content: "";
       position: absolute;
-      top: 50%;
-      right: 8px;
-      width: 5px;
-      height: 5px;
-      border-right: 1.4px solid var(--muted);
-      border-bottom: 1.4px solid var(--muted);
-      transform: translateY(-70%) rotate(45deg);
-      pointer-events: none;
+      top: 16px;
+      left: -27px;
+      width: 22px;
+      border-top: 2px solid var(--line);
     }
-    .changes-count { color: var(--muted); font: 10px/1 var(--mono); white-space: nowrap; }
-    .file-change { margin-bottom: 5px; overflow: hidden; border: 1px solid var(--line); border-radius: 6px; background: var(--surface-2); }
-    .file-change[hidden] { display: none; }
-    .file-change-head { width: 100%; min-height: 29px; display: grid; grid-template-columns: 14px 14px minmax(0,1fr) auto; gap: 6px; align-items: center; padding: 6px 8px; border: 0; background: var(--surface); color: inherit; cursor: pointer; text-align: left; }
-    .file-change-head svg { width: 11px; height: 11px; color: var(--muted); }
-    .file-change.open .file-change-head svg { transform: rotate(90deg); }
-    .file-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 10px/1 var(--mono); }
-    .file-status { color: var(--muted); font: 10px/1 var(--mono); }
-    .file-change-head .counts { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 10px/1 var(--mono); color: var(--muted); }
-    .diff { display: none; overflow-x: auto; border-top: 1px solid var(--line); background: var(--surface-2); font: 10px/1.5 var(--mono); }
-    .file-change.open .diff { display: block; }
-    .diff-line { display: grid; grid-template-columns: 22px 22px minmax(max-content, 1fr); min-width: 100%; padding: 1px 8px; }
-    .diff-line .ln { color: var(--faint); text-align: right; padding-right: 6px; }
-    .diff-line.plus { background: color-mix(in srgb, #27a269 14%, transparent); }
-    .diff-line.minus { background: color-mix(in srgb, #db4b58 13%, transparent); }
 
-
-    .settings-popover {
+    .tree > li::after {
+      content: "";
       position: absolute;
-      z-index: 20;
-      left: 10px;
-      right: 10px;
-      bottom: calc(100% + 8px);
-      max-height: min(420px, calc(100dvh - 88px));
-      overflow: auto;
-      border: 1px solid var(--line-strong);
-      border-radius: 10px;
-      background: var(--surface);
-      box-shadow: 0 12px 38px rgba(20,20,15,.16);
-      transform-origin: left bottom;
-      transition: opacity .15s var(--ease-out), transform .15s var(--ease-out);
-    }
-    .settings-popover.closing { opacity: 0; transform: scale(.97); pointer-events: none; }
-    @starting-style { .settings-popover:not([hidden]) { opacity: 0; transform: scale(.97); } }
-    .settings-popover[hidden] { display: none; }
-    .settings-head { display: flex; align-items: center; padding: 9px 10px 8px; border-bottom: 1px solid var(--line); }
-    .settings-head h2 { margin: 0; font-size: 12px; }
-    .settings-head button { margin-left: auto; }
-    .settings-body { padding: 0 10px 10px; }
-    .settings-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); }
-    .settings-row.stack { grid-template-columns: minmax(0, 1fr); gap: 7px; }
-    .settings-row:last-child { border-bottom: 0; padding-bottom: 2px; }
-    .settings-row h3 { margin: 0 0 2px; font-size: 12px; font-weight: 600; }
-    .settings-row p { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.35; }
-    .theme-options { display: flex; width: 100%; padding: 2px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface-2); }
-    .theme-option { flex: 1; padding: 5px 6px; border: 0; border-radius: 5px; background: transparent; color: var(--muted); font-size: 10px; cursor: pointer; }
-    .theme-option.active { background: var(--surface); color: var(--ink); box-shadow: 0 1px 4px rgba(0,0,0,.08); }
-    .usage { width: 100%; }
-    .usage-top { display: flex; justify-content: space-between; margin-bottom: 6px; font: 9px/1 var(--mono); }
-    .usage-track { height: 5px; overflow: hidden; border-radius: 5px; background: var(--surface-3); }
-    .usage-fill { width: 72%; height: 100%; background: var(--accent); }
-    .switch { position: relative; width: 32px; height: 18px; border: 0; border-radius: 18px; background: var(--line-strong); cursor: pointer; transition: background-color .15s var(--ease-out), transform .12s var(--ease-out); }
-    .switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 12px; height: 12px; border-radius: 50%; background: white; transition: transform .15s var(--ease-out); }
-    .switch.on { background: var(--accent); }
-    .switch.on::after { transform: translateX(14px); }
-    .secondary-button { padding: 7px 10px; border: 1px solid var(--line-strong); border-radius: 7px; background: var(--surface); color: var(--ink); font-size: 10px; cursor: pointer; }
-    .show-more-files { margin: 6px 0 12px; padding: 3px 0; border: 0; background: transparent; color: var(--muted); font-size: 10px; cursor: pointer; text-align: left; }
-    .show-more-files:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-
-    @media (hover: hover) and (pointer: fine) {
-      .icon-btn:hover { background: var(--surface-3); }
-      .new-thread:hover { border-color: var(--line-strong); }
-      .folder:hover { background: var(--surface-3); color: var(--ink); }
-      .thread:hover { background: var(--surface-3); }
-      .thread:hover .key { opacity: 1; }
-      .response-body a:hover { opacity: .78; }
-      .composer-tool:hover { background: var(--surface-3); color: var(--ink); }
-      .model-option:hover { background: var(--surface-3); }
-      .send:hover { opacity: .82; }
-      .detail-tab:hover { background: var(--surface-3); color: var(--ink); }
-      .env-link:hover { opacity: .72; }
-      .file-change-head:hover { background: var(--surface-2); }
-      .changes-filter:hover { border-color: var(--line-strong); }
-      .secondary-button:hover { background: var(--surface-2); }
-      .show-more-files:hover { color: var(--ink); text-decoration: underline; }
+      top: 0;
+      bottom: 0;
+      left: -27px;
+      border-left: 2px solid var(--line);
     }
 
-    body[data-theme="dark"] {
-      color-scheme: dark;
-      --bg: #0b0d0c;
-      --surface: #111311;
-      --surface-2: #161916;
-      --surface-3: #20241f;
-      --ink: #e2e6e2;
-      --muted: #929b92;
-      --faint: #626a63;
-      --line: #292e29;
-      --line-strong: #3c443d;
-      --accent: #7aa8f8;
-      --accent-soft: #17253d;
-      --good: #66c58c;
-      --bad: #ff8795;
-      --shadow: 0 20px 70px rgba(0,0,0,.46);
+    .tree > li:last-child::after {
+      bottom: auto;
+      height: 16px;
     }
 
-    .toast {
-      position: fixed;
-      z-index: 20;
-      top: 28px;
-      left: 50%;
-      transform: translate(-50%, -8px);
-      padding: 8px 11px;
-      border: 1px solid var(--line-strong);
-      border-radius: 7px;
-      background: var(--ink);
-      color: var(--surface);
-      box-shadow: var(--shadow);
-      font-size: 11px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .18s var(--ease-out), transform .18s var(--ease-out);
+    .tree .tree {
+      margin-top: 3px;
+      margin-left: 8px;
     }
-    .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-    .left-hidden { grid-template-columns: 0 minmax(420px, 1fr) var(--right); }
-    .left-hidden .rail { overflow: hidden; border: 0; }
-    .right-hidden { grid-template-columns: var(--left) minmax(420px, 1fr) 0; }
-    .right-hidden .detail { overflow: hidden; border: 0; }
-    .left-hidden.right-hidden { grid-template-columns: 0 minmax(420px, 1fr) 0; }
-    .detail-wide { --right: min(620px, 52vw); }
-    .drawer-scrim { display: none; }
-
-    @media (max-width: 980px) {
-      .shell { grid-template-columns: 224px minmax(0, 1fr); }
-      .detail { position: absolute; z-index: 8; inset: 0 0 0 auto; display: flex; width: min(42vw, 360px); border-left: 1px solid var(--line); box-shadow: -12px 0 40px rgba(0,0,0,.16); transform: translateX(105%); transition: transform .2s var(--ease-out); }
-      .shell.mobile-detail .detail { overflow: hidden; transform: translateX(0); }
-      .right-toggle, #closeDetailMobile { display: inline-grid; }
-      #detailExpand { display: none; }
-      .drawer-scrim { position: absolute; z-index: 7; inset: 0; display: block; border: 0; background: rgba(20,20,18,.28); opacity: 0; pointer-events: none; transition: opacity .18s var(--ease-out); }
-      .shell.mobile-detail .drawer-scrim { opacity: 1; pointer-events: auto; }
-      .left-hidden, .left-hidden.right-hidden { grid-template-columns: 0 minmax(0, 1fr); }
+    .branch-title {
+      display: flex;
+      width: fit-content;
+      max-width: 100%;
+      align-items: baseline;
+      gap: 8px;
+      font-weight: 700;
     }
+
+    .branch-title a { white-space: nowrap; }
+    .muted { color: var(--muted); }
+
+    .portfolio strong,
+    .previously strong { color: var(--muted); }
+
+    .post-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+      gap: 18px;
+      width: min(560px, 100%);
+      padding: 3px 0 10px;
+      align-items: start;
+    }
+
+    .post-link {
+      display: block;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 1px 0 rgba(30, 35, 40, .04);
+    }
+
+    .post-link img {
+      display: block;
+      width: 100%;
+      height: auto;
+      transition: opacity 120ms ease;
+    }
+
+    .post-link:hover img { opacity: .82; }
+
+    .loading,
+    .load-error {
+      color: var(--muted);
+      font-weight: 600;
+    }
+
     @media (max-width: 680px) {
-      body { overflow: hidden; }
-      .shell { width: 100vw; height: 100dvh; margin: 0; border: 0; border-radius: 0; grid-template-columns: minmax(0, 1fr); }
-      .rail { position: absolute; z-index: 8; inset: 0 auto 0 0; width: min(84vw, 300px); box-shadow: 12px 0 40px rgba(0,0,0,.16); transform: translateX(-105%); transition: transform .2s var(--ease-out); }
-      .shell.mobile-menu .rail { transform: translateX(0); }
-      .detail { width: min(88vw, 360px); }
-      .right-toggle { display: inline-grid; }
-      #detailExpand { display: none; }
-      .drawer-scrim { position: absolute; z-index: 7; inset: 0; display: block; border: 0; background: rgba(20,20,18,.28); opacity: 0; pointer-events: none; transition: opacity .18s var(--ease-out); }
-      .shell.mobile-menu .drawer-scrim, .shell.mobile-detail .drawer-scrim { opacity: 1; pointer-events: auto; }
-      .chat { grid-column: 1; }
-      .conversation { width: calc(100% - 30px); padding-top: 26px; }
-      .composer-wrap { padding: 0 8px 10px; }
-      .desktop-only { display: none; }
-      .icon-btn.mobile-only { display: inline-grid; }
+      body { font-size: 14px; }
+
+      .page {
+        width: min(100% - 30px, 960px);
+        padding: 96px 0 88px;
+      }
+
+      :root {
+        --mascot-width: 80px;
+        --mascot-height: 52px;
+        --mascot-run-duration: 7.5s;
+      }
+
+      .runner-track { margin-bottom: 45px; }
+      .intro { margin-bottom: 38px; }
+      .section { margin-top: 38px; }
+      .section-title { font-size: 23px; }
+      .tree { margin-left: 8px; padding-left: 23px; }
+      .tree > li::before { left: -23px; width: 18px; }
+      .tree > li::after { left: -23px; }
+      .tree .tree { margin-left: 4px; }
+      .post-row { gap: 9px; }
+      .branch-title { gap: 6px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      html { scroll-behavior: auto; }
-      .rail, .detail, .switch::after, .folder-state-icon svg { transition-duration: .01ms !important; }
-      .model-picker, .settings-popover { transform: scale(1) !important; transition: opacity .12s var(--ease-out) !important; }
-      .toast, .toast.show { transform: translate(-50%, 0) !important; transition: opacity .12s var(--ease-out) !important; }
-      .drawer-scrim { transition: opacity .12s var(--ease-out) !important; }
-      .icon-btn:active, .thread:active, .folder:active, .new-thread:active, .composer-tool:active, .send:active, .detail-tab:active, .file-change-head:active, .model-option:active, .theme-option:active, .switch:active, .secondary-button:active { transform: none; }
+      .post-link img { transition: none; }
+      .mascot-runner {
+        left: 0;
+        transform: none;
+        animation: none;
+      }
+      .mascot-character,
+      .mascot-limb-a,
+      .mascot-limb-b { animation: none; }
     }
   </style>
 </head>
-<body data-theme="light">
-  <main class="shell" id="shell">
-    <aside class="rail" aria-label="Threads">
-      <div class="brand">
-        <div class="mark">bt</div>
-        <div class="brand-copy">
-          <div class="brand-name">ben tossell</div>
-        </div>
-        <button class="icon-btn mobile-only" id="closeMobile" aria-label="Close menu" style="margin-left:auto">
-          <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
-        </button>
-      </div>
+<body>
+  <main class="page" id="content">
+    <p class="loading">loading content.md…</p>
 
-      <button class="new-thread" id="newThread">
-        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-        <span>New question</span>
-        <span class="shortcut">N</span>
-      </button>
-
-      <div class="rail-label"><span>Threads</span><span></span></div>
-      <nav class="thread-list" id="threadList"></nav>
-
-      <div class="rail-bottom">
-        <section class="settings-popover" id="settingsPopover" role="dialog" aria-labelledby="settingsTitle" hidden>
-          <header class="settings-head">
-            <h2 id="settingsTitle">Settings</h2>
-            <button class="icon-btn" id="closeSettings" aria-label="Close settings">
-              <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
-            </button>
-          </header>
-          <div class="settings-body">
-            <div class="settings-row stack">
-              <div><h3>Appearance</h3></div>
-              <div class="theme-options" aria-label="Theme">
-                <button class="theme-option active" data-theme="light">Light</button>
-                <button class="theme-option" data-theme="dark">Dark</button>
-                <button class="theme-option" data-theme="system">System</button>
-              </div>
-            </div>
-            <div class="settings-row stack">
-              <div><h3>Usage remaining</h3></div>
-              <div class="usage"><div class="usage-top"><span>72% left</span></div><div class="usage-track"><div class="usage-fill"></div></div></div>
-            </div>
-            <div class="settings-row">
-              <div><h3>Show pet</h3></div>
-              <button class="switch" id="petSwitch" role="switch" aria-checked="false" aria-label="Show pet"></button>
-            </div>
-            <div class="settings-row">
-              <div><h3>Invite a friend</h3></div>
-              <button class="secondary-button" id="inviteButton">Copy invite</button>
-            </div>
-          </div>
-        </section>
-        <button class="icon-btn settings-gear" id="openSettings" aria-label="Open settings" aria-haspopup="dialog" aria-expanded="false">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.6v-.2h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1z"/></svg>
-        </button>
-      </div>
-    </aside>
-    <button class="drawer-scrim" id="drawerScrim" type="button" aria-label="Close sidebar"></button>
-
-    <section class="chat">
-      <header class="topbar">
-        <button class="icon-btn" id="leftToggle" aria-label="Toggle threads">
-          <svg id="leftToggleIcon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg>
-        </button>
-        <div class="topbar-title"><span>~/</span><strong id="topTitle">about-me</strong></div>
-        <div class="topbar-spacer"></div>
-        <button class="icon-btn right-toggle" id="rightToggle" aria-label="Toggle details">
-          <svg id="rightToggleIcon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg>
-        </button>
-      </header>
-
-      <div class="messages" id="messages">
-        <div class="conversation" id="conversation" aria-live="polite"></div>
-      </div>
-
-      <div class="composer-wrap">
-        <form class="composer" id="composer">
-          <input class="prompt-input" id="promptInput" autocomplete="off" placeholder="Ask bites a question…" aria-label="Ask a question">
-          <div class="composer-tools">
-            <button class="composer-tool" type="button" id="addContext" aria-label="Add context">
-              <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-            </button>
-            <button class="composer-tool" type="button" id="approvalMode">
-              <svg viewBox="0 0 24 24"><path d="M8 12l3 3 5-6"/><circle cx="12" cy="12" r="9"/></svg>
-              <span>Approve for me</span>
-              <svg viewBox="0 0 24 24"><path d="M8 10l4 4 4-4"/></svg>
-            </button>
-          </div>
-          <div class="composer-tools" style="justify-content:flex-end">
-            <button class="composer-tool" type="button" id="modelButton" aria-haspopup="listbox" aria-expanded="false">
-              <span class="provider-logo" id="providerLogo">O</span><strong id="modelLabel">5.6 Sol</strong><span id="effortLabel">High</span>
-              <svg viewBox="0 0 24 24"><path d="M8 10l4 4 4-4"/></svg>
-            </button>
-            <button class="composer-tool" type="button" id="voiceInput" aria-label="Voice input">
-              <svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
-            </button>
-            <button class="send" aria-label="Send question">
-              <svg viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></svg>
-            </button>
-          </div>
-          <div class="model-picker" id="modelPicker" role="listbox" hidden></div>
-        </form>
-      </div>
-    </section>
-
-    <aside class="detail" aria-label="Context">
-      <div class="topbar">
-        <div class="detail-tabs" aria-label="Sidebar views">
-          <button class="detail-tab active" id="contextTab" aria-pressed="true" aria-label="Show environment">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
-          </button>
-          <button class="detail-tab" id="changesTab" aria-pressed="false" aria-label="Show file changes">
-            <svg viewBox="0 0 24 24"><path d="M4 4h6v6H4zM14 14h6v6h-6zM7 10v4h10v-4"/></svg>
-          </button>
-        </div>
-        <div class="topbar-spacer"></div>
-        <button class="icon-btn mobile-only" id="closeDetailMobile" aria-label="Close details">
-          <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
-        </button>
-        <button class="icon-btn" id="detailExpand" aria-label="Expand sidebar">
-          <svg id="detailExpandIcon" viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/></svg>
-        </button>
-      </div>
-      <div class="context-panel" id="contextPanel"></div>
-      <div class="changes-panel" id="changesPanel" hidden></div>
-    </aside>
   </main>
-  <div class="toast" id="toast">Ready</div>
 
   <script>
-    const icon = (name) => {
-      const paths = {
-        user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
-        chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
-        box: '<path d="M21 8l-9 5-9-5 9-5 9 5z"/><path d="M3 8v8l9 5 9-5V8M12 13v8"/>',
-        pulse: '<path d="M3 12h4l2-7 4 14 2-7h6"/>',
-        history: '<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/>',
-        x: '<path d="M23 3a10.9 10.9 0 0 1-3.14 1.53A4.48 4.48 0 0 0 12 8.5v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/>',
-        github: '<path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3.3-.4 6.8-1.6 6.8-7.4A5.8 5.8 0 0 0 19.3 3 5.4 5.4 0 0 0 19.1 0S17.9-.4 15 1.5a14 14 0 0 0-7 0C5.1-.4 3.9 0 3.9 0a5.4 5.4 0 0 0-.2 3A5.8 5.8 0 0 0 2.2 7c0 5.8 3.5 7 6.8 7.4A4.8 4.8 0 0 0 8 18v4"/><path d="M8 19c-3 .9-3-1.5-4-2"/>',
-        linkedin: '<rect x="3" y="9" width="4" height="12"/><path d="M5 3v.01M11 21v-7a4 4 0 0 1 8 0v7M11 9v12M19 21v-7"/>',
-        mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
-        folder: '<path d="M3 6a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
-        'folder-open': '<path d="M3 8V6a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2"/><path d="M3 9h18l-2 10H5z"/>',
-        chevron: '<path d="M9 18l6-6-6-6"/>',
-        laptop: '<rect x="4" y="4" width="16" height="12" rx="2"/><path d="M2 20h20"/>',
-        branch: '<circle cx="6" cy="5" r="2"/><circle cx="18" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><path d="M6 7v10M18 7v3a4 4 0 0 1-4 4H6"/>',
-        file: '<path d="M6 2h9l4 4v16H6z"/><path d="M14 2v5h5"/>',
-        activity: '<path d="M4 6h16M4 12h10M4 18h13"/>',
-        external: '<path d="M14 4h6v6M20 4l-9 9"/><path d="M18 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6"/>'
-      };
-      return `<svg viewBox="0 0 24 24" aria-hidden="true">${paths[name] || paths.user}</svg>`;
-    };
+    const contentRoot = document.querySelector("#content");
 
-    let threads = {};
-
-    const socialLinks = [
-      { label: 'Twitter', handle: '@bentossell', href: 'https://x.com/bentossell', icon: 'x' },
-      { label: 'GitHub', handle: 'bentossell', href: 'https://github.com/bentossell', icon: 'github' },
-      { label: 'Newsletter', handle: 'bensbites.com', href: 'https://www.bensbites.com', icon: 'mail' }
-    ];
-
-    let gitFiles = [
-      { name: 'index.html', status: 'M', add: 324, del: 88 },
-      { name: 'README.md', status: 'M', add: 48, del: 18 },
-      { name: 'package.json', status: 'M', add: 7, del: 7 },
-      { name: 'AGENTS.md', status: 'A', add: 8, del: 0 },
-      { name: 'CLAUDE.md', status: 'A', add: 1, del: 0 },
-      { name: 'threads/index.json', status: 'A', add: 7, del: 0 },
-      { name: 'threads/about.md', status: 'A', add: 23, del: 0 },
-      { name: 'threads/investments.md', status: 'A', add: 27, del: 0 },
-      { name: 'threads/products-i-love.md', status: 'A', add: 25, del: 0 },
-      { name: 'threads/now.md', status: 'A', add: 23, del: 0 },
-      { name: 'threads/previously.md', status: 'A', add: 23, del: 0 }
-    ];
-
-    let gitStatus = {
-      environment: 'Local · MacBook Air M5',
-      directory: '~/bentossell',
-      branch: 'main',
-      status: 'Dirty'
-    };
-
-    const modelOptions = [
-      { provider: 'OpenAI', mark: 'O', model: '5.6 Sol', effort: 'High' },
-      { provider: 'Anthropic', mark: 'A', model: 'Fable', effort: 'High' },
-      { provider: 'xAI', mark: 'x', model: 'Grok 4.6', effort: 'High' },
-    ];
-
-    const shell = document.getElementById('shell');
-    const list = document.getElementById('threadList');
-    const conversation = document.getElementById('conversation');
-    const messages = document.getElementById('messages');
-    const contextPanel = document.getElementById('contextPanel');
-    const changesPanel = document.getElementById('changesPanel');
-    const topTitle = document.getElementById('topTitle');
-    const promptInput = document.getElementById('promptInput');
-    const toast = document.getElementById('toast');
-    const modelPicker = document.getElementById('modelPicker');
-    const modelButton = document.getElementById('modelButton');
-    const settingsPopover = document.getElementById('settingsPopover');
-    const settingsTrigger = document.getElementById('openSettings');
-    const colorScheme = matchMedia('(prefers-color-scheme: dark)');
-    let current = 'about';
-    let folderOpen = true;
-    let selectedModel = 0;
-    let cancelModelPickerClose = null;
-    let cancelSettingsClose = null;
-    let visited = new Set(JSON.parse(localStorage.getItem('ben-visited-threads') || '[]'));
-
-    const escapeHtml = (value) => value.replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
-    const gitTotals = () => gitFiles.reduce((totals, file) => ({ add: totals.add + Number(file.add || 0), del: totals.del + Number(file.del || 0) }), { add: 0, del: 0 });
-    const configureLinks = root => root.querySelectorAll('a').forEach(link => {
-      link.target = '_blank';
-      link.rel = 'noopener noreferrer';
-    });
-
-    function hideAfterTransition(element, fallbackMs, onHidden) {
-      let finished = false;
-      let timer;
-      const finish = event => {
-        if (event && event.target !== element) return;
-        if (finished) return;
-        finished = true;
-        element.removeEventListener('transitionend', finish);
-        clearTimeout(timer);
-        element.hidden = true;
-        element.classList.remove('closing');
-        onHidden();
-      };
-      element.addEventListener('transitionend', finish);
-      timer = setTimeout(finish, fallbackMs);
-      return () => {
-        if (finished) return;
-        finished = true;
-        element.removeEventListener('transitionend', finish);
-        clearTimeout(timer);
-        element.classList.remove('closing');
-      };
+    function escapeHtml(value) {
+      return value.replace(/[&<>"']/g, (character) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#039;"
+      })[character]);
     }
 
-    function inlineMarkdown(value) {
-      return escapeHtml(value)
-        .replace(/\[([^\]]+)\]\(((?:https?:\/\/|\/)[^)\s]+)\)/g, (_, label, href) => {
-          const external = icon('external').replace('<svg', '<svg class="external-link-icon"');
-          return `<a href="${href}">${label}${external}</a>`;
-        })
-        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-        .replace(/`(.+?)`/g, '<code>$1</code>');
+    function safeUrl(value) {
+      const url = value.trim();
+      return /^(https?:|mailto:|assets\/)/.test(url) ? url : "#";
     }
 
-    function markdownHtml(markdown) {
-      const lines = markdown.replace(/\r\n?/g, '\n').split('\n');
-      const output = [];
-      const startsBlock = line => /^(#{2,3})\s+|^>\s?|^-\s+/.test(line.trim());
-      let index = 0;
+    function renderInline(value) {
+      const tokens = [];
+      const store = (html) => {
+        const token = `\u0000${tokens.length}\u0000`;
+        tokens.push(html);
+        return token;
+      };
 
-      while (index < lines.length) {
-        const line = lines[index].trim();
-        if (!line) { index += 1; continue; }
+      let source = value;
 
-        const heading = line.match(/^(#{2,3})\s+(.+)$/);
-        if (heading) {
-          output.push(`<h2>${inlineMarkdown(heading[2])}</h2>`);
-          index += 1;
+      source = source.replace(/\[!\[([^\]]*)\]\(([^)]+)\)\]\(([^)]+)\)/g, (_, alt, imageUrl, linkUrl) => store(
+        `<a class="post-link" href="${escapeHtml(safeUrl(linkUrl))}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(alt)}"><img src="${escapeHtml(safeUrl(imageUrl))}" alt="${escapeHtml(alt)}"></a>`
+      ));
+
+      source = source.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, href) => {
+        const url = safeUrl(href);
+        return store(`<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(label)}</a>`);
+      });
+
+      source = source.replace(/\*\*([^*]+)\*\*/g, (_, text) => store(`<strong>${escapeHtml(text)}</strong>`));
+      source = source.replace(/\\([\[\]()])/g, "$1");
+      source = escapeHtml(source);
+
+      return source.replace(/\u0000(\d+)\u0000/g, (_, index) => tokens[Number(index)]);
+    }
+
+    function parseMarkdown(markdown) {
+      const model = { title: "", intro: [], sections: [] };
+      const lines = markdown.replace(/\r/g, "").split("\n");
+      let currentSection = null;
+      let paragraph = [];
+      let itemStack = [];
+
+      const flushParagraph = () => {
+        if (!paragraph.length) return;
+        model.intro.push(paragraph.join(" ").trim());
+        paragraph = [];
+      };
+
+      for (const line of lines) {
+        if (line.startsWith("# ")) {
+          flushParagraph();
+          model.title = line.slice(2).trim();
           continue;
         }
 
-        if (line.startsWith('>')) {
-          const quote = [];
-          while (index < lines.length && lines[index].trim().startsWith('>')) {
-            quote.push(lines[index].trim().replace(/^>\s?/, ''));
-            index += 1;
-          }
-          output.push(`<p class="response-note">${inlineMarkdown(quote.join(' '))}</p>`);
+        if (line.startsWith("## ")) {
+          flushParagraph();
+          currentSection = { title: line.slice(3).trim(), items: [] };
+          model.sections.push(currentSection);
+          itemStack = [];
           continue;
         }
 
-        if (line.startsWith('- ')) {
-          const items = [];
-          while (index < lines.length && lines[index].trim().startsWith('- ')) {
-            const item = lines[index].trim().slice(2);
-            items.push(`<li>${inlineMarkdown(item)}</li>`);
-            index += 1;
-          }
-          output.push(`<ul>${items.join('')}</ul>`);
+        const listMatch = line.match(/^(\s*)-\s+(.+)$/);
+        if (listMatch && currentSection) {
+          const depth = Math.floor(listMatch[1].replace(/\t/g, "  ").length / 2);
+          const item = { text: listMatch[2].trim(), children: [] };
+          const parent = depth === 0 ? currentSection.items : itemStack[depth - 1]?.children;
+          (parent || currentSection.items).push(item);
+          itemStack[depth] = item;
+          itemStack.length = depth + 1;
           continue;
         }
 
-        const paragraph = [line];
-        index += 1;
-        while (index < lines.length && lines[index].trim() && !startsBlock(lines[index])) {
-          paragraph.push(lines[index].trim());
-          index += 1;
+        if (!line.trim()) {
+          flushParagraph();
+          continue;
         }
-        output.push(`<p>${inlineMarkdown(paragraph.join(' '))}</p>`);
+
+        if (!currentSection) paragraph.push(line.trim());
       }
 
-      return output.join('');
+      flushParagraph();
+      return model;
     }
 
-    function parseThreadMarkdown(file, raw) {
-      const frontmatter = raw.match(/^---\s*\n([\s\S]*?)\n---\s*\n?/);
-      if (!frontmatter) throw new Error(`${file} needs frontmatter`);
-      const data = {};
-      frontmatter[1].split('\n').forEach(line => {
-        const splitAt = line.indexOf(':');
-        if (splitAt < 0) return;
-        data[line.slice(0, splitAt).trim()] = line.slice(splitAt + 1).trim().replace(/^['"]|['"]$/g, '');
-      });
-      const id = data.id || file.replace(/\.md$/, '');
-      return {
-        id,
-        title: data.title || id,
-        slug: data.slug || id,
-        question: data.question || `Tell me about ${data.title || id}`,
-        html: markdownHtml(raw.slice(frontmatter[0].length).trim())
-      };
-    }
-
-    function unwrapMarkdownViewer(raw, contentType) {
-      if (!contentType.includes('text/html')) return raw;
-      const documentCopy = new DOMParser().parseFromString(raw, 'text/html');
-      return documentCopy.querySelector('#raw')?.textContent || raw;
-    }
-
-    async function loadThreads() {
-      const manifestResponse = await fetch('threads/index.json', { cache: 'no-store' });
-      if (!manifestResponse.ok) throw new Error('Could not load threads/index.json');
-      const files = await manifestResponse.json();
-      const loaded = await Promise.all(files.map(async file => {
-        const response = await fetch(`threads/${file}`, { cache: 'no-store' });
-        if (!response.ok) throw new Error(`Could not load threads/${file}`);
-        const raw = await response.text();
-        return parseThreadMarkdown(file, unwrapMarkdownViewer(raw, response.headers.get('content-type') || ''));
-      }));
-      threads = Object.fromEntries(loaded.map(thread => [thread.id, thread]));
-    }
-
-    function renderList() {
-      const hasUnread = Object.keys(threads).some(id => !visited.has(id));
-      list.innerHTML = `
-        <button class="folder ${folderOpen ? '' : 'collapsed'}" id="benFolder" aria-expanded="${folderOpen}" aria-label="ben folder${hasUnread ? ', unread threads' : ''}">
-          <span class="folder-state-icon ${folderOpen ? 'open' : ''}" aria-hidden="true">${icon('folder').replace('<svg', '<svg class="folder-closed"')}${icon('folder-open').replace('<svg', '<svg class="folder-open"')}</span><span>ben</span>${hasUnread ? '<span class="unread-dot" aria-hidden="true"></span>' : '<span></span>'}${icon('chevron').replace('<svg', '<svg class="chevron"')}
-        </button>
-        <div class="folder-threads ${folderOpen ? '' : 'collapsed'}" id="folderThreads">
-          ${Object.entries(threads).map(([id, item], index) => `
-            <button class="thread ${id === current ? 'active' : ''}" data-thread="${id}" ${id === current ? 'aria-current="page"' : ''} aria-label="${item.title}${visited.has(id) ? '' : ', unread'}">
-              <span class="thread-title">${item.title}</span>${visited.has(id) ? `<span class="key">${index + 1}</span>` : '<span class="unread-dot" aria-hidden="true"></span>'}
-            </button>`).join('')}
-        </div>`;
-      document.getElementById('benFolder').addEventListener('click', () => {
-        folderOpen = !folderOpen;
-        const folder = document.getElementById('benFolder');
-        folder.classList.toggle('collapsed', !folderOpen);
-        folder.setAttribute('aria-expanded', String(folderOpen));
-        folder.querySelector('.folder-state-icon').classList.toggle('open', folderOpen);
-        document.getElementById('folderThreads').classList.toggle('collapsed', !folderOpen);
-      });
-      list.querySelectorAll('.thread').forEach(button => button.addEventListener('click', () => selectThread(button.dataset.thread)));
-    }
-
-    function renderConversation(item, followUp = null) {
-      const question = followUp || item.question;
-      const body = followUp
-        ? '<p>This site uses prepared answers. Choose another thread to explore more about Ben.</p>'
-        : item.html;
-      conversation.innerHTML = `
-        <div class="question-row"><div class="question">${escapeHtml(question)}</div></div>
-        <article class="response">
-          <div class="response-head"><div class="agent-mark"><img src="assets/bites-logo.png" alt=""></div><strong>bites</strong></div>
-          <div class="response-body">${body}</div>
-        </article>`;
-      configureLinks(conversation);
-      messages.scrollTo({ top: 0, behavior: 'instant' });
-    }
-
-    function renderContext() {
-      const totals = gitTotals();
-      const links = socialLinks.map(link => `<div class="env-row">${icon(link.icon)}<span class="env-key">${link.label}</span><a class="env-link" href="${link.href}" target="_blank" rel="noreferrer"><span>${link.handle}</span>${icon('external')}</a></div>`).join('');
-      const previewFiles = gitFiles.slice(0, 5).map(file => `<div class="mini-file"><span class="state">${file.status}</span><span class="name">${file.name}</span><span class="counts"><span class="add">+${file.add}</span>${file.del ? ` <span class="del">-${file.del}</span>` : ''}</span></div>`).join('');
-      const remaining = Math.max(0, gitFiles.length - 5);
-      contextPanel.innerHTML = `
-        <div class="env-row">${icon('user')}<span class="env-key">Parent</span><span class="env-value">None</span></div>
-        <div class="env-row">${icon('laptop')}<span class="env-key">Environment</span><span class="env-value">${escapeHtml(gitStatus.environment)}</span></div>
-        <div class="env-row">${icon('folder')}<span class="env-key">Directory</span><span class="env-value">${escapeHtml(gitStatus.directory)}</span></div>
-        <div class="env-row">${icon('branch')}<span class="env-key">Branch</span><span class="env-value">${escapeHtml(gitStatus.branch)}</span></div>
-        <div class="env-row">${icon('activity')}<span class="env-key">Git status</span><span class="env-value dirty">${escapeHtml(gitStatus.status)}</span></div>
-        <div class="git-summary"><strong>Uncommitted</strong><span>${gitFiles.length} files, <span class="add">+${totals.add}</span> <span class="del">-${totals.del}</span></span></div>
-        <div class="mini-files">${previewFiles}</div>
-        ${remaining ? `<button class="show-more-files" type="button" id="showAllChanges">Show ${remaining} more</button>` : ''}
-        <div class="property-divider"></div>${links}`;
-      configureLinks(contextPanel);
-      document.getElementById('showAllChanges')?.addEventListener('click', () => activateDetailTab('changes'));
-    }
-
-    function renderChanges() {
-      const totals = gitTotals();
-      const fileHtml = gitFiles.map((file, index) => {
-        const diff = file.diff || [['', '', '', 'No inline preview for this file.']];
-        return `<div class="file-change" data-file="${index}">
-          <button class="file-change-head">${icon('chevron')}<span class="file-status">${file.status}</span><span class="file-name">${file.name}</span><span class="counts"><span class="add">+${file.add}</span>${file.del ? ` <span class="del">-${file.del}</span>` : ''}</span></button>
-          <div class="diff">${diff.map(([type, oldLine, newLine, code]) => `<div class="diff-line ${type}"><span class="ln">${oldLine}</span><span class="ln">${newLine}</span><span>${escapeHtml(code)}</span></div>`).join('')}</div>
-        </div>`;
-      }).join('');
-      changesPanel.innerHTML = `<div class="changes-toolbar"><label class="changes-filter-wrap"><select class="changes-filter" aria-label="Change filter"><option value="all">All changes</option><option value="modified">Modified</option><option value="added">Added</option></select></label><span class="changes-count">${gitFiles.length} files, <span class="add">+${totals.add}</span> <span class="del">-${totals.del}</span></span></div>${fileHtml}`;
-      changesPanel.querySelectorAll('.file-change-head').forEach(button => button.addEventListener('click', () => button.parentElement.classList.toggle('open')));
-      changesPanel.querySelector('.changes-filter').addEventListener('change', event => {
-        const visibleFiles = [];
-        changesPanel.querySelectorAll('.file-change').forEach((row, index) => {
-          const file = gitFiles[index];
-          row.hidden = event.target.value === 'modified' ? file.status !== 'M' : event.target.value === 'added' ? file.status !== 'A' : false;
-          if (!row.hidden) visibleFiles.push(file);
-        });
-        const filteredTotals = visibleFiles.reduce((sum, file) => ({ add: sum.add + file.add, del: sum.del + file.del }), { add: 0, del: 0 });
-        changesPanel.querySelector('.changes-count').innerHTML = `${visibleFiles.length} files, <span class="add">+${filteredTotals.add}</span> <span class="del">-${filteredTotals.del}</span>`;
-      });
-    }
-
-    function activateDetailTab(tab) {
-      const showContext = tab === 'context';
-      contextPanel.hidden = !showContext;
-      changesPanel.hidden = showContext;
-      document.getElementById('contextTab').classList.toggle('active', showContext);
-      document.getElementById('changesTab').classList.toggle('active', !showContext);
-      document.getElementById('contextTab').setAttribute('aria-pressed', String(showContext));
-      document.getElementById('changesTab').setAttribute('aria-pressed', String(!showContext));
-    }
-
-    function selectThread(id) {
-      if (!threads[id]) return;
-      current = id;
-      const item = threads[id];
-      visited.add(id);
-      localStorage.setItem('ben-visited-threads', JSON.stringify([...visited]));
-      topTitle.textContent = item.slug;
-      renderList();
-      renderConversation(item);
-      renderContext();
-      history.replaceState(null, '', `#${id}`);
-      closeMobilePanels();
-    }
-
-    function submitPrompt(value) {
-      const question = value.trim();
-      if (!question) return;
-      renderConversation(threads[current], question);
-      promptInput.value = '';
-    }
-
-    function showToast(text) {
-      toast.textContent = text;
-      toast.classList.add('show');
-      clearTimeout(showToast.timer);
-      showToast.timer = setTimeout(() => toast.classList.remove('show'), 1500);
-    }
-
-    function renderModels() {
-      modelPicker.innerHTML = modelOptions.map((option, index) => `<button class="model-option ${index === selectedModel ? 'active' : ''}" type="button" role="option" aria-selected="${index === selectedModel}" data-model="${index}"><span class="provider-logo">${option.mark}</span><span><strong>${option.model}</strong><small>${option.provider} · ${option.effort}</small></span><span class="check" aria-hidden="true">${index === selectedModel ? '✓' : ''}</span></button>`).join('');
-      modelPicker.querySelectorAll('.model-option').forEach(button => button.addEventListener('click', () => selectModel(Number(button.dataset.model))));
-    }
-
-    function selectModel(index) {
-      selectedModel = index;
-      const selection = modelOptions[selectedModel];
-      document.getElementById('modelLabel').textContent = selection.model;
-      document.getElementById('effortLabel').textContent = selection.effort;
-      document.getElementById('providerLogo').textContent = selection.mark;
-      closeModelPicker();
-      renderModels();
-      modelButton.focus();
-    }
-
-    function openModelPicker() {
-      cancelModelPickerClose?.();
-      cancelModelPickerClose = null;
-      modelPicker.hidden = false;
-      modelButton.setAttribute('aria-expanded', 'true');
-      requestAnimationFrame(() => modelPicker.querySelector(`[data-model="${selectedModel}"]`)?.focus());
-    }
-
-    function closeModelPicker({ restoreFocus = false } = {}) {
-      if (modelPicker.hidden || modelPicker.classList.contains('closing')) return;
-      modelButton.setAttribute('aria-expanded', 'false');
-      modelPicker.classList.add('closing');
-      cancelModelPickerClose = hideAfterTransition(modelPicker, 200, () => {
-        cancelModelPickerClose = null;
-        if (restoreFocus) modelButton.focus();
-      });
-    }
-
-    function setTheme(theme) {
-      const resolved = theme === 'system' && colorScheme.matches ? 'dark' : theme === 'system' ? 'light' : theme;
-      document.body.dataset.theme = resolved;
-      localStorage.setItem('ben-theme', theme);
-      document.querySelectorAll('.theme-option').forEach(button => {
-        const active = button.dataset.theme === theme;
-        button.classList.toggle('active', active);
-        button.setAttribute('aria-pressed', String(active));
-      });
-    }
-
-    function closeSettingsPopover({ restoreFocus = true } = {}) {
-      if (settingsPopover.hidden || settingsPopover.classList.contains('closing')) return;
-      settingsTrigger.setAttribute('aria-expanded', 'false');
-      settingsPopover.classList.add('closing');
-      cancelSettingsClose = hideAfterTransition(settingsPopover, 200, () => {
-        cancelSettingsClose = null;
-        if (restoreFocus) settingsTrigger.focus();
-      });
-    }
-
-    function openSettingsPopover() {
-      cancelSettingsClose?.();
-      cancelSettingsClose = null;
-      settingsPopover.hidden = false;
-      settingsTrigger.setAttribute('aria-expanded', 'true');
-      requestAnimationFrame(() => document.getElementById('closeSettings').focus());
-    }
-
-    function trapSettingsFocus(event) {
-      const focusable = [...settingsPopover.querySelectorAll('button:not([disabled]), input:not([disabled]), select:not([disabled]), [href], [tabindex]:not([tabindex="-1"])')];
-      if (!focusable.length) return;
-      const first = focusable[0];
-      const last = focusable.at(-1);
-      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
-      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
-    }
-
-    function setLeftHidden(hidden) {
-      shell.classList.toggle('left-hidden', hidden);
-      if (hidden) closeSettingsPopover({ restoreFocus: false });
-      const button = document.getElementById('leftToggle');
-      button.setAttribute('aria-label', hidden ? 'Show threads' : 'Hide threads');
-      button.setAttribute('aria-pressed', String(hidden));
-      document.getElementById('leftToggleIcon').innerHTML = hidden
-        ? '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M5 4v16M9 9l3 3-3 3"/>'
-        : '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/>';
-    }
-
-    function setDetailWide(expanded) {
-      shell.classList.toggle('detail-wide', expanded);
-      const button = document.getElementById('detailExpand');
-      button.setAttribute('aria-label', expanded ? 'Restore sidebar width' : 'Expand sidebar');
-      button.setAttribute('aria-pressed', String(expanded));
-      document.getElementById('detailExpandIcon').innerHTML = expanded
-        ? '<path d="M8 3v5H3M16 3v5h5M8 21v-5H3M16 21v-5h5"/>'
-        : '<path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/>';
-    }
-
-    function setRightHidden(hidden) {
-      shell.classList.toggle('right-hidden', hidden);
-      const button = document.getElementById('rightToggle');
-      button.setAttribute('aria-label', hidden ? 'Show details' : 'Hide details');
-      button.setAttribute('aria-pressed', String(hidden));
-      document.getElementById('rightToggleIcon').innerHTML = hidden
-        ? '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M19 4v16M15 9l-3 3 3 3"/>'
-        : '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/>';
-    }
-
-    async function loadConnectedGitStatus() {
-      const endpoint = document.documentElement.dataset.gitStatusEndpoint;
-      if (!endpoint) return;
-      try {
-        const response = await fetch(endpoint);
-        if (!response.ok) return;
-        const data = await response.json();
-        if (Array.isArray(data.files)) {
-          gitFiles = data.files.map(file => ({
-            name: file.name,
-            status: /^(a|added|\?\?)/i.test(String(file.status || '')) ? 'A' : 'M',
-            add: file.additions || 0,
-            del: file.deletions || 0,
-            diff: file.diff
-          }));
+    function renderItems(items, depth = 0) {
+      return items.map((item) => {
+        if (item.children.length) {
+          const open = depth > 0 ? " open" : "";
+          const muted = depth > 0 ? " muted" : "";
+          const listClass = item.text.toLowerCase() === "portfolio" ? "tree portfolio" : "tree";
+          return `<li><details class="branch"${open}><summary class="branch-title${muted}"><span>${renderInline(item.text)}</span></summary><ul class="${listClass}">${renderItems(item.children, depth + 1)}</ul></details></li>`;
         }
-        gitStatus = { ...gitStatus, ...data.context };
-        renderChanges();
-        renderContext();
-      } catch { /* Keep the prototype data when no connector is available. */ }
+
+        if (item.text.includes("![")) {
+          return `<li><div class="post-row">${renderInline(item.text)}</div></li>`;
+        }
+
+        return `<li class="muted">${renderInline(item.text)}</li>`;
+      }).join("");
     }
 
-    document.getElementById('composer').addEventListener('submit', event => {
-      event.preventDefault();
-      submitPrompt(promptInput.value);
-    });
-    document.getElementById('newThread').addEventListener('click', () => {
-      promptInput.focus();
-      closeMobilePanels();
-      showToast('Start a new question');
-    });
-    document.getElementById('leftToggle').addEventListener('click', () => {
-      if (matchMedia('(max-width: 680px)').matches) {
-        const opening = !shell.classList.contains('mobile-menu');
-        closeMobilePanels();
-        shell.classList.toggle('mobile-menu', opening);
-      } else setLeftHidden(!shell.classList.contains('left-hidden'));
-    });
-    document.getElementById('closeMobile').addEventListener('click', closeMobilePanels);
-    document.getElementById('closeDetailMobile').addEventListener('click', closeMobilePanels);
-    document.getElementById('drawerScrim').addEventListener('click', closeMobilePanels);
-    document.getElementById('rightToggle').addEventListener('click', () => {
-      if (matchMedia('(max-width: 980px)').matches) {
-        const opening = !shell.classList.contains('mobile-detail');
-        closeMobilePanels();
-        shell.classList.toggle('mobile-detail', opening);
-      } else setRightHidden(!shell.classList.contains('right-hidden'));
-    });
-    document.getElementById('detailExpand').addEventListener('click', () => setDetailWide(!shell.classList.contains('detail-wide')));
-    document.getElementById('contextTab').addEventListener('click', () => activateDetailTab('context'));
-    document.getElementById('changesTab').addEventListener('click', () => activateDetailTab('changes'));
+    function renderPage(model) {
+      const intro = model.intro.map((paragraph) => `<p>${renderInline(paragraph)}</p>`).join("");
+      const sections = model.sections.map((section) => {
+        const className = section.title.toLowerCase() === "previously" ? "tree previously" : "tree";
+        return `<section class="section"><h2 class="section-title">## ${escapeHtml(section.title)}</h2><ul class="${className}">${renderItems(section.items)}</ul></section>`;
+      }).join("");
 
-    modelButton.addEventListener('click', () => {
-      if (modelPicker.hidden || modelPicker.classList.contains('closing')) openModelPicker();
-      else closeModelPicker({ restoreFocus: true });
-    });
-    document.addEventListener('click', event => {
-      if (!modelPicker.hidden && !modelPicker.contains(event.target) && !modelButton.contains(event.target)) closeModelPicker();
-      if (!settingsPopover.hidden && !settingsPopover.contains(event.target) && !settingsTrigger.contains(event.target)) closeSettingsPopover({ restoreFocus: false });
-    });
+      contentRoot.innerHTML = `<div class="runner-track"><hr class="rule"><div class="mascot-lane" aria-hidden="true"><div class="mascot-runner"><svg class="mascot-sprite" viewBox="-30 -42 370 241" focusable="false"><g class="mascot-character"><g class="mascot-limb-a" style="transform-origin:42px 95px"><rect x="-25" y="86" width="72" height="18" rx="9" fill="#fa5252" transform="rotate(-35 42 95)"/></g><g class="mascot-limb-b" style="transform-origin:250px 92px"><rect x="245" y="83" width="72" height="18" rx="9" fill="#fa5252" transform="rotate(35 250 92)"/></g><g class="mascot-limb-b" style="transform-origin:113px 154px"><rect x="104" y="151" width="18" height="48" rx="9" fill="#fa5252"/></g><g class="mascot-limb-a" style="transform-origin:178px 154px"><rect x="169" y="151" width="18" height="48" rx="9" fill="#fa5252"/></g><ellipse cx="101" cy="13" rx="40" ry="50" fill="#f1f3f5" stroke="#202126" stroke-width="5"/><ellipse cx="185" cy="13" rx="40" ry="50" fill="#f1f3f5" stroke="#202126" stroke-width="5"/><ellipse cx="101" cy="14" rx="19" ry="23" fill="#202126"/><ellipse cx="185" cy="14" rx="19" ry="23" fill="#202126"/><rect x="40" y="15" width="212" height="146" rx="10" fill="#fa5252"/><rect x="66" y="50" width="160" height="86" rx="7" fill="#202126"/><rect x="82" y="49" width="30" height="45" rx="2" fill="#f8f9fa" stroke="#202126" stroke-width="3"/><rect x="114" y="49" width="30" height="45" rx="2" fill="#f8f9fa" stroke="#202126" stroke-width="3"/><rect x="146" y="49" width="30" height="45" rx="2" fill="#f8f9fa" stroke="#202126" stroke-width="3"/><rect x="178" y="49" width="30" height="45" rx="2" fill="#f8f9fa" stroke="#202126" stroke-width="3"/><path d="M110 121h68l-10 17h-48z" fill="#f783ac"/></g></svg></div></div></div><header class="intro"><h1># ${renderInline(model.title)}</h1>${intro}</header>${sections}`;
 
-    settingsTrigger.addEventListener('click', () => {
-      closeModelPicker();
-      if (settingsPopover.hidden || settingsPopover.classList.contains('closing')) openSettingsPopover();
-      else closeSettingsPopover({ restoreFocus: true });
-    });
-    document.getElementById('closeSettings').addEventListener('click', () => closeSettingsPopover());
-    document.querySelectorAll('.theme-option').forEach(button => button.addEventListener('click', () => setTheme(button.dataset.theme)));
-    document.getElementById('petSwitch').addEventListener('click', event => {
-      const enabled = !event.currentTarget.classList.contains('on');
-      event.currentTarget.classList.toggle('on', enabled);
-      event.currentTarget.setAttribute('aria-checked', String(enabled));
-      showToast(enabled ? 'Pet enabled · photo needed' : 'Pet hidden');
-    });
-    document.getElementById('inviteButton').addEventListener('click', async () => {
-      try { await navigator.clipboard.writeText(location.href); showToast('Invite link copied'); }
-      catch { showToast('Copy is unavailable in this preview'); }
-    });
-    document.getElementById('addContext').addEventListener('click', () => showToast('Context picker is not in this prototype'));
-    document.getElementById('approvalMode').addEventListener('click', () => showToast('Approval modes are not in this prototype'));
-    document.getElementById('voiceInput').addEventListener('click', () => showToast('Voice input is not in this prototype'));
-
-    function closeMobilePanels() {
-      shell.classList.remove('mobile-menu', 'mobile-detail');
-      closeSettingsPopover({ restoreFocus: false });
+      contentRoot.querySelectorAll("summary a").forEach((link) => {
+        link.addEventListener("click", (event) => event.stopPropagation());
+      });
     }
 
-    colorScheme.addEventListener('change', () => {
-      if ((localStorage.getItem('ben-theme') || 'light') === 'system') setTheme('system');
-    });
-
-    window.addEventListener('hashchange', () => {
-      const id = location.hash.slice(1);
-      if (threads[id] && id !== current) selectThread(id);
-    });
-
-    document.addEventListener('keydown', event => {
-      if (event.key === 'Escape') {
-        if (!settingsPopover.hidden) closeSettingsPopover();
-        closeModelPicker({ restoreFocus: true });
-        closeMobilePanels();
-        return;
-      }
-      if (!settingsPopover.hidden && event.key === 'Tab') { trapSettingsFocus(event); return; }
-      if (!modelPicker.hidden && ['ArrowDown', 'ArrowUp', 'Home', 'End', 'Enter'].includes(event.key)) {
-        const options = [...modelPicker.querySelectorAll('.model-option')];
-        const focusedIndex = Math.max(0, options.indexOf(document.activeElement));
-        if (event.key === 'Enter') { event.preventDefault(); selectModel(Number(options[focusedIndex].dataset.model)); return; }
-        event.preventDefault();
-        const nextIndex = event.key === 'Home' ? 0 : event.key === 'End' ? options.length - 1 : event.key === 'ArrowDown' ? (focusedIndex + 1) % options.length : (focusedIndex - 1 + options.length) % options.length;
-        options[nextIndex].focus();
-        return;
-      }
-      if (event.target.matches('input, textarea, select, [contenteditable="true"]')) return;
-      if (event.metaKey || event.ctrlKey || event.altKey) return;
-      const ids = Object.keys(threads);
-      if (/^[1-9]$/.test(event.key) && ids[Number(event.key) - 1]) { event.preventDefault(); selectThread(ids[Number(event.key) - 1]); }
-      if (event.key.toLowerCase() === 'n') { event.preventDefault(); promptInput.focus(); }
-    });
-
-    async function start() {
-      renderModels();
-      renderChanges();
-      setTheme(localStorage.getItem('ben-theme') || 'light');
-      setLeftHidden(shell.classList.contains('left-hidden'));
-      setRightHidden(shell.classList.contains('right-hidden'));
-      setDetailWide(shell.classList.contains('detail-wide'));
-
-      try {
-        await loadThreads();
-        const initial = location.hash.slice(1);
-        const defaultThread = threads.about ? 'about' : Object.keys(threads)[0];
-        selectThread(threads[initial] ? initial : defaultThread);
-        loadConnectedGitStatus();
-      } catch (error) {
-        conversation.innerHTML = `<article class="response"><div class="response-body"><h2>Threads could not load</h2><p>${escapeHtml(error.message)}</p><p class="response-note">Run this site through <code>npm run dev</code>. Markdown files cannot load when index.html is opened directly.</p></div></article>`;
-        console.error(error);
-      }
-    }
-
-    start();
+    fetch("content.md?raw=1", { cache: "no-store" })
+      .then((response) => {
+        if (!response.ok) throw new Error(`Could not load content.md (${response.status})`);
+        return response.text();
+      })
+      .then((markdown) => renderPage(parseMarkdown(markdown)))
+      .catch((error) => {
+        contentRoot.innerHTML = `<p class="load-error">${escapeHtml(error.message)}</p>`;
+      });
   </script>
 </body>
 </html>
