@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Ben Tossell — builder + investor.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" sizes="any">
   <title>Ben Tossell</title>
   <style>
     @font-face {
@@ -22,6 +23,8 @@
       --link: #3389e8;
       --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
       --hand: "Shantell Sans", "Comic Sans MS", cursive;
+      --content-width: 720px;
+      --annotation-gutter: clamp(0px, calc(100vw - 480px), 150px);
       --mascot-width: 104px;
       --mascot-height: 68px;
     }
@@ -56,7 +59,7 @@
     }
 
     .page {
-      width: min(960px, calc(100% - 48px));
+      width: min(1020px, calc(100% - 30px));
       margin: 0 auto;
       padding: 118px 0 150px;
     }
@@ -309,12 +312,75 @@
     .section { margin-top: 52px; }
 
     .section-title {
+      position: relative;
       display: flex;
       width: fit-content;
       align-items: center;
       gap: 11px;
       font-size: 26px;
       line-height: 1.3;
+    }
+
+    .runner-track,
+    .intro,
+    .section {
+      width: min(var(--content-width), calc(100% - var(--annotation-gutter)));
+      margin-left: var(--annotation-gutter);
+    }
+
+    .markdown-token { display: inline-block; }
+
+    .markdown-note {
+      position: absolute;
+      top: 1px;
+      right: calc(100% + 28px);
+      width: 108px;
+      color: #ff6b6b;
+      font-family: var(--hand);
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: .01em;
+      text-align: left;
+      transform: rotate(-2deg);
+    }
+
+    .section-title.annotation-on-right .markdown-note {
+      right: auto;
+      left: calc(100% + 24px);
+    }
+
+    .expand-annotation {
+      position: relative;
+      width: fit-content;
+      max-width: 100%;
+    }
+
+    .expand-annotation > .tree {
+      width: max-content;
+      max-width: 100%;
+    }
+
+    .expand-note {
+      position: absolute;
+      top: 50%;
+      right: calc(100% + 42px);
+      color: #d66bea;
+      font-family: var(--hand);
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1;
+      white-space: nowrap;
+      transform: translateY(-50%) rotate(-2deg);
+    }
+
+    .expand-annotation.bracket-bottom { margin-bottom: 60px; }
+
+    .expand-annotation.bracket-bottom .expand-note {
+      top: calc(100% + 28px);
+      right: auto;
+      left: 50%;
+      transform: translateX(-50%) rotate(-2deg);
     }
 
     .branch-title::after {
@@ -419,7 +485,7 @@
       body { font-size: 14px; }
 
       .page {
-        width: min(100% - 30px, 960px);
+        width: min(100% - 30px, 1020px);
         padding: 96px 0 88px;
       }
 
@@ -432,6 +498,15 @@
       .intro { margin-bottom: 38px; }
       .section { margin-top: 38px; }
       .section-title { font-size: 23px; }
+      .markdown-note {
+        top: 0;
+        width: 92px;
+        font-size: 15px;
+      }
+      .section-title.annotation-on-right .markdown-note { left: calc(100% + 16px); }
+      .expand-note { font-size: 15px; }
+      .expand-annotation.bracket-bottom { margin-bottom: 68px; }
+      .expand-annotation > .tree { max-width: 100%; }
       .tree { margin-left: 8px; padding-left: 23px; }
       .tree > li::before { left: -23px; width: 18px; }
       .tree > li::after { left: -23px; }
@@ -464,7 +539,9 @@
 
   </main>
 
-  <script>
+  <script type="module">
+    import { annotate } from "https://unpkg.com/rough-notation@0.5.1/lib/rough-notation.esm.js";
+
     const contentRoot = document.querySelector("#content");
 
     function escapeHtml(value) {
@@ -509,7 +586,7 @@
     }
 
     function parseMarkdown(markdown) {
-      const model = { title: "", intro: [], sections: [] };
+      const model = { title: "", intro: [], sections: [], markdownAnnotation: "", expandAnnotation: "" };
       const lines = markdown.replace(/\r/g, "").split("\n");
       let currentSection = null;
       let paragraph = [];
@@ -522,6 +599,20 @@
       };
 
       for (const line of lines) {
+        const markdownAnnotationMatch = line.match(/^<!--\s*markdown-annotation:\s*(.+?)\s*-->$/i);
+        if (markdownAnnotationMatch) {
+          flushParagraph();
+          model.markdownAnnotation = markdownAnnotationMatch[1].trim();
+          continue;
+        }
+
+        const expandAnnotationMatch = line.match(/^<!--\s*expand-annotation:\s*(.+?)\s*-->$/i);
+        if (expandAnnotationMatch) {
+          flushParagraph();
+          model.expandAnnotation = expandAnnotationMatch[1].trim();
+          continue;
+        }
+
         if (line.startsWith("# ")) {
           flushParagraph();
           model.title = line.slice(2).trim();
@@ -572,11 +663,117 @@
           return `<li><div class="post-row">${renderInline(item.text)}</div></li>`;
         }
 
-        return `<li class="muted">${renderInline(item.text)}</li>`;
+        return `<li class="muted"><span class="tree-leaf">${renderInline(item.text)}</span></li>`;
       }).join("");
     }
 
     let stopMascot = () => {};
+    let stopRoughAnnotations = () => {};
+
+    async function setupRoughAnnotations() {
+      stopRoughAnnotations();
+
+      const markdownToken = contentRoot.querySelector("[data-markdown-annotation]");
+      const markdownTitle = markdownToken?.closest(".section-title");
+      const markdownNote = markdownTitle?.querySelector(".markdown-note");
+      const expandTarget = contentRoot.querySelector("[data-expand-annotation]");
+      const expandWrapper = expandTarget?.closest(".expand-annotation");
+      const expandNote = expandWrapper?.querySelector(".expand-note");
+      if (!markdownToken || !markdownTitle || !markdownNote || !expandTarget || !expandWrapper || !expandNote) return;
+
+      await document.fonts.ready;
+
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const roughBox = annotate(markdownToken, {
+        type: "box",
+        color: "#ff6b6b",
+        strokeWidth: 2.25,
+        padding: [1, 5],
+        iterations: 1,
+        animate: !reducedMotion,
+        animationDuration: 680
+      });
+      let roughBracket = null;
+      let bracketPosition = "";
+      let resizeTimer = 0;
+
+      function placeMarkdownNote() {
+        const availableLeft = markdownTitle.getBoundingClientRect().left;
+        markdownTitle.classList.toggle("annotation-on-right", availableLeft < markdownNote.offsetWidth + 42);
+      }
+
+      function getBracketPosition() {
+        return expandTarget.getBoundingClientRect().left >= expandNote.offsetWidth + 72 ? "left" : "bottom";
+      }
+
+      function sizeExpandTargetToContent() {
+        expandTarget.style.removeProperty("width");
+        const targetLeft = expandTarget.getBoundingClientRect().left;
+        const sectionRight = expandWrapper.closest(".section").getBoundingClientRect().right;
+        const availableWidth = Math.max(0, sectionRight - targetLeft);
+        const measurableContent = [...expandTarget.querySelectorAll("summary, .tree-leaf, .post-row")]
+          .filter((element) => element.getClientRects().length);
+        const rightmostContent = measurableContent.reduce((right, element) => {
+          return Math.max(right, element.getBoundingClientRect().right);
+        }, targetLeft);
+        const contentWidth = Math.ceil(rightmostContent - targetLeft);
+        expandTarget.style.width = `${Math.min(contentWidth, availableWidth)}px`;
+      }
+
+      function drawBracket() {
+        const nextPosition = getBracketPosition();
+        expandWrapper.classList.toggle("bracket-bottom", nextPosition === "bottom");
+        sizeExpandTargetToContent();
+
+        if (!roughBracket || nextPosition !== bracketPosition) {
+          roughBracket?.remove();
+          bracketPosition = nextPosition;
+          roughBracket = annotate(expandTarget, {
+            type: "bracket",
+            brackets: nextPosition,
+            color: "#d66bea",
+            strokeWidth: 3,
+            padding: nextPosition === "left" ? [2, 7, 2, 9] : [2, 0, 7, 0],
+            iterations: 1,
+            animate: false
+          });
+        }
+
+        roughBracket.show();
+      }
+
+      function updateBracketAfterToggle(event) {
+        if (!expandTarget.contains(event.target)) return;
+        drawBracket();
+      }
+
+      function redraw() {
+        window.clearTimeout(resizeTimer);
+        resizeTimer = window.setTimeout(() => {
+          placeMarkdownNote();
+          roughBox.show();
+          drawBracket();
+        }, 100);
+      }
+
+      placeMarkdownNote();
+      requestAnimationFrame(() => {
+        roughBox.show();
+        drawBracket();
+      });
+      window.addEventListener("resize", redraw);
+      contentRoot.addEventListener("toggle", updateBracketAfterToggle, true);
+      expandTarget.addEventListener("load", drawBracket, true);
+
+      stopRoughAnnotations = () => {
+        window.clearTimeout(resizeTimer);
+        window.removeEventListener("resize", redraw);
+        contentRoot.removeEventListener("toggle", updateBracketAfterToggle, true);
+        expandTarget.removeEventListener("load", drawBracket, true);
+        roughBox.remove();
+        roughBracket?.remove();
+      };
+    }
 
     function setupMascot() {
       stopMascot();
@@ -820,7 +1017,15 @@
       const intro = model.intro.map((paragraph) => `<p>${renderInline(paragraph)}</p>`).join("");
       const sections = model.sections.map((section) => {
         const className = section.title.toLowerCase() === "previously" ? "tree previously" : "tree";
-        return `<section class="section"><h2 class="section-title">## ${escapeHtml(section.title)}</h2><ul class="${className}">${renderItems(section.items)}</ul></section>`;
+        const isNow = section.title.toLowerCase() === "now";
+        const isPreviously = section.title.toLowerCase() === "previously";
+        const markdownToken = isPreviously ? `<span class="markdown-token" data-markdown-annotation>##</span>` : "##";
+        const markdownNote = isPreviously && model.markdownAnnotation ? `<span class="markdown-note">${escapeHtml(model.markdownAnnotation)}</span>` : "";
+        const tree = `<ul class="${className}"${isNow ? " data-expand-annotation" : ""}>${renderItems(section.items)}</ul>`;
+        const treeWithAnnotation = isNow && model.expandAnnotation
+          ? `<div class="expand-annotation"><span class="expand-note">${escapeHtml(model.expandAnnotation)}</span>${tree}</div>`
+          : tree;
+        return `<section class="section"><h2 class="section-title">${markdownToken} ${escapeHtml(section.title)}${markdownNote}</h2>${treeWithAnnotation}</section>`;
       }).join("");
 
       contentRoot.innerHTML = `<div class="runner-track"><hr class="rule"><div class="mascot-lane" aria-hidden="true"><div class="mascot-runner"><svg class="mascot-sprite" viewBox="-30 -42 370 241" focusable="false"><g class="mascot-character"><g class="mascot-limb-a" style="transform-origin:42px 95px"><rect x="-25" y="86" width="72" height="18" rx="9" fill="#fa5252" transform="rotate(-35 42 95)"/></g><g class="mascot-limb-b" style="transform-origin:250px 92px"><rect x="245" y="83" width="72" height="18" rx="9" fill="#fa5252" transform="rotate(35 250 92)"/></g><g class="mascot-limb-b" style="transform-origin:113px 154px"><rect x="104" y="151" width="18" height="48" rx="9" fill="#fa5252"/></g><g class="mascot-limb-a" style="transform-origin:178px 154px"><rect x="169" y="151" width="18" height="48" rx="9" fill="#fa5252"/></g><ellipse cx="101" cy="13" rx="40" ry="50" fill="#f1f3f5" stroke="#202126" stroke-width="5"/><ellipse cx="185" cy="13" rx="40" ry="50" fill="#f1f3f5" stroke="#202126" stroke-width="5"/><ellipse cx="101" cy="14" rx="19" ry="23" fill="#202126"/><ellipse cx="185" cy="14" rx="19" ry="23" fill="#202126"/><rect x="40" y="15" width="212" height="146" rx="10" fill="#fa5252"/><rect x="66" y="50" width="160" height="86" rx="7" fill="#202126"/><rect x="82" y="49" width="30" height="45" rx="2" fill="#f8f9fa" stroke="#202126" stroke-width="3"/><rect x="114" y="49" width="30" height="45" rx="2" fill="#f8f9fa" stroke="#202126" stroke-width="3"/><rect x="146" y="49" width="30" height="45" rx="2" fill="#f8f9fa" stroke="#202126" stroke-width="3"/><rect x="178" y="49" width="30" height="45" rx="2" fill="#f8f9fa" stroke="#202126" stroke-width="3"/><path d="M110 121h68l-10 17h-48z" fill="#f783ac"/></g></svg></div></div></div><header class="intro"><h1># ${renderInline(model.title)}</h1>${intro}</header>${sections}`;
@@ -830,6 +1035,7 @@
       });
 
       setupMascot();
+      setupRoughAnnotations();
     }
 
     fetch("content.md?raw=1", { cache: "no-store" })

@@ -2,6 +2,8 @@
 
 i can't code (i'm non-technical) but i'm a self-taught internet builder. i make stuff with agents all day and explain how it works as i'm learning.
 
+<!-- expand-annotation: expand -->
+
 ## Now
 
 - \[bens bites\]\([bensbites.com](https://bensbites.com)\)
@@ -20,6 +22,8 @@ i can't code (i'm non-technical) but i'm a self-taught internet builder. i make 
     - **Anthropic** series B [SPV 🤞]
     - **Opencode** seed [exited]
     - [your co? reach out.](https://x.com/bentossell)
+
+<!-- markdown-annotation: markdown formatting -->
 
 ## Previously
 
