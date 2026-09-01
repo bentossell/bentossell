@@ -2,8 +2,6 @@
 
 i can't code (i'm non-technical) but i'm a self-taught internet builder. i make stuff with agents all day and explain how it works as i'm learning.
 
-<!-- embed: token-activity -->
-
 <!-- expand-annotation: expand -->
 
 ## Now
