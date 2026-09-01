@@ -67,7 +67,7 @@ main{max-width:1900px;margin:0 auto;padding:clamp(48px,6vw,72px) 28px 64px}
 .status{margin-top:16px;color:var(--muted);font-size:10px;line-height:1.45}
 .error{color:var(--down)}
 .board{min-width:0;font-size:12px;line-height:1.2}
-.cols{display:grid;grid-template-columns:34px minmax(180px,250px) 104px 74px 74px 118px minmax(0,1fr);align-items:center}
+.cols{display:grid;grid-template-columns:34px minmax(180px,250px) 104px 80px minmax(0,1fr);align-items:center}
 .head{min-height:28px;border-bottom:1px solid var(--line);font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
 .head span,.head button{padding:0 10px;white-space:nowrap;text-align:left}
 .head button{border:0;background:transparent;color:inherit;font:inherit;letter-spacing:inherit;text-transform:inherit;cursor:pointer}
@@ -89,8 +89,6 @@ main{max-width:1900px;margin:0 auto;padding:clamp(48px,6vw,72px) 28px 64px}
 .rate{font-weight:700}.unit{color:var(--muted);font-weight:400}
 .delta{font-weight:600;font-size:11px}
 .delta .up{color:var(--up)}.delta .down{color:var(--down)}.delta .flat{color:var(--faint)}
-.spark{padding:0 12px}
-.spark svg{display:block;overflow:visible}
 .mix{display:flex;align-items:center;gap:12px;min-width:0;padding:0 12px;font-size:11px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bar{display:flex;flex:0 0 120px;height:10px;overflow:hidden;background:var(--stack)}
 .bar span{min-width:1px;height:100%;background:var(--c)}
@@ -110,7 +108,7 @@ main{max-width:1900px;margin:0 auto;padding:clamp(48px,6vw,72px) 28px 64px}
 .footnote{margin:56px 0 0;padding-top:24px;border-top:1px solid var(--line);font-size:11px;line-height:1.5;color:var(--muted)}
 @media (max-width:1500px){
   .layout{gap:36px}
-  .cols{grid-template-columns:34px minmax(160px,220px) 96px 70px 70px 100px minmax(0,1fr)}
+  .cols{grid-template-columns:34px minmax(160px,220px) 96px 76px minmax(0,1fr)}
 }
 @media (max-width:1140px){
   main{padding:40px 18px 54px}
@@ -122,7 +120,7 @@ main{max-width:1900px;margin:0 auto;padding:clamp(48px,6vw,72px) 28px 64px}
 }
 @media (max-width:700px){
   .cols{grid-template-columns:26px minmax(0,1fr) 92px 66px}
-  .head .d1h,.head .sparkh,.head .mixh,.row .d1h,.spark,.mix,.detail .d1h,.detail .share{display:none}
+  .head .mixh,.mix,.detail .share{display:none}
   .row,.detail{min-height:44px}
   .chevron{display:none}
   .name{gap:6px}
@@ -142,7 +140,7 @@ main{max-width:1900px;margin:0 auto;padding:clamp(48px,6vw,72px) 28px 64px}
   <header class="hero">
     <div class="counter" id="counter">—</div>
     <p class="hero-sub" id="hero-sub">tokens streamed across the top 20 apps on OpenRouter since you opened this page.</p>
-    <p class="hero-rate" id="hero-rate"><span id="headline-rate">—</span><span>tok/s right now</span><span class="delta" id="headline-delta"></span></p>
+    <p class="hero-rate" id="hero-rate"><span><span id="headline-rate">—</span> tok/s right now</span><span class="delta" id="headline-delta"></span></p>
     <div class="hero-nav" id="hero-nav" hidden></div>
     <div class="day-stats" id="day-stats" hidden></div>
   </header>
@@ -225,21 +223,23 @@ function families(source){
   });
   return [...groups.values()].map(g=>({...g,versions:g.versions.sort((a,b)=>b.tps-a.tps),apps:[...g.apps.values()].filter(a=>a.tps>0).sort((a,b)=>b.tps-a.tps)})).sort((a,b)=>b.tps-a.tps);
 }
+function hasDay(){const t=(data.history||{}).total||{};return t.d24h!==null&&t.d24h!==undefined}
+function changeHorizon(){return archive?'':hasDay()?'24 h':'1 h'}
+function changeOf(hist){return hasDay()?(hist.d24h??null):(hist.d1h??null)}
 function liveRows(){
   const h=data.history||{models:{},apps:{},total:{}};
   const fams=families(data.models);
-  const hasDay=h.total&&h.total.d24h!==null&&h.total.d24h!==undefined;
   if(view==='model'){
-    return fams.map(f=>{const hist=h.models[f.id]||{};return {key:'m:'+f.id,id:f.id,label:short(f.id),sub:provider(f.id),color:modelColor(f.id),tps:f.tps,d1h:hist.d1h??null,d24h:hist.d24h??null,series:hist.series||null,isNew:hasDay&&(hist.d24h===null||hist.d24h===undefined),parts:f.apps.map(a=>({label:a.name,color:appColor(a.name),tps:a.tps})),versions:f.versions,detail:f.apps.map(a=>({label:a.name,color:appColor(a.name),tps:a.tps,swatch:true}))}});
+    return fams.map(f=>{const hist=h.models[f.id]||{};return {key:'m:'+f.id,id:f.id,label:short(f.id),sub:provider(f.id),color:modelColor(f.id),tps:f.tps,change:changeOf(hist),isNew:hasDay()&&(hist.d24h===null||hist.d24h===undefined),parts:f.apps.map(a=>({label:a.name,color:appColor(a.name),tps:a.tps})),versions:f.versions,detail:f.apps.map(a=>({label:a.name,color:appColor(a.name),tps:a.tps,swatch:true}))}});
   }
   return data.apps.map(app=>{
     const hist=h.apps[app.name]||{};
     const models=fams.map(f=>({label:short(f.id),color:modelColor(f.id),tps:(f.apps.find(a=>a.name===app.name)||{tps:0}).tps,sub:provider(f.id)})).filter(m=>m.tps>0).sort((a,b)=>b.tps-a.tps);
-    return {key:'a:'+app.name,id:app.name,label:app.name,sub:'',color:null,swatch:appColor(app.name),tps:app.totalTps,d1h:hist.d1h??null,d24h:hist.d24h??null,series:hist.series||null,isNew:false,parts:models,versions:null,detail:models};
+    return {key:'a:'+app.name,id:app.name,label:app.name,sub:'',color:null,swatch:appColor(app.name),tps:app.totalTps,change:changeOf(hist),isNew:false,parts:models,versions:null,detail:models};
   });
 }
 function archiveRows(){
-  return archive.models.map(m=>({key:'d:'+m.id,id:m.id,label:short(m.id),sub:provider(m.id),color:modelColor(m.id),tps:m.tokens,avg:m.tokens/86400,d24h:m.change,series:null,isNew:false,parts:m.apps.map(a=>({label:a.app,color:appColor(a.app),tps:a.tokens})),versions:m.versions.map(v=>({id:v.id,tps:v.tokens})),detail:m.apps.map(a=>({label:a.app,color:appColor(a.app),tps:a.tokens,swatch:true}))}));
+  return archive.models.map(m=>({key:'d:'+m.id,id:m.id,label:short(m.id),sub:provider(m.id),color:modelColor(m.id),tps:m.tokens,change:m.change,isNew:false,parts:m.apps.map(a=>({label:a.app,color:appColor(a.app),tps:a.tokens})),versions:m.versions.map(v=>({id:v.id,tps:v.tokens})),detail:m.apps.map(a=>({label:a.app,color:appColor(a.app),tps:a.tokens,swatch:true}))}));
 }
 function sorted(list){
   const dir=sortDir==='asc'?1:-1;
@@ -255,15 +255,6 @@ function sorted(list){
 }
 
 // ---- rendering ----
-function sparkline(series,color){
-  if(!series)return '';
-  const pts=series.map((v,i)=>[i,v]).filter(p=>p[1]!==null);
-  if(pts.length<2)return '';
-  const w=94,h=18,vals=pts.map(p=>p[1]),min=Math.min(...vals),max=Math.max(...vals);
-  const x=i=>(i/(series.length-1))*w,y=v=>h-((v-min)/((max-min)||1))*(h-2)-1;
-  const d=pts.map(p=>x(p[0]).toFixed(1)+','+y(p[1]).toFixed(1)).join(' ');
-  return '<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'"><polyline points="'+d+'" fill="none" stroke="'+color+'" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"></polyline></svg>';
-}
 function deltaHtml(v){
   if(v===null||v===undefined)return '<span class="flat">—</span>';
   const pct=Math.abs(100*v);
@@ -281,13 +272,10 @@ function rowHtml(r){
   const name=r.color
     ?'<strong style="--c:'+r.color+'">'+esc(r.label)+'</strong><span class="provider">'+esc(r.sub)+'</span>'+(r.isNew?'<span class="badge">new</span>':'')
     :'<i class="swatch" style="--c:'+r.swatch+'"></i><strong style="--c:var(--ink)">'+esc(r.label)+'</strong>';
-  const second=archive?'<span class="num">'+sig3(r.avg)+' <span class="unit">tok/s avg</span></span>':'<span class="num delta d1h">'+deltaHtml(r.d1h)+'</span>';
   return '<span class="rank">'+r.rank+'</span>'+
     '<span class="name"><span class="chevron">'+(open?'▾':'▸')+'</span>'+name+'</span>'+
     '<span class="num rate">'+sig3(r.tps)+' <span class="unit">'+unit()+'</span></span>'+
-    second+
-    '<span class="num delta">'+deltaHtml(r.d24h)+'</span>'+
-    '<span class="spark">'+sparkline(r.series,r.color||r.swatch)+'</span>'+
+    '<span class="num delta">'+deltaHtml(r.change)+'</span>'+
     '<span class="mix">'+mixHtml(r.parts,r.tps)+'</span>';
 }
 function detailHtml(r){
@@ -295,7 +283,7 @@ function detailHtml(r){
     '<span></span>'+
     '<span class="name">'+(swatch?'<i class="swatch" style="--c:'+color+'"></i><span>'+esc(label)+'</span>':'<strong style="--c:'+color+'">'+esc(label)+'</strong><span class="provider">'+esc(sub||'')+'</span>')+'</span>'+
     '<span class="num rate">'+sig3(tps)+' <span class="unit">'+unit()+'</span></span>'+
-    '<span class="num d1h"></span><span class="num"></span><span class="spark"></span>'+
+    '<span class="num"></span>'+
     '<span class="share"><span class="bar"><span style="width:'+(100*tps/r.tps).toFixed(1)+'%;--c:'+color+'"></span></span><span>'+(100*tps/r.tps).toFixed(1)+'%</span></span>'+
   '</div>';
   let html='';
@@ -323,7 +311,7 @@ function updateGroup(r){
 function renderHead(){
   const col=(key,label,cls)=>key?'<button type="button" class="'+cls+'" data-sort="'+key+'" aria-sort="'+(sortKey===key?(sortDir==='asc'?'ascending':'descending'):'none')+'">'+label+(sortKey===key?(sortDir==='asc'?' ↑':' ↓'):'')+'</button>':'<span class="'+cls+'">'+label+'</span>';
   headEl.innerHTML=col(null,'','')+col('name',view==='model'||archive?'model':'app','')+col('tps',archive?'day total':'tok/s','num')+
-    (archive?col('avg','average','num'):col('d1h','Δ 1 h','num d1h'))+col('d24h',archive?'vs prev day':'Δ 24 h','num')+col(null,archive?'':'24 h','sparkh')+col(null,view==='model'||archive?'apps':'models','mixh');
+    col('change',archive?'vs prev day':'Δ '+changeHorizon(),'num')+col(null,view==='model'||archive?'apps':'models','mixh');
   headEl.querySelectorAll('[data-sort]').forEach(b=>b.addEventListener('click',()=>{
     const key=b.dataset.sort;
     if(sortKey===key)sortDir=sortDir==='asc'?'desc':'asc';else{sortKey=key;sortDir=key==='name'?'asc':'desc'}
@@ -360,7 +348,8 @@ function renderLiveHero(){
   const h=data.history||{};
   heroSub.textContent='tokens streamed '+(view==='app'?'through the top 20 apps on OpenRouter':'across the top 20 apps on OpenRouter')+' since you opened this page.';
   headlineRate.textContent=sig3(data.totalTps);
-  headlineDelta.innerHTML=h.total&&h.total.d1h!==null&&h.total.d1h!==undefined?deltaHtml(h.total.d1h)+'<span> vs 1 h ago</span>':'';
+  const total=h.total||{},c=changeOf(total);
+  headlineDelta.innerHTML=c!==null?deltaHtml(c)+'<span> vs '+changeHorizon()+' ago</span>':'';
   heroRate.hidden=false;heroNav.hidden=true;dayStats.hidden=true;
   const f=data.freshness;
   el('window').textContent=age(f.medianWindowSeconds);
