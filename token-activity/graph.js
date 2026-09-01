@@ -5,6 +5,8 @@
   const APPS = ['claude', 'codex', 'pi', 'factory', 'bb'];
   const COLORS = { claude: '#d97757', codex: '#10a37f', pi: '#8b5cf6', factory: '#2f6bff', bb: '#d4a017' };
   const CELL = 10, GAP = 2, LEFT = 24, TOP = 14, SCELL = 8, SLEFT = 66, ROWGAP = 12;
+  const MPAL = ['#0f9b9b', '#e05d8a', '#4f46e5', '#7cb342', '#f59e0b', '#0ea5c9', '#a0522d', '#c026d3', '#64748b'];
+  const OTHER = '#9ba4b1', TOPN = MPAL.length, BW = 10, BH = 90;
   const dayName = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const monName = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -53,6 +55,9 @@
 .ta .ta-axis{fill:var(--ta-muted);font-size:9px}
 .ta .ta-foot{margin-top:8px;color:var(--ta-muted);display:flex;gap:16px;flex-wrap:wrap}
 .ta .ta-foot b{color:var(--ta-ink);font-weight:600}
+.ta .ta-models{margin-top:24px}
+.ta .ta-models p{margin:0 0 6px;color:var(--ta-muted)}
+.ta .ta-models .ta-apps{margin:0 0 8px}
 .ta-tip{position:fixed;display:none;pointer-events:none;background:var(--ink,#202126);color:var(--paper,#fbfdfd);padding:5px 8px;border-radius:4px;font:11px/1.45 var(--mono,"SFMono-Regular",Consolas,monospace);white-space:nowrap;z-index:9}
 `;
 
@@ -72,7 +77,7 @@
     const linkTitle = root.dataset.tokenActivity === 'link';
     const state = { metric: 'tokens', only: null, split: false };
     root.classList.add('ta');
-    root.innerHTML = `<div class="ta-head"><div>${linkTitle ? '<a class="ta-title" href="/token-activity/">token activity</a>' : '<span class="ta-title">token activity</span>'}<p class="ta-sub"></p></div><div class="ta-toggle"><button data-m="tokens" class="on">tokens</button><button data-m="output">output only</button><button data-m="cost">cost</button></div></div><div class="ta-apps"></div><div class="ta-scroll"></div><div class="ta-foot"></div>`;
+    root.innerHTML = `<div class="ta-head"><div>${linkTitle ? '<a class="ta-title" href="/token-activity/">token activity</a>' : '<span class="ta-title">token activity</span>'}<p class="ta-sub"></p></div><div class="ta-toggle"><button data-m="tokens" class="on">tokens</button><button data-m="output">output only</button><button data-m="cost">cost</button></div></div><div class="ta-apps"></div><div class="ta-scroll"></div><div class="ta-foot"></div><div class="ta-models"><p></p><div class="ta-apps"></div><div class="ta-scroll"></div></div>`;
     const $ = (s) => root.querySelector(s);
     const weeks = calendar(), days = weeks.flat();
     const unit = (v) => state.metric === 'cost' ? money(v) : fmt(v);
@@ -91,6 +96,33 @@
       state.only = state.only === b.dataset.app ? null : b.dataset.app; state.split = false; render();
     };
     tip($('.ta-scroll'));
+    tip($('.ta-models .ta-scroll'));
+
+    // model rows for a day, limited to the apps in view
+    const modelRows = (c, apps) => { const out = []; const byApp = data.models?.[c.date] || {}; for (const a of apps) for (const [m, r] of Object.entries(byApp[a] || {})) out.push([m, metricOf(r, state.metric)]); return out; };
+    function renderModels(apps) {
+      const tot = {}; for (const c of days) for (const [m, v] of modelRows(c, apps)) tot[m] = (tot[m] || 0) + v;
+      const ranked = Object.entries(tot).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
+      const top = ranked.slice(0, TOPN).map(([m]) => m);
+      const col = (m) => m === 'other' ? OTHER : MPAL[top.indexOf(m)];
+      const wk = weeks.map(w => { const o = {}; for (const c of w) for (const [m, v] of modelRows(c, apps)) { const k = top.includes(m) ? m : 'other'; o[k] = (o[k] || 0) + v; } return o; });
+      const max = Math.sqrt(Math.max(1, ...wk.map(o => Object.values(o).reduce((a, b) => a + b, 0))));
+      const W = LEFT + weeks.length * (BW + GAP);
+      let s = `<svg width="${W}" height="${BH + 14}" viewBox="0 0 ${W} ${BH + 14}">`;
+      const order = [...top, 'other'];
+      wk.forEach((o, i) => {
+        const t = Object.values(o).reduce((a, b) => a + b, 0); if (!t) return;
+        const scale = Math.sqrt(t) / max * BH / t; let y = BH;
+        const parts = order.filter(m => o[m]).map(m => `<span style="color:${col(m)}">■</span> ${m} ${unit(o[m])}`).join('<br>');
+        const t2 = esc(`<b>week of ${label(weeks[i][0].date)}</b> · ${unit(t)}<br>${parts}`);
+        for (const m of order) { if (!o[m]) continue; const h = o[m] * scale; y -= h; s += `<rect x="${LEFT + i * (BW + GAP)}" y="${y.toFixed(1)}" width="${BW}" height="${h.toFixed(1)}" fill="${col(m)}" data-tip="${t2}"/>`; }
+      });
+      s += monthLabels(LEFT, BW, BH + 11) + '</svg>';
+      const legend = ranked.slice(0, TOPN).map(([m, v]) => `<span><span class="sw" style="background:${col(m)}"></span><b style="color:${col(m)}">${m}</b> ${unit(v)}</span>`).join('') + (ranked.length > TOPN ? `<span><span class="sw" style="background:${OTHER}"></span><b style="color:${OTHER}">other</b> ${ranked.length - TOPN} models</span>` : '');
+      $('.ta-models p').textContent = ranked.length ? `by model, per week${state.only ? ', ' + state.only + ' only' : ''}. bar height is square-root scaled.` : '';
+      $('.ta-models .ta-apps').innerHTML = legend;
+      const g = $('.ta-models .ta-scroll'); g.innerHTML = ranked.length ? s : ''; g.scrollLeft = g.scrollWidth;
+    }
 
     function render() {
       const { metric, only, split } = state;
@@ -133,7 +165,10 @@
       const tokens = days.reduce((x, c) => x + apps.reduce((y, a) => y + (data.days[c.date]?.[a] ? total(data.days[c.date][a]) : 0), 0), 0);
       const cost = days.reduce((x, c) => x + apps.reduce((y, a) => y + (data.days[c.date]?.[a]?.cost || 0), 0), 0);
       const activeDays = days.filter(c => apps.some(a => val(c, a) > 0)).length;
-      let streak = 0; for (let i = days.length - 1; i >= 0 && apps.some(a => val(days[i], a) > 0); i--) streak++;
+      // streak counts through yesterday when today has no data yet
+      let i = days.length - 1; if (!apps.some(a => val(days[i], a) > 0)) i--;
+      let streak = 0; for (; i >= 0 && apps.some(a => val(days[i], a) > 0); i--) streak++;
+      renderModels(apps);
       const updated = data.generatedAt ? new Date(data.generatedAt) : null;
       const ago = updated ? Math.max(0, Math.round((Date.now() - updated) / 36e5)) : null;
       $('.ta-foot').innerHTML = `<span><b>${fmt(tokens)}</b> tokens</span><span><b>${money(cost)}</b> at list price</span><span><b>${activeDays}</b> active days</span><span><b>${streak}</b> day streak</span>${ago != null ? `<span>updated ${ago < 1 ? 'just now' : ago + 'h ago'}</span>` : ''}`;
