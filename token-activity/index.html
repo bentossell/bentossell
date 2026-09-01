@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>token activity · ben tossell</title>
+  <meta name="description" content="Every token Ben's agents used, by day, across Claude Code, Codex, pi, Factory and bb.">
+  <meta name="theme-color" content="#fbfdfd" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#151719" media="(prefers-color-scheme: dark)">
+  <link rel="canonical" href="https://bentossell.com/token-activity/">
+  <style>
+    @font-face { font-family: "Shantell Sans"; font-style: normal; font-weight: 700; font-display: swap; src: url("../assets/shantell-sans-700.ttf") format("truetype"); }
+    :root {
+      color-scheme: light dark;
+      --paper: #fbfdfd; --ink: #202126; --muted: #9ba4b1; --link: #3389e8;
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      --hand: "Shantell Sans", "Comic Sans MS", cursive;
+    }
+    @media (prefers-color-scheme: dark) { :root { --paper: #151719; --ink: #f1f3f5; --muted: #8f99a7; --link: #62a8f5; } }
+    html, body { overflow-x: hidden; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font: 12px/1.5 var(--mono); }
+    .page { box-sizing: border-box; max-width: 720px; margin: 0 auto; padding: 48px 20px 80px; }
+    h1 { font: 700 26px/1.2 var(--hand); margin: 0 0 6px; }
+    h1 a { color: inherit; text-decoration: none; }
+    .lede { color: var(--muted); margin: 0 0 28px; max-width: 60ch; }
+    .lede a { color: var(--link); }
+    .notes { margin-top: 36px; color: var(--muted); max-width: 64ch; }
+    .notes p { margin: 0 0 8px; }
+    .notes a { color: var(--link); }
+    .notes b { color: var(--ink); font-weight: 600; }
+    [data-token-activity] .ta-title { display: none; }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <h1><a href="/">ben tossell</a> / token activity</h1>
+    <p class="lede">i make stuff with agents all day. this is the receipt. every token, every day, across every agent app i use, scanned from the logs on my two macs and refreshed hourly.</p>
+    <div data-token-activity></div>
+    <div class="notes">
+      <p><b>apps.</b> claude is claude code. codex is the openai codex cli and app. pi is the pi coding agent. factory is droid. bb is my own agent runner, which drives the others inside its own workspaces.</p>
+      <p><b>tokens.</b> input, output, cache read and cache write added together. most of it is cache read, which is why "output only" looks so different. output is the closest thing to effort.</p>
+      <p><b>cost.</b> what the tokens would cost at list price on each vendor's api, from <a href="https://models.dev">models.dev</a>. i pay subscriptions, so this is the number i avoided, not the number i paid.</p>
+      <p><b>how.</b> a node script reads each app's local session logs, buckets by day, and merges both machines. no content leaves the machines, only counts.</p>
+    </div>
+  </main>
+  <script src="graph.js"></script>
+</body>
+</html>

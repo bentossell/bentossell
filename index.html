@@ -4,6 +4,23 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Ben Tossell — builder + investor.">
+  <link rel="canonical" href="https://bentossell.com/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Ben Tossell">
+  <meta property="og:title" content="Ben Tossell">
+  <meta property="og:description" content="Ben Tossell — builder + investor.">
+  <meta property="og:url" content="https://bentossell.com/">
+  <meta property="og:image" content="https://bentossell.com/assets/social-home.png">
+  <meta property="og:image:secure_url" content="https://bentossell.com/assets/social-home.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Ben Tossell — builder and investor">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Ben Tossell">
+  <meta name="twitter:description" content="Ben Tossell — builder + investor.">
+  <meta name="twitter:image" content="https://bentossell.com/assets/social-home.png">
+  <meta name="twitter:image:alt" content="Ben Tossell — builder and investor">
   <meta name="theme-color" content="#fbfdfd" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#151719" media="(prefers-color-scheme: dark)">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" sizes="any">
@@ -562,6 +579,7 @@
 
   </main>
 
+  <script src="token-activity/graph.js" defer></script>
   <script type="module">
     import { annotate } from "https://unpkg.com/rough-notation@0.5.1/lib/rough-notation.esm.js";
 
@@ -633,6 +651,13 @@
         if (expandAnnotationMatch) {
           flushParagraph();
           model.expandAnnotation = expandAnnotationMatch[1].trim();
+          continue;
+        }
+
+        const embedMatch = line.match(/^<!--\s*embed:\s*(.+?)\s*-->$/i);
+        if (embedMatch) {
+          flushParagraph();
+          model.sections.push({ embed: embedMatch[1].trim() });
           continue;
         }
 
@@ -1039,6 +1064,8 @@
     function renderPage(model) {
       const intro = model.intro.map((paragraph) => `<p>${renderInline(paragraph)}</p>`).join("");
       const sections = model.sections.map((section) => {
+        if (section.embed === "token-activity") return `<section class="section embed"><div data-token-activity="link"></div></section>`;
+        if (section.embed) return "";
         const className = section.title.toLowerCase() === "previously" ? "tree previously" : "tree";
         const isNow = section.title.toLowerCase() === "now";
         const isPreviously = section.title.toLowerCase() === "previously";
@@ -1057,6 +1084,7 @@
         link.addEventListener("click", (event) => event.stopPropagation());
       });
 
+      window.tokenActivityInit?.();
       setupMascot();
       setupRoughAnnotations();
     }
