@@ -60,6 +60,9 @@ main{max-width:1900px;margin:0 auto;padding:clamp(48px,6vw,72px) 28px 64px}
 .views{display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:3px}
 .views button{flex:1;padding:6px 10px;border:0;border-radius:2px;background:transparent;color:var(--muted);font:inherit;font-size:11px;font-weight:600;white-space:nowrap;cursor:pointer}
 .views button[aria-pressed="true"]{background:var(--chip-on);color:var(--chip-on-ink)}
+.views button:disabled{color:var(--faint);cursor:default}
+.horizons{margin-top:8px}
+.views-label{padding:6px 4px 6px 8px;font-size:11px;font-weight:600;color:var(--muted)}
 .legend{display:grid;grid-template-columns:1fr 1fr;gap:7px 14px;margin-top:18px;font-size:10px;line-height:1.25;color:var(--sub)}
 .legend span{display:flex;align-items:center;min-width:0;padding:3px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .legend span.on{background:var(--legend-on);color:var(--ink);font-weight:700}
@@ -159,6 +162,13 @@ main{max-width:1900px;margin:0 auto;padding:clamp(48px,6vw,72px) 28px 64px}
         <button type="button" data-view="model" aria-pressed="true">By model</button>
         <button type="button" data-view="app" aria-pressed="false">By app</button>
       </div>
+      <div class="views horizons" id="horizons" role="group" aria-label="Change measured against">
+        <span class="views-label">Δ vs</span>
+        <button type="button" data-h="1h" aria-pressed="true">1 h</button>
+        <button type="button" data-h="6h" aria-pressed="false">6 h</button>
+        <button type="button" data-h="12h" aria-pressed="false">12 h</button>
+        <button type="button" data-h="24h" aria-pressed="false">24 h</button>
+      </div>
       <div class="legend" id="legend" aria-label="Colour key"></div>
       <div class="status" id="status">Loading the latest measurement…</div>
     </aside>
@@ -223,9 +233,18 @@ function families(source){
   });
   return [...groups.values()].map(g=>({...g,versions:g.versions.sort((a,b)=>b.tps-a.tps),apps:[...g.apps.values()].filter(a=>a.tps>0).sort((a,b)=>b.tps-a.tps)})).sort((a,b)=>b.tps-a.tps);
 }
-function hasDay(){const t=(data.history||{}).total||{};return t.d24h!==null&&t.d24h!==undefined}
-function changeHorizon(){return archive?'':hasDay()?'24 h':'1 h'}
-function changeOf(hist){return hasDay()?(hist.d24h??null):(hist.d1h??null)}
+let horizon='1h';try{horizon=localStorage.getItem('rt-horizon')||'1h'}catch{}
+const HORIZONS=['1h','6h','12h','24h'];
+function available(h){const t=(data.history||{}).total||{};const v=t['d'+h];return v!==null&&v!==undefined}
+function hasDay(){return available('24h')}
+function changeHorizon(){return archive?'':horizon.replace('h',' h')}
+function changeOf(hist){return hist['d'+horizon]??null}
+function renderHorizons(){
+  if(!data)return;
+  if(!available(horizon)){const first=HORIZONS.find(available);if(first)horizon=first}
+  document.querySelectorAll('#horizons button').forEach(b=>{b.disabled=!available(b.dataset.h);b.setAttribute('aria-pressed',String(b.dataset.h===horizon))});
+}
+document.querySelectorAll('#horizons button').forEach(b=>b.addEventListener('click',()=>{horizon=b.dataset.h;try{localStorage.setItem('rt-horizon',horizon)}catch{}render()}));
 function liveRows(){
   const h=data.history||{models:{},apps:{},total:{}};
   const fams=families(data.models);
@@ -341,7 +360,8 @@ function render(){
   if(!reduceMotion)rows.forEach(r=>{const g=groupEls.get(r.key),old=before.get(r.key);if(old===undefined)return;const delta=old-g.getBoundingClientRect().top;if(Math.abs(delta)<1)return;g.getAnimations().forEach(a=>a.cancel());g.animate([{transform:'translateY('+delta+'px)'},{transform:'translateY(0)'}],{duration:750,easing:'cubic-bezier(.2,.7,.2,1)'})});
   moreEl.hidden=all.length<=LIMIT;
   moreButton.textContent=showAll?'Show top '+LIMIT:'Show all '+all.length+(view==='app'&&!archive?' apps':' models');
-  renderHead();renderLegend();
+  renderHead();renderLegend();renderHorizons();
+  el('horizons').hidden=!!archive;
   if(archive)renderArchiveHero();else renderLiveHero();
 }
 function renderLiveHero(){
@@ -370,11 +390,11 @@ function renderArchiveHero(){
   const prev=i>0?archiveDays[i-1]:null,next=i>=0&&i<archiveDays.length-1?archiveDays[i+1]:null;
   heroNav.innerHTML=(prev?'<a class="button" href="#/'+prev+'">← '+prev+'</a>':'')+(next?'<a class="button" href="#/'+next+'">'+next+' →</a>':'')+'<a class="button" href="#">Today, live →</a>';
   heroNav.hidden=false;
-  const peakAt=archive.peak.hour===null?'—':String(archive.peak.hour).padStart(2,'0')+':00 UTC';
-  dayStats.innerHTML='<div><span>tokens in the day</span><strong>'+sig3(archive.totalTokens)+'</strong></div><div><span>average rate</span><strong>'+sig3(archive.averageTps)+' tok/s</strong></div><div><span>peak hour · '+peakAt+'</span><strong>'+sig3(archive.peak.tps)+' tok/s</strong></div><div><span>models seen</span><strong>'+archive.models.length+'</strong></div>';
+  const peak=archive.peak&&archive.peak.hour!==null?'<div><span>peak hour · '+String(archive.peak.hour).padStart(2,'0')+':00 UTC</span><strong>'+sig3(archive.peak.tps)+' tok/s</strong></div>':'<div><span>peak hour</span><strong>—</strong></div>';
+  dayStats.innerHTML='<div><span>tokens in the day</span><strong>'+sig3(archive.totalTokens)+'</strong></div><div><span>average rate</span><strong>'+sig3(archive.averageTps)+' tok/s</strong></div>'+peak+'<div><span>models seen</span><strong>'+archive.models.length+'</strong></div>';
   dayStats.hidden=false;
   freshnessEl.hidden=true;
-  statusEl.classList.remove('error');statusEl.textContent='Written once at midnight UTC. This page does not change.';
+  statusEl.classList.remove('error');statusEl.textContent=archive.hourly?'Written once at midnight UTC. This page does not change.':'Day totals from OpenRouter. No hourly detail before 1 Sep 2026.';
   footnote.hidden=false;footnote.innerHTML='One page per day. <a href="#">Back to the live board</a>.';
 }
 
