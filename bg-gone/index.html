@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>bg gone · ben tossell</title>
+  <meta name="description" content="Remove the background from any image. Runs in your browser, nothing is uploaded.">
+  <meta name="theme-color" content="#fbfdfd" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#151719" media="(prefers-color-scheme: dark)">
+  <link rel="canonical" href="https://bentossell.com/bg-gone/">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" sizes="any">
+  <link rel="icon" href="/favicon.ico" sizes="32x32">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <meta property="og:title" content="bg gone">
+  <meta property="og:description" content="Remove the background from any image. Runs in your browser, nothing is uploaded.">
+  <style>
+    @font-face { font-family: "Shantell Sans"; font-style: normal; font-weight: 700; font-display: swap; src: url("../assets/shantell-sans-700.ttf") format("truetype"); }
+    :root {
+      color-scheme: light dark;
+      --paper: #fbfdfd; --ink: #202126; --muted: #9ba4b1; --link: #3389e8; --line: #dfe3e8; --check: #e3e6ea;
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      --hand: "Shantell Sans", "Comic Sans MS", cursive;
+    }
+    @media (prefers-color-scheme: dark) { :root { --paper: #151719; --ink: #f1f3f5; --muted: #8f99a7; --link: #62a8f5; --line: #2c3036; --check: #2a2e33; } }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; overflow-x: hidden; }
+    body { background: var(--paper); color: var(--ink); font: 12px/1.5 var(--mono); }
+    .page { height: 100%; max-width: 960px; margin: 0 auto; padding: 48px 20px 40px; display: flex; flex-direction: column; gap: 14px; }
+    h1 { font: 700 26px/1.2 var(--hand); margin: 0; }
+    h1 a { color: inherit; text-decoration: none; }
+    .lede { color: var(--muted); margin: 0; max-width: 60ch; }
+    .lede a { color: var(--link); }
+    #drop { flex: 1; min-height: 220px; border: 1px dashed var(--line); display: flex; align-items: center; justify-content: center; text-align: center; color: var(--muted); cursor: pointer; padding: 20px; }
+    #drop.over { border-color: var(--ink); color: var(--ink); }
+    #drop[aria-disabled="true"] { cursor: default; }
+    #drop u { text-decoration-color: var(--line); }
+    #drop small { display: block; margin-top: 6px; }
+    #hint { min-height: 1.5em; margin: -6px 0 0; color: var(--muted); font-size: 10px; }
+    input[type=file] { display: none; }
+    #work { display: none; flex: 1; flex-direction: column; gap: 10px; min-height: 0; }
+    #work.on { display: flex; }
+    #panes { flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: minmax(0, 1fr); gap: 10px; min-height: 0; }
+    .pane { position: relative; min-height: 0; overflow: hidden; border: 1px solid var(--line); }
+    .pane img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; display: block; }
+    /* The canvas is sized by fit() to the same contained box as the original, so the two
+       line up. The checkerboard lives on the canvas, not the pane, so the background
+       (checker or solid colour) never spills past the image bounds. */
+    #cv { position: absolute; inset: 0; margin: auto; display: block; --c: var(--check); background-color: var(--paper); background-image: linear-gradient(45deg, var(--c) 25%, transparent 25%), linear-gradient(-45deg, var(--c) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, var(--c) 75%), linear-gradient(-45deg, transparent 75%, var(--c) 75%); background-size: 16px 16px; background-position: 0 0, 0 8px, 8px -8px, -8px 0; }
+    #out.solid #cv { background-image: none; }
+    .pane small { position: absolute; left: 6px; top: 4px; color: var(--muted); z-index: 1; }
+    #bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; position: relative; }
+    #bar .sp { flex: 1; }
+    button { font: inherit; padding: 4px 9px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); cursor: pointer; border-radius: 3px; }
+    button:disabled { color: var(--muted); cursor: default; }
+    button.pri { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+    button.inline { padding: 1px 6px; color: var(--link); border-color: var(--line); }
+    #chips { display: flex; align-items: center; gap: 6px; }
+    .chip { width: 22px; height: 22px; padding: 0; border-radius: 4px; outline: 2px solid transparent; outline-offset: 2px; }
+    .chip.on { outline-color: var(--ink); }
+    .chip.trans { background: repeating-conic-gradient(var(--check) 0 25%, var(--paper) 0 50%) 0 0/10px 10px; }
+    .chip.plus { border-style: dashed; font-size: 14px; line-height: 1; }
+    .chip.plus::before { content: "+"; }
+    #pop { position: absolute; bottom: calc(100% + 8px); z-index: 5; width: 240px; padding: 10px; display: none; flex-direction: column; gap: 8px; background: var(--paper); border: 1px solid var(--line); border-radius: 4px; box-shadow: 0 6px 24px rgba(0,0,0,.12); }
+    #pop.open { display: flex; }
+    #sv { position: relative; height: 130px; border: 1px solid var(--line); border-radius: 3px; cursor: crosshair; touch-action: none; background: linear-gradient(to top, #000, transparent), linear-gradient(to right, #fff, transparent), var(--hue, #f00); }
+    #sv i { position: absolute; width: 12px; height: 12px; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 0 1px rgba(0,0,0,.5); transform: translate(-50%, -50%); pointer-events: none; }
+    #hue { -webkit-appearance: none; appearance: none; width: 100%; height: 12px; margin: 0; border: 1px solid var(--line); border-radius: 6px; background: linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00); }
+    #hue::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: #fff; border: 1px solid rgba(0,0,0,.4); }
+    #hue::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: #fff; border: 1px solid rgba(0,0,0,.4); }
+    #pop .row { display: flex; align-items: center; gap: 6px; }
+    #hex { font: inherit; flex: 1; padding: 4px 6px; border: 1px solid var(--line); border-radius: 3px; background: var(--paper); color: var(--ink); }
+    #hex.bad { border-color: #d05050; }
+    #sw { width: 24px; height: 24px; border: 1px solid var(--line); border-radius: 3px; }
+    #status { color: var(--muted); min-height: 1.5em; }
+    #status.err { color: #d05050; }
+    #prog { width: 100%; height: 2px; background: var(--line); display: none; }
+    #prog i { display: block; height: 100%; width: 0; background: var(--ink); }
+    .notes { color: var(--muted); max-width: 64ch; }
+    .notes p { margin: 0 0 6px; }
+    .notes a { color: var(--link); }
+    .notes b { color: var(--ink); font-weight: 600; }
+    .notes code { color: var(--ink); }
+    @media (max-width: 640px) { #panes { grid-template-columns: 1fr; } .page { padding-top: 28px; } }
+  </style>
+</head>
+<body>
+<main class="page">
+  <h1><a href="/">ben tossell</a> / bg gone</h1>
+  <p class="lede">remove.bg is shutting down in december, so here's mine. drop an image, get a cutout. the model runs in your browser, nothing is uploaded. open source, <a href="https://github.com/bentossell/bg-gone" target="_blank" rel="noopener">clone it</a>.</p>
+
+  <div id="drop">
+    <div>drop an image, paste one, or <u>choose a file</u><small>jpg, png, webp.</small></div>
+    <input id="file" type="file" accept="image/*" multiple>
+  </div>
+  <p id="hint" aria-live="polite"></p>
+
+  <div id="work">
+    <div id="panes">
+      <div class="pane"><small>original</small><img id="src" alt=""></div>
+      <div class="pane" id="out"><small>result</small><canvas id="cv"></canvas></div>
+    </div>
+    <div id="prog"><i></i></div>
+    <div id="status"></div>
+    <div id="bar">
+      <div id="chips">
+        <button class="chip trans on" data-bg="" title="transparent"></button>
+        <button class="chip" data-bg="#ffffff" style="background:#fff" title="white"></button>
+        <button class="chip" data-bg="#000000" style="background:#000" title="black"></button>
+        <button class="chip plus" id="plus" title="custom colour"></button>
+      </div>
+      <div id="pop">
+        <div id="sv"><i></i></div>
+        <input id="hue" type="range" min="0" max="360" value="212">
+        <div class="row"><input id="hex" value="#4f9cff" spellcheck="false" maxlength="7" placeholder="#hex or name"><i id="sw"></i></div>
+      </div>
+      <span class="sp"></span>
+      <button id="dl" class="pri" disabled>download png</button>
+      <button id="again">another</button>
+    </div>
+  </div>
+
+  <div class="notes">
+    <p><b>how.</b> <a href="https://github.com/ZhengPeng7/BiRefNet" target="_blank" rel="noopener">BiRefNet</a> lite runs on your gpu through <a href="https://huggingface.co/docs/transformers.js" target="_blank" rel="noopener">transformers.js</a>. no webgpu? it falls back to RMBG-1.4 on wasm, slower but fine. the model loads and warms up while you pick a file, and is cached after the first visit.</p>
+    <p><b>terminal.</b> <code>npx github:bentossell/bg-gone photo.jpg</code> does the same thing from the command line. batch folders, solid backgrounds, pipes. <a href="https://github.com/bentossell/bg-gone" target="_blank" rel="noopener">source on github</a>.</p>
+    <p><b>agents.</b> <button id="copy" class="inline">copy instructions for your agent</button></p>
+  </div>
+</main>
+
+<script type="text/plain" id="agent-instructions">
+bg gone: remove image backgrounds locally, nothing is uploaded. by @bentossell. https://bentossell.com/bg-gone/
+
+Option A, in a browser (GPU, about 5s per image after a one-time 110MB model download):
+- Open https://bentossell.com/bg-gone/?src=<image url> and it processes automatically. Add &bg=white, &bg=black, &bg=<css colour name> or &bg=<hex without the #> for a solid background.
+- The cutout renders into canvas#cv. The element #status reads "WxH · Ns" when done, or starts with "failed".
+- Read the result with document.querySelector('#cv').toDataURL('image/png'), or click #dl to download <name>-no-bg.png.
+- Headless Chrome works with --enable-unsafe-webgpu. Drive it over the DevTools protocol and poll #status, since the compute runs off the main thread.
+
+Option B, from the terminal (Node 20+, CPU only, about 6s per image on an M-series Mac after a one-time 224MB model download):
+  npx github:bentossell/bg-gone photo.jpg                              # writes photo-no-bg.png next to it
+  npx github:bentossell/bg-gone a.jpg b.png --bg white --out ./cut     # batch, solid background, output folder
+  npx github:bentossell/bg-gone ./photos --mask                        # every image in a folder, matte only
+  cat photo.jpg | npx github:bentossell/bg-gone - > cutout.png         # stdin to stdout
+- Inputs can be files, folders, http(s) urls, or - for stdin. --bg takes white, black, any css colour name, or hex.
+- Output is a PNG with alpha, or a solid background with --bg. Same model as the site (BiRefNet lite, MIT licence). --model rmbg is smaller and faster.
+- Model files cache in ~/.cache/bg-gone, so later runs skip the download. Source and full options: https://github.com/bentossell/bg-gone
+</script>
+
+<script type="module">
+const $ = s => document.querySelector(s);
+const drop = $('#drop'), file = $('#file'), work = $('#work'), srcImg = $('#src');
+const cv = $('#cv'), ctx = cv.getContext('2d'), out = $('#out');
+const status = $('#status'), prog = $('#prog'), progBar = $('#prog i'), dl = $('#dl'), hint = $('#hint');
+let queue = [], cut = null, name = 'image', busy = false;
+
+const say = (t, err) => { status.textContent = t; status.className = err ? 'err' : ''; };
+const q = new URLSearchParams(location.search);
+const mobile = navigator.userAgentData?.mobile === true
+  || /Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent)
+  || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+// Model: BiRefNet-lite on WebGPU (best), RMBG-1.4 int8 on WASM as fallback.
+const gpu = !!navigator.gpu;
+const M = gpu
+  ? { id: 'jiabins0303/birefnet-lite-1024-webgpu', opts: { device: 'webgpu', dtype: 'fp32', model_file_name: 'model_fp16' }, size: '110MB' }
+  : { id: 'briaai/RMBG-1.4', opts: { device: 'wasm', dtype: 'q8', config: { model_type: 'custom' } }, size: '45MB' };
+
+// Load on page open and run one blank image through, so the download and
+// GPU shader compile happen while the visitor is still picking a file.
+let ready;
+function load() {
+  if (ready) return ready;
+  ready = (async () => {
+    const { AutoModel, AutoProcessor, RawImage } = await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.2.0');
+    const model = await AutoModel.from_pretrained(M.id, { ...M.opts, progress_callback: p => {
+      if (p.status === 'progress' && p.file.endsWith('.onnx')) { hint.textContent = `getting things ready… ${Math.round(p.progress)}%`; progBar.style.width = p.progress + '%'; }
+    } });
+    const processor = gpu
+      ? await AutoProcessor.from_pretrained(M.id)
+      : await AutoProcessor.from_pretrained(M.id, { config: { do_normalize: true, do_pad: false, do_rescale: true, do_resize: true, image_mean: [0.5, 0.5, 0.5], feature_extractor_type: 'ImageFeatureExtractor', image_std: [1, 1, 1], resample: 2, rescale_factor: 1 / 255, size: { width: 1024, height: 1024 } } });
+    const run = async (image) => {
+      const { pixel_values } = await processor(image);
+      if (gpu) { const { output_image } = await model({ input_image: pixel_values }); return output_image[0].sigmoid(); }
+      const { output } = await model({ input: pixel_values }); return output[0];
+    };
+    hint.textContent = 'almost there…';
+    await run(new RawImage(new Uint8ClampedArray([128, 128, 128]), 1, 1, 3));
+    hint.textContent = 'ready when you are.';
+    return { run, RawImage };
+  })();
+  ready.catch(() => { hint.textContent = 'couldn’t get ready — refresh to try again.'; });
+  return ready;
+}
+if (mobile) {
+  drop.setAttribute('aria-disabled', 'true');
+  hint.textContent = 'not supported on mobile…yet';
+} else {
+  hint.textContent = 'getting things ready…';
+  load();
+}
+
+async function matte(f) {
+  const { run, RawImage } = await load();
+  const image = await RawImage.fromBlob(f);
+  const t = await run(image);
+  const mask = await RawImage.fromTensor(t.mul(255).to('uint8')).resize(image.width, image.height);
+  const c = document.createElement('canvas'); c.width = image.width; c.height = image.height;
+  const x = c.getContext('2d'); x.drawImage(image.toCanvas(), 0, 0);
+  const d = x.getImageData(0, 0, c.width, c.height);
+  for (let i = 0, j = 3; i < mask.data.length; i++, j += 4) d.data[j] = mask.data[i];
+  x.putImageData(d, 0, 0);
+  return c;
+}
+
+drop.onclick = () => { if (!mobile) file.click(); };
+file.onchange = () => { take([...file.files]); file.value = ''; };
+addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('over'); });
+addEventListener('dragleave', () => drop.classList.remove('over'));
+addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('over'); take([...e.dataTransfer.files]); });
+addEventListener('paste', e => take([...e.clipboardData.files]));
+
+function take(files) {
+  if (mobile) return;
+  files = files.filter(f => f.type.startsWith('image/'));
+  if (!files.length) return;
+  queue.push(...files);
+  if (!busy) next();
+}
+
+async function next() {
+  const f = queue.shift();
+  if (!f) { busy = false; return; }
+  busy = true;
+  name = f.name.replace(/\.[^.]+$/, '') || 'image';
+  drop.style.display = 'none'; hint.hidden = true; work.classList.add('on');
+  srcImg.src = URL.createObjectURL(f);
+  cut = null; dl.disabled = true; cv.width = cv.height = 0; fit();
+  prog.style.display = 'block'; progBar.style.width = '0';
+  say('working…');
+  const t0 = performance.now();
+  try {
+    cut = await matte(f);
+    cv.width = cut.width; cv.height = cut.height; fit();
+    paint();
+    dl.disabled = false;
+    const s = ((performance.now() - t0) / 1000).toFixed(1);
+    say(`${cut.width}×${cut.height} · ${s}s${queue.length ? ` · ${queue.length} more queued` : ''}`);
+  } catch (e) {
+    console.error(e);
+    say('failed: ' + (e.message || e), true);
+  }
+  prog.style.display = 'none';
+  if (queue.length) setTimeout(next, 400); else busy = false;
+}
+
+// Background picker: three fixed chips plus a custom chip that opens a
+// saturation/brightness square, a hue slider and a hex field.
+const chips = $('#chips'), plus = $('#plus'), pop = $('#pop'), sv = $('#sv'), dot = $('#sv i'), hue = $('#hue'), hex = $('#hex'), sw = $('#sw');
+let bgColor = '';                  // '' means transparent
+let h = 212, s = 0.69, v = 1;      // custom colour as hsv
+const bg = () => bgColor;
+
+const hsv2hex = (h, s, v) => '#' + [5, 3, 1].map(n => { const k = (n + h / 60) % 6; return Math.round((v - v * s * Math.max(0, Math.min(k, 4 - k, 1))) * 255).toString(16).padStart(2, '0'); }).join('');
+const hex2hsv = x => {
+  const [r, g, b] = [1, 3, 5].map(i => parseInt(x.slice(i, i + 2), 16) / 255);
+  const M = Math.max(r, g, b), d = M - Math.min(r, g, b);
+  let hh = 0; if (d) hh = M === r ? ((g - b) / d) % 6 : M === g ? (b - r) / d + 2 : (r - g) / d + 4;
+  return [(hh * 60 + 360) % 360, M ? d / M : 0, M];
+};
+// Accepts "#4f9cff", "4f9cff", "fff", or a css colour name. Returns "#rrggbb" or null.
+function normalise(str) {
+  str = (str || '').trim(); if (!str) return null;
+  if (/^([0-9a-f]{3}){1,2}$/i.test(str)) str = '#' + str;
+  const c = document.createElement('canvas').getContext('2d');
+  c.fillStyle = '#000'; c.fillStyle = str; const a = c.fillStyle;
+  c.fillStyle = '#fff'; c.fillStyle = str; if (a !== c.fillStyle) return null;
+  if (a[0] === '#') return a;
+  const m = a.match(/\d+/g); return m ? '#' + m.slice(0, 3).map(n => (+n).toString(16).padStart(2, '0')).join('') : null;
+}
+
+function pick(c, btn) {
+  bgColor = c;
+  chips.querySelectorAll('.chip.on').forEach(x => x.classList.remove('on'));
+  btn.classList.add('on');
+  paint();
+}
+chips.querySelectorAll('.chip[data-bg]').forEach(b => b.onclick = () => pick(b.dataset.bg, b));
+
+// Redraw the panel from h/s/v, colour the custom chip, select it.
+function draw(keepHex) {
+  const c = hsv2hex(h, s, v);
+  sv.style.setProperty('--hue', `hsl(${h} 100% 50%)`);
+  dot.style.left = s * 100 + '%'; dot.style.top = (1 - v) * 100 + '%';
+  hue.value = h; sw.style.background = c; plus.style.background = c; plus.classList.remove('plus');
+  if (!keepHex) { hex.value = c; hex.classList.remove('bad'); }
+  localStorage.setItem('bg-custom', c);
+  pick(c, plus);
+}
+const setCustom = c => { [h, s, v] = hex2hsv(c); draw(); };
+const drag = e => { const r = sv.getBoundingClientRect(); s = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)); v = 1 - Math.min(1, Math.max(0, (e.clientY - r.top) / r.height)); draw(); };
+sv.onpointerdown = e => { sv.setPointerCapture(e.pointerId); sv.onpointermove = drag; drag(e); };
+sv.onpointerup = sv.onpointercancel = () => { sv.onpointermove = null; };
+hue.oninput = () => { h = +hue.value; draw(); };
+hex.oninput = () => { const c = normalise(hex.value); hex.classList.toggle('bad', !c && hex.value.length > 1); if (c) { [h, s, v] = hex2hsv(c); draw(true); } };
+hex.onkeydown = e => { if (e.key === 'Enter') pop.classList.remove('open'); };
+
+const closePop = e => { if (e && (pop.contains(e.target) || e.target === plus)) return; pop.classList.remove('open'); removeEventListener('pointerdown', closePop, true); };
+plus.onclick = () => {
+  if (!plus.classList.contains('plus')) pick(hsv2hex(h, s, v), plus);
+  pop.style.left = plus.offsetLeft + 'px';
+  if (pop.classList.toggle('open')) setTimeout(() => addEventListener('pointerdown', closePop, true));
+};
+addEventListener('keydown', e => { if (e.key === 'Escape') closePop(); });
+
+// Restore the last custom colour onto the chip, but keep transparent selected.
+{ const c = localStorage.getItem('bg-custom'); if (c && normalise(c)) { [h, s, v] = hex2hsv(c); hex.value = c; sw.style.background = c; plus.style.background = c; plus.classList.remove('plus'); } }
+sv.style.setProperty('--hue', `hsl(${h} 100% 50%)`); dot.style.left = s * 100 + '%'; dot.style.top = (1 - v) * 100 + '%'; sw.style.background = hsv2hex(h, s, v);
+
+function paint() {
+  if (!cut) return;
+  const c = bg();
+  ctx.clearRect(0, 0, cv.width, cv.height);
+  if (c) { ctx.fillStyle = c; ctx.fillRect(0, 0, cv.width, cv.height); }
+  ctx.drawImage(cut, 0, 0);
+  out.classList.toggle('solid', !!c);
+}
+// Scale the canvas to fit inside the pane, same as object-fit: contain does for the original.
+function fit() {
+  if (!cv.width || !cv.height) { cv.style.width = cv.style.height = '0'; return; }
+  const k = Math.min(out.clientWidth / cv.width, out.clientHeight / cv.height);
+  cv.style.width = cv.width * k + 'px'; cv.style.height = cv.height * k + 'px';
+}
+new ResizeObserver(fit).observe(out);
+// Size the empty canvas to the original as soon as it decodes, so the checkerboard
+// placeholder shows where the result will land while the model works.
+srcImg.onload = () => { if (!cut) { cv.width = srcImg.naturalWidth; cv.height = srcImg.naturalHeight; fit(); } };
+
+dl.onclick = () => cv.toBlob(b => {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(b); a.download = `${name}-no-bg.png`; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+}, 'image/png');
+
+$('#again').onclick = () => { queue = []; work.classList.remove('on'); drop.style.display = 'flex'; hint.hidden = false; say(''); };
+
+const copy = $('#copy');
+copy.onclick = async () => {
+  const text = $('#agent-instructions').textContent.trim() + '\n';
+  let ok = false;
+  try { await navigator.clipboard.writeText(text); ok = true; } catch {}
+  if (!ok) {
+    const ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select(); ok = document.execCommand('copy'); ta.remove();
+  }
+  copy.textContent = ok ? 'copied' : 'copy failed';
+  setTimeout(() => { copy.textContent = 'copy instructions for your agent'; }, 1500);
+};
+
+// ?src=<image url> processes on load; &bg=white|black|<name>|<hex without #> picks the background.
+const src = q.get('src') || q.get('test');
+if (q.get('bg')) {
+  const c = normalise(q.get('bg'));
+  const b = c && chips.querySelector(`.chip[data-bg="${c}"]`);
+  if (b) pick(c, b); else if (c) setCustom(c);
+}
+if (src && !mobile) Promise.all(src.split(',').map(u => fetch(u).then(r => r.blob())))
+  .then(bs => take(bs.map((b, i) => new File([b], (src.split(',')[i].split('/').pop().split('?')[0] || 'image'), { type: b.type || 'image/jpeg' }))))
+  .catch(e => say('failed to fetch ' + src + ': ' + e.message, true));
+</script>
+</body>
+</html>
