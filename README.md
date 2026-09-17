@@ -9,7 +9,6 @@ a self-taught internet builder (i can't code). i make sites and apps with agents
 - \[bens bites\]\([bensbites.com](https://bensbites.com)\)
   - est 2022
   - where i post my builds and walkthroughs
-  - [![How I built this](/assets/how-i-built-this.png)](https://www.bensbites.com/p/how-i-built-this) [![Ben's session](/assets/bens-session.png)](https://www.bensbites.com/p/bens-session)
 <!-- always-expanded -->
 - building
   - [realtime-tokens](https://bentossell.com/realtime-tokens/) — live OpenRouter model traffic
