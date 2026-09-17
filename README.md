@@ -1,23 +1,37 @@
-# bentossell
+# [@bentossell](https://x.com/bentossell)
 
-Ben Tossell's personal site, based on the `v2` frame in `~/tldraw/site.tldraw`.
+a self-taught internet builder (i can't code). i make sites and apps with agents all day and explain how it works as i'm learning.
 
-## Edit the site
+<!-- expand-annotation: expand -->
 
-Edit `content.md`. It uses standard Markdown headings, nested lists, links, bold text, and linked images. Refresh the page to see changes.
+## Now
 
-## Run locally
+- \[bens bites\]\([bensbites.com](https://bensbites.com)\)
+  - est 2022
+  - where i post my builds and walkthroughs
+  - [![How I built this](/assets/how-i-built-this.png)](https://www.bensbites.com/p/how-i-built-this) [![Ben's session](/assets/bens-session.png)](https://www.bensbites.com/p/bens-session)
+<!-- always-expanded -->
+- building
+  - [realtime-tokens](https://bentossell.com/realtime-tokens/) — live OpenRouter model traffic
+  - [bg-gone](https://bentossell.com/bg-gone/) — remove image backgrounds in your browser
+- investor
+  - 100k cheques
+  - developer tools and infra
+  - portfolio
+    - **Supabase** seed
+    - **Etched** seed
+    - **Factory** seed
+    - **Earendil** seed
+    - **SF Compute** seed
+    - **Anthropic** series B [SPV 🤞]
+    - **Opencode** seed [exited]
+    - [your co? reach out.](https://x.com/bentossell)
 
-```bash
-npm run dev
-```
+<!-- markdown-annotation: markdown formatting -->
 
-Open [http://127.0.0.1:4173](http://127.0.0.1:4173).
+## Previously
 
-## Main files
-
-- `index.html` — layout, tree interactions, and links
-- `content.md` — all visible site copy, links, and tree content
-- `assets/shantell-sans-700.ttf` — self-hosted Shantell Sans heading font
-- `assets/how-i-built-this.png` — Ben's Bites post image
-- `assets/bens-session.png` — Ben's Bites post image
+- **Sequoia** scout
+- **a16z** scout
+- **Makerpad** founder [exited to Zapier]
+- **Product Hunt** [2015-2017]
