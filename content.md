@@ -1,6 +1,6 @@
 # [@bentossell](https://x.com/bentossell)
 
-i can't code (i'm non-technical) but i'm a self-taught internet builder. i make stuff with agents all day and explain how it works as i'm learning.
+a self-taught internet builder (i can't code). i make sites and apps with agents all day and explain how it works as i'm learning.
 
 <!-- expand-annotation: expand -->
 
@@ -9,7 +9,13 @@ i can't code (i'm non-technical) but i'm a self-taught internet builder. i make 
 - \[bens bites\]\([bensbites.com](https://bensbites.com)\)
   - est 2022
   - where i post my builds and walkthroughs
-  - [![How I built this](assets/how-i-built-this.png)](https://www.bensbites.com/p/how-i-built-this) [![Ben's session](assets/bens-session.png)](https://www.bensbites.com/p/bens-session)
+  - [How I built this](https://www.bensbites.com/p/how-i-built-this)
+  - [Ben's session](https://www.bensbites.com/p/bens-session)
+<!-- always-expanded -->
+- building
+  - [realtime-tokens](https://bentossell.com/realtime-tokens/) — live OpenRouter model traffic
+  - [token activity](https://bentossell.com/token-activity/) — every token my agents use, by day
+  - [bg-gone](https://bentossell.com/bg-gone/) — remove image backgrounds in your browser
 - investor
   - 100k cheques
   - developer tools and infra
@@ -31,3 +37,13 @@ i can't code (i'm non-technical) but i'm a self-taught internet builder. i make 
 - **a16z** scout
 - **Makerpad** founder [exited to Zapier]
 - **Product Hunt** [2015-2017]
+
+<!-- not-found-lede: this page isn't here. it might never have been. -->
+<!-- not-found-tooltip: i sniffed around. nothing. -->
+
+## 404
+
+- [bentossell.com](https://bentossell.com/) — start again
+- [bg-gone](https://bentossell.com/bg-gone/) — remove image backgrounds in your browser
+- [realtime-tokens](https://bentossell.com/realtime-tokens/) — live OpenRouter model traffic
+- [bens bites](https://www.bensbites.com/) — where i post my builds and walkthroughs
