@@ -6,7 +6,7 @@ a self-taught internet builder (i can't code). i make sites and apps with agents
 
 ## Now
 
-- \[bens bites\]\([bensbites.com](https://bensbites.com)\)
+- [bens bites](https://bensbites.com)
   - est 2022
   - where i post my builds and walkthroughs
   - [How I built this](https://www.bensbites.com/p/how-i-built-this)
