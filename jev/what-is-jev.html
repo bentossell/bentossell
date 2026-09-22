@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What is Jev? Six pictures.</title>
+<meta name="description" content="Jev, explained for someone who knows nothing about it. Six big pictures, one sentence each.">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="site.css">
+<style>
+.page { padding: 0 24px 96px; }
+.wrap { max-width: 1040px; margin: 0 auto; }
+.kicker { font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-2); }
+.top { display: flex; justify-content: space-between; align-items: center; padding: 24px 0 0; font-size: 14px; }
+.top a { color: var(--text-2); text-decoration-thickness: from-font; text-underline-offset: 3px; display: inline-flex; align-items: center; min-height: 44px; }
+header { padding: 56px 0 40px; display: grid; gap: 20px; }
+h1 { font-family: var(--font-serif); font-weight: var(--fw-normal); font-size: clamp(38px, 6vw, 68px); letter-spacing: -0.02em; line-height: 1.02; max-width: 20ch; }
+.lede { font-size: 20px; color: var(--text-2); max-width: 52ch; text-wrap: pretty; }
+.ch { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 48px; align-items: center; padding: 64px 0; border-top: var(--hairline) solid var(--line); }
+.ch .txt { display: grid; gap: 14px; align-content: center; }
+.ch .n { font-size: 13px; color: var(--text-3); font-variant-numeric: tabular-nums; }
+.ch h2 { font-family: var(--font-serif); font-weight: var(--fw-normal); font-size: clamp(30px, 3.6vw, 44px); letter-spacing: -0.015em; }
+.ch p { font-size: 19px; color: var(--text-2); max-width: 36ch; text-wrap: pretty; }
+.ch .who { font-size: 14px; color: var(--text-3); max-width: 40ch; }
+.ch .pic { width: 100%; }
+.next { border-top: var(--hairline) solid var(--line); padding: 64px 0 0; display: grid; gap: 16px; }
+.next h2 { font-family: var(--font-serif); font-weight: var(--fw-normal); font-size: clamp(30px, 4vw, 44px); letter-spacing: -0.015em; max-width: 22ch; }
+.btn { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 22px; border-radius: 999px; background: var(--text); color: var(--bg); text-decoration: none; font-weight: var(--fw-medium); justify-self: start; transition: opacity 150ms ease-out; }
+.btn:active { transform: scale(0.96); }
+@media (hover: hover) and (pointer: fine) { .btn:hover { opacity: 0.85; } }
+footer { padding-top: 56px; font-size: 14px; color: var(--text-3); max-width: 65ch; }
+footer a { color: var(--text-2); }
+@media (max-width: 760px) {
+  header { padding-top: 32px; }
+  .ch { grid-template-columns: 1fr; gap: 20px; padding: 40px 0; }
+}
+</style>
+</head>
+<body>
+<div class="page"><div class="wrap">
+  <div class="top"><a href="index.html">← All 41 posts</a></div>
+  <header>
+    <span class="kicker">What is Jev?</span>
+    <h1>A new kind of AI came out last week. It does not talk. It decides.</h1>
+    <p class="lede">Six pictures explain it. No jargon.</p>
+  </header>
+  <div id="chapters"></div>
+  <section class="next">
+    <span class="kicker">Next</span>
+    <h2>So, in week one, people put judgment everywhere.</h2>
+    <a class="btn" href="index.html">See the 41 things people built →</a>
+  </section>
+  <footer>Facts in the pictures come from <a href="https://typesafe.ai/blog/introducing-system-one-models-and-jev" target="_blank" rel="noopener">TypeSafe’s launch post</a> and <a href="https://simonwillison.net/2026/Sep/21/jev/" target="_blank" rel="noopener">Simon Willison’s notes</a>. Speed and cost figures are TypeSafe’s own claims.</footer>
+</div></div>
+<script src="pics.js"></script>
+<script>
+const { pics, chapters, whoMade } = window.JEV_PICS;
+document.getElementById('chapters').innerHTML = chapters.map((c, i) => `<section class="ch"><div class="txt"><span class="n">${String(i + 1).padStart(2, '0')} / 06</span><h2>${c.h}</h2><p>${c.p}</p>${i === 0 ? `<p class="who">${whoMade}</p>` : ''}</div>${pics[c.pic]()}</section>`).join('');
+</script>
+</body>
+</html>

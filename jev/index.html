@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- video.twimg.com returns 403 when a foreign Referer is sent; images and video both need this. -->
+<meta name="referrer" content="no-referrer">
+<title>Jev, week one · 41 things people built</title>
+<meta name="description" content="What people built with Jev, TypeSafe AI’s decision model, in its first week (15–21 Sep 2026). 41 posts with videos, grouped by use case, plus a six-picture explainer.">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="site.css">
+<style>
+.page { min-height: 100dvh; padding-bottom: 80px; }
+.top { max-width: 1320px; margin: 0 auto; padding: 36px 24px 0; display: grid; gap: 20px; }
+.ttl { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+h1 { font-size: 28px; font-weight: var(--fw-semibold); letter-spacing: -0.02em; }
+.ttl p { font-size: 14px; color: var(--text-2); }
+
+details { background: var(--surface); border-radius: 16px; box-shadow: var(--elev); }
+summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 20px; min-height: 56px; font-weight: var(--fw-medium); border-radius: 16px; }
+summary::-webkit-details-marker { display: none; }
+summary .hint { font-size: 13px; color: var(--text-3); font-weight: var(--fw-normal); }
+summary .chev { width: 20px; height: 20px; color: var(--text-3); flex: none; transition: transform 150ms ease-out; }
+details[open] summary .chev { transform: rotate(180deg); }
+.strip { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; padding: 4px 12px 12px; }
+.tile { background: var(--surface-2); border-radius: 12px; padding: 16px; display: grid; gap: 12px; align-content: space-between; min-height: 230px; min-width: 0; overflow: hidden; }
+.tile h4 { font-size: 15px; font-weight: var(--fw-semibold); letter-spacing: -0.005em; }
+.tile p { font-size: 13px; color: var(--text-2); text-wrap: pretty; }
+.tile .mini { height: 96px; display: grid; align-items: center; min-width: 0; }
+.tile.cta { background: var(--text); color: var(--bg); text-decoration: none; align-content: end; transition: opacity 150ms ease-out; }
+.tile.cta h4 { font-size: 18px; letter-spacing: -0.01em; }
+.tile.cta p { color: inherit; opacity: 0.7; }
+.tile.cta:active { transform: scale(0.98); }
+@media (hover: hover) and (pointer: fine) { .tile.cta:hover { opacity: 0.88; } }
+
+.bar-wrap { position: sticky; top: 0; z-index: 1; background: color-mix(in oklch, var(--bg) 88%, transparent); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-bottom: var(--hairline) solid var(--line); margin-top: 8px; }
+.bar { max-width: 1320px; margin: 0 auto; padding: 12px 24px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.chip { flex: none; height: 36px; padding: 0 14px; border-radius: 999px; border: 0; background: transparent; color: var(--text-2); font-size: 14px; font-weight: var(--fw-medium); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; position: relative; transition: color 150ms ease-out, background-color 150ms ease-out; }
+.chip::before { content: ""; position: absolute; inset: -4px 0; }
+.chip .c { font-size: 12px; color: var(--text-3); font-variant-numeric: tabular-nums; }
+.chip[aria-pressed="true"] { background: var(--text); color: var(--bg); }
+.chip[aria-pressed="true"] .c { color: color-mix(in oklch, var(--bg) 70%, var(--text)); }
+.chip:active { transform: scale(0.96); }
+@media (hover: hover) and (pointer: fine) { .chip:not([aria-pressed="true"]):hover { background: var(--surface-2); color: var(--text); } }
+.sp { flex: 1; min-width: 12px; }
+.sort { flex: none; display: inline-flex; background: var(--surface); border-radius: 999px; padding: 3px; box-shadow: var(--elev); }
+.sort button { height: 30px; padding: 0 12px; border: 0; border-radius: 999px; background: transparent; color: var(--text-2); font-size: 13px; font-weight: var(--fw-medium); cursor: pointer; position: relative; transition: color 150ms ease-out, background-color 150ms ease-out; }
+.sort button::before { content: ""; position: absolute; inset: -7px 0; }
+.sort button[aria-pressed="true"] { background: var(--surface-2); color: var(--text); }
+
+.grid { max-width: 1320px; margin: 0 auto; padding: 20px 24px 0; column-width: 330px; column-gap: 14px; }
+.card { break-inside: avoid; margin-bottom: 14px; display: grid; gap: 12px; background: var(--surface); border-radius: 16px; padding: 16px 16px 14px; box-shadow: var(--elev); transition: box-shadow 150ms ease-out; }
+@media (hover: hover) and (pointer: fine) { .card:hover { box-shadow: var(--elev-hover); } }
+.card .hd { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.card .hd .nm { font-size: 14px; font-weight: var(--fw-medium); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card .hd .at { font-size: 13px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card h3 { font-size: 17px; font-weight: var(--fw-semibold); letter-spacing: -0.01em; line-height: 1.3; text-wrap: pretty; }
+.card h3 a { text-decoration: none; transition: color 150ms ease-out; }
+@media (hover: hover) and (pointer: fine) { .card h3 a:hover { color: var(--accent); } }
+.card .txt { font-size: 14px; color: var(--text-2); white-space: pre-line; overflow-wrap: anywhere; }
+.card .txt[data-clamp] { display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; }
+.card .more { justify-self: start; border: 0; background: none; padding: 0; min-height: 32px; font-size: 13px; color: var(--text-2); cursor: pointer; text-decoration: underline; text-decoration-thickness: from-font; text-underline-offset: 3px; margin-top: -8px; position: relative; }
+.card .more::before { content: ""; position: absolute; inset: -6px -8px; }
+.card .note { font-size: 12px; color: var(--text-3); margin-top: -6px; }
+.card .note a { color: var(--text-2); }
+.media { position: relative; border-radius: 8px; overflow: hidden; background: var(--surface-2); outline: 1px solid var(--img-outline); outline-offset: -1px; max-height: 480px; }
+.media img, .media video { width: 100%; height: 100%; object-fit: contain; max-height: 480px; }
+.media video { background: var(--surface-2); }
+.media .dur { position: absolute; left: 8px; bottom: 8px; font-size: 11px; padding: 2px 6px; border-radius: 4px; background: rgb(0 0 0 / 0.6); color: #fff; font-variant-numeric: tabular-nums; pointer-events: none; }
+.quote { border-left: 2px solid var(--line); padding: 2px 0 2px 12px; display: grid; gap: 6px; }
+.quote .qa { font-size: 13px; color: var(--text-3); }
+.quote .qa b { color: var(--text-2); font-weight: var(--fw-medium); }
+.quote .qt { font-size: 13px; color: var(--text-2); display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+.card .ft { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 13px; color: var(--text-3); padding-top: 12px; border-top: var(--hairline) solid var(--line); min-width: 0; }
+.card .ft b { font-weight: var(--fw-medium); color: var(--text-2); }
+.card .ft .tag { flex: 0 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; }
+.card .ft a { color: var(--text-2); text-decoration-thickness: from-font; text-underline-offset: 3px; white-space: nowrap; display: inline-flex; align-items: center; min-height: 32px; }
+.empty { padding: 60px 24px; text-align: center; color: var(--text-2); }
+.foot { max-width: 1320px; margin: 0 auto; padding: 32px 24px 0; font-size: 13px; color: var(--text-3); }
+.foot a { color: var(--text-2); }
+@media (max-width: 1100px) { .strip { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .strip { grid-template-columns: 1fr; } .tile { min-height: 0; } .grid { column-width: auto; column-count: 1; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="top">
+    <div class="ttl"><h1>Jev, week one</h1><p><span class="num" id="count"></span> posts · 15–21 Sep 2026 · what people built in the first seven days</p></div>
+    <details>
+      <summary><span>New here? What Jev is, in five pictures <span class="hint" id="who"></span></span><svg class="chev" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 8l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></summary>
+      <div class="strip" id="strip"></div>
+    </details>
+  </div>
+  <div class="bar-wrap"><div class="bar" id="bar" role="group" aria-label="Filter by use case"></div></div>
+  <div class="grid" id="grid"></div>
+  <p class="foot">Posts are Ben’s X bookmarks from 15–21 September 2026 that mention Jev or TypeSafe. Media is loaded from X when you play or scroll to it. <a href="what-is-jev.html">What is Jev?</a></p>
+</div>
+
+<script src="tweets.js"></script>
+<script src="pics.js"></script>
+<script>
+const { clusters, tweets } = window.JEV;
+const { chapters, minis, whoMade } = window.JEV_PICS;
+const byCluster = Object.fromEntries(clusters.map(c => [c.id, tweets.filter(t => t.cluster === c.id)]));
+const clusterById = Object.fromEntries(clusters.map(c => [c.id, c]));
+
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmt = n => n >= 1e6 ? (n / 1e6).toFixed(1).replace(/\.0$/, '') + 'M' : n >= 1e3 ? (n / 1e3).toFixed(n < 1e4 ? 1 : 0).replace(/\.0$/, '') + 'K' : String(n);
+const day = iso => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' });
+const dur = ms => { const s = Math.round(ms / 1000); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
+const initials = a => (a.name || a.username || '?').replace(/[^\p{L}\p{N} ]/gu, '').trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?';
+const avatar = a => `<span class="av sm" ${a.avatar ? '' : 'data-broken'} aria-hidden="true">${a.avatar ? `<img src="${esc(a.avatar.replace('_normal', '_bigger'))}" width="32" height="32" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.setAttribute('data-broken','')">` : ''}<span>${esc(initials(a))}</span></span>`;
+
+const mediaEl = (m, ownerUrl) => {
+  const ratio = m.width && m.height ? `aspect-ratio:${m.width}/${m.height};` : '';
+  if (m.type === 'photo') {
+    return `<a class="media" style="${ratio}" href="${esc(ownerUrl)}" target="_blank" rel="noopener" aria-label="Open post on X"><img src="${esc(m.src)}?name=medium" width="${m.width || ''}" height="${m.height || ''}" alt="" loading="lazy" referrerpolicy="no-referrer"></a>`;
+  }
+  if (!m.src) return '';
+  const gif = m.type === 'animated_gif';
+  return `<div class="media" style="${ratio}"><video preload="none" poster="${esc(m.preview)}" controls playsinline ${gif ? 'muted loop' : ''} width="${m.width || ''}" height="${m.height || ''}"><source src="${esc(m.src)}" type="video/mp4"></video>${m.durationMs ? `<span class="dur">${dur(m.durationMs)}</span>` : ''}</div>`;
+};
+
+const card = t => {
+  const long = t.text.length > 320 || t.text.split('\n').length > 6;
+  const media = t.media.map(m => mediaEl(m, t.url)).join('');
+  const quoteMedia = !t.media.length && t.quote?.media?.length ? t.quote.media.map(m => mediaEl(m, `https://x.com/${t.quote.author.username}/status/${t.quote.id}`)).join('') : '';
+  return `<article class="card">
+    <div class="hd">${avatar(t.author)}<div style="min-width:0"><div class="nm">${esc(t.author.name)}</div><div class="at">@${esc(t.author.username)} · ${day(t.date)}</div></div></div>
+    <h3><a href="${esc(t.url)}" target="_blank" rel="noopener">${esc(t.headline)}</a></h3>
+    <p class="txt" ${long ? 'data-clamp' : ''}>${esc(t.text)}</p>
+    ${long ? `<button class="more" aria-expanded="false">Show more</button>` : ''}
+    ${t.translated ? `<p class="note">Translated from Chinese · <a href="${esc(t.url)}" target="_blank" rel="noopener">original</a></p>` : ''}
+    ${media}
+    ${t.quote ? `<blockquote class="quote" cite="https://x.com/${esc(t.quote.author.username)}/status/${esc(t.quote.id)}"><p class="qa">Quoting <b>${esc(t.quote.author.name)}</b> @${esc(t.quote.author.username)}</p><p class="qt">${esc(t.quote.text)}</p>${quoteMedia}</blockquote>` : ''}
+    <div class="ft"><span><b class="num">${fmt(t.likes)}</b> likes · <span class="num">${fmt(t.views)}</span> views</span><span class="tag">${esc(clusterById[t.cluster].short)}</span><a href="${esc(t.url)}" target="_blank" rel="noopener">Open on X ↗</a></div>
+  </article>`;
+};
+
+/* state, kept in the URL so views are linkable */
+const params = new URLSearchParams(location.search);
+let filter = clusterById[params.get('f')] ? params.get('f') : 'all';
+let sort = params.get('s') === 'date' ? 'date' : 'likes';
+const grid = document.getElementById('grid');
+const bar = document.getElementById('bar');
+
+function syncUrl() {
+  const u = new URL(location);
+  filter === 'all' ? u.searchParams.delete('f') : u.searchParams.set('f', filter);
+  sort === 'likes' ? u.searchParams.delete('s') : u.searchParams.set('s', sort);
+  history.replaceState(null, '', u);
+}
+function renderGrid() {
+  const list = (filter === 'all' ? tweets : byCluster[filter]).slice();
+  list.sort(sort === 'likes' ? (a, b) => b.likes - a.likes : (a, b) => (a.date < b.date ? 1 : -1));
+  grid.innerHTML = list.length ? list.map(card).join('') : `<p class="empty">Nothing in this group yet.</p>`;
+  grid.querySelectorAll('.more').forEach(b => b.addEventListener('click', () => {
+    const p = b.previousElementSibling; const open = p.hasAttribute('data-clamp');
+    p.toggleAttribute('data-clamp', !open); b.textContent = open ? 'Show less' : 'Show more'; b.setAttribute('aria-expanded', String(open));
+  }));
+}
+function renderBar() {
+  bar.innerHTML = `<button class="chip" data-f="all" aria-pressed="${filter === 'all'}">All <span class="c num">${tweets.length}</span></button>`
+    + clusters.map(c => `<button class="chip" data-f="${c.id}" aria-pressed="${filter === c.id}" title="${esc(c.name)}. ${esc(c.blurb)}">${esc(c.short)} <span class="c num">${byCluster[c.id].length}</span></button>`).join('')
+    + `<span class="sp"></span><div class="sort" role="group" aria-label="Sort"><button data-s="likes" aria-pressed="${sort === 'likes'}">Most liked</button><button data-s="date" aria-pressed="${sort === 'date'}">Newest</button></div>`;
+  bar.querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => { filter = b.dataset.f; renderBar(); renderGrid(); syncUrl(); }));
+  bar.querySelectorAll('.sort button').forEach(b => b.addEventListener('click', () => { sort = b.dataset.s; renderBar(); renderGrid(); syncUrl(); }));
+}
+
+document.getElementById('count').textContent = tweets.length;
+document.getElementById('who').textContent = '· ' + whoMade.split('.')[0];
+document.getElementById('strip').innerHTML = [0, 1, 2, 3, 5].map((ci, i) => `<div class="tile"><div class="mini">${minis[i]}</div><div><h4>${chapters[ci].h}</h4><p>${chapters[ci].p}</p></div></div>`).join('')
+  + `<a class="tile cta" href="what-is-jev.html"><div><h4>Read the full explainer →</h4><p>Six big pictures, one sentence each. Two minutes.</p></div></a>`;
+renderBar();
+renderGrid();
+</script>
+</body>
+</html>
